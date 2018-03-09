@@ -1,0 +1,25 @@
+Package: pat
+Type: Package
+Title: Testing Ecological Patches
+Version: 0.0.0.9000
+Date: 2018-01-05
+Authors@R: person("Godoy", "Lucas", email = "lucasdac.godoy@gmail.com",
+  role = c("aut", "cre"))
+Description: This is a developing R package whose main purpose is to create a 
+  statistical test to check whether two sets of polygons (or a set of polygons and a set of points) 
+  have some association.
+License: GPL-3 + file LICENSE
+BugReports: https://github.com/lcgodoy/pat/issues
+Depends: R (>= 3.4.1)
+Imports:
+  magrittr (>= 1.5),
+  Rcpp (>= 0.12.14),
+  rgeos (>= 0.3-26),
+  sp (>= 1.2-5),
+  methods,
+  stats
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1
+Suggests: knitr,
+  rmarkdown
+VignetteBuilder: knitr

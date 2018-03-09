@@ -1,0 +1,31 @@
+---
+title: "Testing Ecological Patches"
+subtitle: "Testing Polygons Association"
+author: "Lucas da Cunha Godoy"
+date: "01-24-2017"
+output: rmarkdown::html_vignette
+bibliography: biblio.bib
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = F,
+  eval = T
+)
+```
+
+Testing if two sets of polygons have some kind of association is not an easy task. The proof
+of that is that we don't have a method  to do it implemented in neither in *R* or *ArcGIS*.
+So, my dissertation was motivated by a request from researchers from *ESRI* 
+(the company from *ArcGIS*) to my advisor. In this work I developed an
+algorithm based on the paper from [@lotwick1982]. The usage is illustrated below.
+
+## Usage
+
+# References
