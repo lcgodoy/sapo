@@ -4,7 +4,7 @@
 
 An approach for test Polygons/Polygons or Points/Polygons association.
 
-> P.s.: the package is under development.  
+> P.s.: the package is under development and is about my M.Sc. dissertation.  
 
 ## Installation 
 
