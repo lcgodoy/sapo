@@ -36,8 +36,8 @@
 #' @export
 #'
 past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
-                   same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
-                   alpha = 0.05, alternative = "two_sided") {
+                    same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
+                    alpha = 0.05, alternative = "two_sided") {
 
   if(!(class(obj_sp1) %in% c("SpatialPolygons",
                              "SpatialPointsDataFrame") &
@@ -88,12 +88,14 @@ past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
     obj_sp1 <- gIntersection(obj_sp1, limits_to_sp(unique_bbox), byid = T,
                              id = suppressWarnings(names(obj_sp1)))
   } else {
-    id_aux <- slot(obj_sp1, 'data')
-    obj_sp1 <- gIntersection(obj_sp1, limits_to_sp(unique_bbox),
-                             byid = T,
-                             id = as.character(id_aux$id))
-    obj_sp1 <- sp::SpatialPointsDataFrame(obj_sp1, data = id_aux)
-    rm(id_aux)
+    # id_aux <- slot(obj_sp1, 'data')
+    # obj_sp1 <- gIntersection(obj_sp1, limits_to_sp(unique_bbox),
+    #                          byid = T,
+    #                          id = as.character(id_aux$id))
+    # obj_sp1 <- sp::SpatialPointsDataFrame(obj_sp1, data = id_aux)
+    k <- which(rgeos::gWithin(obj_sp1, limits_to_sp(unique_bbox), byid = T))
+    obj_sp1 <- obj_sp1[k, ]
+    rm(k)
   }
 
 
@@ -101,11 +103,15 @@ past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
     obj_sp2 <- gIntersection(obj_sp2, limits_to_sp(unique_bbox), byid = T,
                              id = suppressWarnings(names(obj_sp2)))
   } else {
-    id_aux <- slot(obj_sp2, 'data')
-    obj_sp2 <- gIntersection(obj_sp2, limits_to_sp(unique_bbox), byid = T,
-                             id = as.character(id_aux$id))
-    obj_sp2 <- sp::SpatialPointsDataFrame(obj_sp2, data = id_aux)
-    rm(id_aux)
+    # id_aux <- slot(obj_sp2, 'data')
+    # obj_sp2 <- gIntersection(obj_sp2, limits_to_sp(unique_bbox),
+    #                          byid = T,
+    #                          id = as.character(id_aux$id))
+    # obj_sp2 <- sp::SpatialPointsDataFrame(obj_sp2, data = id_aux)
+
+    k <- which(rgeos::gWithin(obj_sp2, limits_to_sp(unique_bbox), byid = T))
+    obj_sp2 <- obj_sp2[k, ]
+    rm(k)
   }
 
   attr(obj_sp1, "bbox") <- unique_bbox
@@ -136,13 +142,15 @@ past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
       obj1_aux <- gIntersection(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T,
                                 id = suppressWarnings(names(obj1_aux)))
     } else {
-      id_aux <- slot(obj1_aux, 'data')
-      obj1_aux <- gIntersection(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                id = as.character(id_aux$id))
-      obj1_aux <- sp::SpatialPointsDataFrame(obj1_aux,
-                                             data = data.frame(id = row.names(obj1_aux),
-                                                               row.names = row.names(obj1_aux)))
-      rm(id_aux)
+      # id_aux <- slot(obj1_aux, 'data')
+      # obj1_aux <- gIntersection(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T,
+      #                           id = as.character(id_aux$id))
+      # obj1_aux <- sp::SpatialPointsDataFrame(obj1_aux,
+      #                                        data = data.frame(id = row.names(obj1_aux),
+      #                                                          row.names = row.names(obj1_aux)))
+      k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
+      obj1_aux <- obj1_aux[k, ]
+      rm(k)
     }
 
     attr(obj1_aux, "bbox") <- obj2_rshift@bbox
@@ -159,12 +167,14 @@ past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
       obj2_aux <- gIntersection(obj2_aux, limits_to_sp(obj1_rshift@bbox), byid = T,
                                 id = suppressWarnings(names(obj2_aux)))
     } else {
-      id_aux <- slot(obj2_aux, 'data')
-      obj2_aux <- gIntersection(obj2_aux, limits_to_sp(obj1_rshift@bbox), byid = T,
-                                id = as.character(id_aux$id))
-      obj2_aux <- sp::SpatialPointsDataFrame(obj2_aux,
-                                             data = data.frame(id = row.names(obj2_aux),
-                                                               row.names = row.names(obj2_aux)))
+      # id_aux <- slot(obj2_aux, 'data')
+      # obj2_aux <- gIntersection(obj2_aux, limits_to_sp(obj1_rshift@bbox), byid = T,
+      #                           id = as.character(id_aux$id))
+      # obj2_aux <- sp::SpatialPointsDataFrame(obj2_aux,
+      #                                        data = data.frame(id = row.names(obj2_aux),
+      #                                                          row.names = row.names(obj2_aux)))
+      k <- which(rgeos::gWithin(obj2_aux, limits_to_sp(obj1_rshift@bbox), byid = T))
+      obj2_aux <- obj2_aux[k, ]
       rm(id_aux)
     }
 
