@@ -1,4 +1,4 @@
-[![Travis-CI Build Status](https://travis-ci.org/lcgodoy/past.svg?branch=master)](https://travis-ci.org/lcgodoy/past)
+[![Build Status](https://travis-ci.org/lcgodoy/past.svg?branch=master)](https://travis-ci.org/lcgodoy/past)
 
 # Testing Polygons Spatial Association
 
