@@ -1,6 +1,6 @@
-Package: pat
+Package: past
 Type: Package
-Title: Testing Ecological Patches
+Title: Testing Polygons Spatial Association
 Version: 0.0.0.9000
 Date: 2018-01-05
 Authors@R: person("Godoy", "Lucas", email = "lucasdac.godoy@gmail.com",

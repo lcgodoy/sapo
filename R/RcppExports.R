@@ -12,6 +12,6 @@
 #' @param range_y a numeric
 #'
 shift_aux <- function(obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_y) {
-    .Call('_pat_shift_aux', PACKAGE = 'pat', obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_y)
+    .Call('_past_shift_aux', PACKAGE = 'past', obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_y)
 }
 

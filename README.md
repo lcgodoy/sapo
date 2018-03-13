@@ -1,10 +1,10 @@
 [![Travis-CI Build Status](https://travis-ci.org/lcgodoy/pat.svg?branch=master)](https://travis-ci.org/lcgodoy/pat)
 
-# Testing Ecological Patches
+# Testing Polygons Spatial Association
 
-An approach for test Polygons/Polygons or Points/Polygons association.
+An approach for testing ecological patches.
 
-> P.s.: the package is under development and is about my M.Sc. dissertation.  
+> P.s.: the package is under development.  
 
 ## Installation 
 

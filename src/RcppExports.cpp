@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // shift_aux
 S4 shift_aux(S4 obj_sp, S4 obj_sp2, S4 obj_sp3, S4 obj_sp4, int n_poly, double range_x, double range_y);
-RcppExport SEXP _pat_shift_aux(SEXP obj_spSEXP, SEXP obj_sp2SEXP, SEXP obj_sp3SEXP, SEXP obj_sp4SEXP, SEXP n_polySEXP, SEXP range_xSEXP, SEXP range_ySEXP) {
+RcppExport SEXP _past_shift_aux(SEXP obj_spSEXP, SEXP obj_sp2SEXP, SEXP obj_sp3SEXP, SEXP obj_sp4SEXP, SEXP n_polySEXP, SEXP range_xSEXP, SEXP range_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,11 +25,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_pat_shift_aux", (DL_FUNC) &_pat_shift_aux, 7},
+    {"_past_shift_aux", (DL_FUNC) &_past_shift_aux, 7},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_pat(DllInfo *dll) {
+RcppExport void R_init_past(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

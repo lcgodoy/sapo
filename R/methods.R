@@ -1,29 +1,29 @@
-#' Class of the output from \code{\link{pat_mc}}
+#' Class of the output from \code{\link{past_mc}}
 #'
 #' Internal use
 #'
-#' @param x Output from \code{\link{pat_mc}}
+#' @param x Output from \code{\link{past_mc}}
 #'
-#' @aliases pat_test
+#' @aliases past_test
 #'
 #' @export
 #'
-pat_test <- function(x) {
-  x <- append(class(x), "pat_test")
+past_test <- function(x) {
+  x <- append(class(x), "past_test")
 }
 
 
-#' Print method for \code{\link{pat_test}}
+#' Print method for \code{\link{past_test}}
 #'
-#' @param x A \code{\link{pat_test}} object
+#' @param x A \code{\link{past_test}} object
 #' @param ... inherits from \code{print} and \code{format}
 #'
-#' @aliases print print.pat_test
-#' @method print pat_test
+#' @aliases print print.past_test
+#' @method print past_test
 #' @export
 #'
-print.pat_test <- function(x, ...) {
-  if(!class(x) %in% "pat_test") stop('Invalid object')
+print.past_test <- function(x, ...) {
+  if(!class(x) %in% "past_test") stop('Invalid object')
 
   conf <- (1 - x$alpha)*100 %>%
     round(digits = 4)
@@ -35,23 +35,23 @@ print.pat_test <- function(x, ...) {
                 "attraction" = "The sets attracts each other.",
                 "repulsion" = "The sets repulses each other.")
 
-  cat(format('Monte Carlo Polygons Association Test', ...), '\n', '\n')
+  cat(format('Monte Carlo Polygons Spatial Association Test', ...), '\n', '\n')
   cat(paste('Confidence level:', paste(conf, "%", sep = ""), "\n", sep = " "))
   cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
   cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
   cat(paste('p-value:', round(x$p_value, 8), "\n", sep = " "))
 }
 
-#' Summary method for \code{\link{pat_test}}
+#' Summary method for \code{\link{past_test}}
 #'
-#' @param object a \code{\link{pat_test}} object
+#' @param object a \code{\link{past_test}} object
 #' @param ... inherits from \code{print}, \code{format}, and \code{summary}
 #'
-#' @aliases summary summary.pat_test
-#' @method summary pat_test
+#' @aliases summary summary.past_test
+#' @method summary past_test
 #' @export
-summary.pat_test <- function(object, ...) {
-  if(!class(object) %in% "pat_test") stop('Invalid object')
+summary.past_test <- function(object, ...) {
+  if(!class(object) %in% "past_test") stop('Invalid object')
 
   if(FALSE) a <- summary(object, ...)
 
@@ -73,7 +73,7 @@ summary.pat_test <- function(object, ...) {
                   "Do not reject the null hypothesis")
   }
 
-  cat("Monte Carlo Polygons Association Test", '\n \n')
+  cat("Monte Carlo Polygons Spatial Association Test", '\n \n')
   cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
   cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
   cat(paste('Decision:', dec,
@@ -83,8 +83,8 @@ summary.pat_test <- function(object, ...) {
   cat(paste('p-value:', round(object$p_value, 6), "\n", sep = " "))
 }
 
-# plot.pat_test <- function(x) {
-#   if(!class(x) %in% "pat_test") stop('Invalid object')
+# plot.past_test <- function(x) {
+#   if(!class(x) %in% "past_test") stop('Invalid object')
 #
 #
 # }

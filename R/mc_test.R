@@ -1,4 +1,4 @@
-#' Polygons' Association Test
+#' Polygons Spatial Association Test
 #'
 #' @description A Monte Carlo test to verify if two sets of polygons are
 #'    or not.
@@ -24,7 +24,7 @@
 #' @importFrom methods slot
 #' @import sp
 #'
-#' @return a list from class \code{\link{pat_test}}, with values: \describe{
+#' @return a list from class \code{\link{past_test}}, with values: \describe{
 #'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
 #'     \item{sample_ts}{a \code{numeric} scalar giving the test statistic calculated in the original sample}
 #'     \item{mc_ts}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
@@ -35,7 +35,7 @@
 #'
 #' @export
 #'
-pat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
+past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
                    same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
                    alpha = 0.05, alternative = "two_sided") {
 
@@ -185,7 +185,7 @@ pat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
   }
 
   if(output$p_value <= output$alpha) output$rejects <- TRUE
-  class(output) <- "pat_test"
+  class(output) <- "past_test"
 
   rm(list = ls()[!ls() %in% c("output", "mc_values")])
 
@@ -194,7 +194,7 @@ pat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
 }
 
 
-#' @useDynLib pat
+#' @useDynLib past
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' @import magrittr
