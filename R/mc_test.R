@@ -175,7 +175,7 @@ past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
       #                                                          row.names = row.names(obj2_aux)))
       k <- which(rgeos::gWithin(obj2_aux, limits_to_sp(obj1_rshift@bbox), byid = T))
       obj2_aux <- obj2_aux[k, ]
-      rm(id_aux)
+      rm(k)
     }
 
     attr(obj2_aux, "bbox") <- obj1_rshift@bbox
