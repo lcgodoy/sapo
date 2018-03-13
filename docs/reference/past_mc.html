@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Polygons' Association Test — pat_mc • pat</title>
+<title>Polygons Spatial Association Test — past_mc • past</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -47,7 +47,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">pat</a>
+      <a class="navbar-brand" href="../index.html">past</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -68,7 +68,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/polygons-association-ecological-patches.html">Testing Ecological Patches</a>
+      <a href="../articles/polygons-association-ecological-patches.html">Testing Polygons Spatial Association</a>
     </li>
   </ul>
 </li>
@@ -87,7 +87,7 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Polygons' Association Test</h1>
+    <h1>Polygons Spatial Association Test</h1>
     </div>
 
     
@@ -95,7 +95,7 @@
    or not.</p>
     
 
-    <pre class="usage"><span class='fu'>pat_mc</span>(<span class='no'>obj_sp1</span>, <span class='no'>obj_sp2</span>, <span class='kw'>n_sim</span> <span class='kw'>=</span> <span class='fl'>100L</span>, <span class='kw'>unique_bbox</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>same_bbox</span> <span class='kw'>=</span> <span class='no'>T</span>,
+    <pre class="usage"><span class='fu'>past_mc</span>(<span class='no'>obj_sp1</span>, <span class='no'>obj_sp2</span>, <span class='kw'>n_sim</span> <span class='kw'>=</span> <span class='fl'>100L</span>, <span class='kw'>unique_bbox</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>same_bbox</span> <span class='kw'>=</span> <span class='no'>T</span>,
   <span class='kw'>bbox_1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>bbox_2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"two_sided"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -148,7 +148,7 @@ of the second spatial object</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a list from class <code><a href='pat_test.html'>pat_test</a></code>, with values:</p><dl class='dl-horizontal'>
+    <p>a list from class <code><a href='past_test.html'>past_test</a></code>, with values:</p><dl class='dl-horizontal'>
     <dt>p_value</dt><dd><p>a <code>numeric</code> scalar giving the p-value of the test</p></dd>
     <dt>sample_ts</dt><dd><p>a <code>numeric</code> scalar giving the test statistic calculated in the original sample</p></dd>
     <dt>mc_ts</dt><dd><p>a <code>numeric</code> vector giving the test statistic for each of the Monte Carlo simulations</p></dd>
