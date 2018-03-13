@@ -48,7 +48,7 @@ past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
 
   if((class(obj_sp1) %in% "SpatialPointsDataFrame" &
       class(obj_sp2) %in% "SpatialPointsDataFrame")) {
-    warning("if obj_sp1 and obj_sp2 are from class SpatialPolygons, \n
+    warning("if obj_sp1 and obj_sp2 are from class SpatialPolygons,
             then an approach for multitype point patterns
             would be more appropiated.")
   }
