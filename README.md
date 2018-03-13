@@ -1,4 +1,4 @@
-[![Travis-CI Build Status](https://travis-ci.org/lcgodoy/pat.svg?branch=master)](https://travis-ci.org/lcgodoy/pat)
+[![Travis-CI Build Status](https://travis-ci.org/lcgodoy/past.svg?branch=master)](https://travis-ci.org/lcgodoy/past)
 
 # Testing Polygons Spatial Association
 
@@ -10,5 +10,5 @@ An approach for testing ecological patches.
 
 ```r
 # install.packages('devtools')
-devtools::install_github('lcgodoy/pat')
+devtools::install_github('lcgodoy/past')
 ```
