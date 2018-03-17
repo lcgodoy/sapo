@@ -4,26 +4,26 @@
 #'
 #' @param x Output from \code{\link{past_mc}}
 #'
-#' @aliases past_test
+#' @aliases psa_test
 #'
 #' @export
 #'
-past_test <- function(x) {
-  x <- append(class(x), "past_test")
+psa_test <- function(x) {
+  x <- append(class(x), "psa_test")
 }
 
 
-#' Print method for \code{\link{past_test}}
+#' Print method for \code{\link{psa_test}}
 #'
-#' @param x A \code{\link{past_test}} object
+#' @param x A \code{\link{psa_test}} object
 #' @param ... inherits from \code{print} and \code{format}
 #'
-#' @aliases print print.past_test
-#' @method print past_test
+#' @aliases print print.psa_test
+#' @method print psa_test
 #' @export
 #'
-print.past_test <- function(x, ...) {
-  if(!class(x) %in% "past_test") stop('Invalid object')
+print.psa_test <- function(x, ...) {
+  if(!class(x) %in% "psa_test") stop('Invalid object')
 
   conf <- (1 - x$alpha)*100 %>%
     round(digits = 4)
@@ -42,16 +42,16 @@ print.past_test <- function(x, ...) {
   cat(paste('p-value:', round(x$p_value, 8), "\n", sep = " "))
 }
 
-#' Summary method for \code{\link{past_test}}
+#' Summary method for \code{\link{psa_test}}
 #'
-#' @param object a \code{\link{past_test}} object
+#' @param object a \code{\link{psa_test}} object
 #' @param ... inherits from \code{print}, \code{format}, and \code{summary}
 #'
-#' @aliases summary summary.past_test
-#' @method summary past_test
+#' @aliases summary summary.psa_test
+#' @method summary psa_test
 #' @export
-summary.past_test <- function(object, ...) {
-  if(!class(object) %in% "past_test") stop('Invalid object')
+summary.psa_test <- function(object, ...) {
+  if(!class(object) %in% "psa_test") stop('Invalid object')
 
   if(FALSE) a <- summary(object, ...)
 
@@ -83,8 +83,8 @@ summary.past_test <- function(object, ...) {
   cat(paste('p-value:', round(object$p_value, 6), "\n", sep = " "))
 }
 
-# plot.past_test <- function(x) {
-#   if(!class(x) %in% "past_test") stop('Invalid object')
+# plot.psa_test <- function(x) {
+#   if(!class(x) %in% "psa_test") stop('Invalid object')
 #
 #
 # }

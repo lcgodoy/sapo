@@ -3,3 +3,4 @@
 ^\.travis\.yml$
 ^docs$
 .gitlab-ci.yml
+^_pkgdown\.yml$

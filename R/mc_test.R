@@ -24,7 +24,7 @@
 #' @importFrom methods slot
 #' @import sp
 #'
-#' @return a list from class \code{\link{past_test}}, with values: \describe{
+#' @return a list from class \code{\link{psa_test}}, with values: \describe{
 #'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
 #'     \item{sample_ts}{a \code{numeric} scalar giving the test statistic calculated in the original sample}
 #'     \item{mc_ts}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
@@ -35,7 +35,7 @@
 #'
 #' @export
 #'
-past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
+psat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
                     same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
                     alpha = 0.05, alternative = "two_sided") {
 
@@ -195,7 +195,7 @@ past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
   }
 
   if(output$p_value <= output$alpha) output$rejects <- TRUE
-  class(output) <- "past_test"
+  class(output) <- "psa_test"
 
   rm(list = ls()[!ls() %in% c("output", "mc_values")])
 
@@ -204,7 +204,7 @@ past_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
 }
 
 
-#' @useDynLib past
+#' @useDynLib tpsa
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
 #' @import magrittr
