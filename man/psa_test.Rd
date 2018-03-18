@@ -2,12 +2,12 @@
 % Please edit documentation in R/methods.R
 \name{psa_test}
 \alias{psa_test}
-\title{Class of the output from \code{\link{past_mc}}}
+\title{Class of the output from \code{\link{psat_mc}}}
 \usage{
 psa_test(x)
 }
 \arguments{
-\item{x}{Output from \code{\link{past_mc}}}
+\item{x}{Output from \code{\link{psat_mc}}}
 }
 \description{
 Internal use

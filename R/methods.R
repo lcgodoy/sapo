@@ -1,8 +1,8 @@
-#' Class of the output from \code{\link{past_mc}}
+#' Class of the output from \code{\link{psat_mc}}
 #'
 #' Internal use
 #'
-#' @param x Output from \code{\link{past_mc}}
+#' @param x Output from \code{\link{psat_mc}}
 #'
 #' @aliases psa_test
 #'
