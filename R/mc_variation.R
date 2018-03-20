@@ -1,7 +1,8 @@
-#' Polygons Spatial Association Test
+#' Polygons Spatial Association Test (variation)
 #'
 #' @description A Monte Carlo test to verify if two sets of polygons are
-#'    or not.
+#'    associated. The difference bewtween this function and the function
+#'    \code{psat_mc} is that here you can choose the test statistic.
 #'
 #' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
 #' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
@@ -15,7 +16,9 @@
 #' @param bbox_2 a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
 #'  of the second spatial object
 #' @param alpha a \code{numeric} indicating the confidence level
-#' @param alternative a string indicating the alternative hypothesis, it can be: "independece",
+#' @param ts a \code{character} indicating the test statistic used in the test, the options are
+#'  \code{c('psam', 'k12', 'f')}.
+#' @param alternative a \code{character} indicating the alternative hypothesis, it can be: "independece",
 #' "repulsion", or "attraction" if you interest is  only check if the sets are independent
 #'           or not, if the two sets repulses each other, or if the two sets attracts each other,
 #'           respectively.
@@ -35,9 +38,10 @@
 #'
 #' @export
 #'
-psat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
-                    same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
-                    alpha = 0.05, alternative = "two_sided") {
+psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
+                     same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
+                     alpha = 0.05, ts = 'psam',
+                     alternative = "two_sided") {
 
   if(!(class(obj_sp1) %in% c("SpatialPolygons",
                              "SpatialPointsDataFrame") &
@@ -97,7 +101,6 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
     obj_sp1 <- obj_sp1[k, ]
     rm(k)
   }
-
 
   if(class(obj_sp2) %in% 'SpatialPolygons') {
     obj_sp2 <- gIntersection(obj_sp2, limits_to_sp(unique_bbox), byid = T,
@@ -195,7 +198,6 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
   }
 
   if(output$p_value <= output$alpha) output$rejects <- TRUE
-
   # class(output) <- "psa_test"
   class(output) <- psa_test(output)
 
@@ -204,10 +206,3 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
   return(output)
 
 }
-
-
-#' @useDynLib tpsa
-#' @importFrom Rcpp sourceCpp
-#' @importFrom Rcpp evalCpp
-#' @import magrittr
-NULL

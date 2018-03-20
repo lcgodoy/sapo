@@ -23,7 +23,7 @@ psa_test <- function(x) {
 #' @export
 #'
 print.psa_test <- function(x, ...) {
-  if(!class(x) %in% "psa_test") stop('Invalid object')
+  if(!"psa_test" %in% class(object)) stop('Invalid object')
 
   conf <- (1 - x$alpha)*100 %>%
     round(digits = 4)
@@ -51,7 +51,7 @@ print.psa_test <- function(x, ...) {
 #' @method summary psa_test
 #' @export
 summary.psa_test <- function(object, ...) {
-  if(!class(object) %in% "psa_test") stop('Invalid object')
+  if(!"psa_test" %in% class(object)) stop('Invalid object')
 
   if(FALSE) a <- summary(object, ...)
 
@@ -88,3 +88,47 @@ summary.psa_test <- function(object, ...) {
 #
 #
 # }
+
+#' Class of the output from \code{\link{psat_mc}}
+#'
+#' Internal use
+#'
+#' @param x Output from \code{\link{pf12}}
+#'
+#' @aliases pF
+#'
+#' @export
+#'
+pF <- function(x) {
+  x <- append(class(x), "pF")
+}
+
+#' Plot method for \code{\link{pF}}
+#'
+#' @param x a \code{\link{pF}} object
+#' @param ... inherits from \code{plot}.
+#'
+#' @aliases plot plot.pF
+#' @method plot pF
+#' @export
+plot.pF <- function(x, ...) {
+  if(!"pF" %in% class(x)) stop('Invalid object')
+
+  plot(x[,1], x[,2],
+       type = 'l', xlab = 'd',
+       ylab = '', lty = 2,
+       col = 'red',
+       ylim = c(min(x[,2], x[,3]),
+                max(x[,2], x[,3])),
+       ...)
+
+  lines(x[,1], x[,2], lty = 3,
+        col = 'blue',
+        ...)
+
+  legend('bottomright', col = c('red', 'blue'),
+         lty = c(2, 3),
+         legend = c((expression(F[12])), (expression(F[21]))),
+         bg = 'n',
+         bty = 'n')
+}

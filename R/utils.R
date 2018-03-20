@@ -325,17 +325,18 @@ sp_ID_dist <- function(obj_sp1, obj_sp2) {
 
 }
 
-#' Polygons' Association Measure
+#' Polygons' Spatial Association Measure
 #'
 #' @description test statistic for the MC test.
 #'
 #' @param obj_sp1 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
 #' @param obj_sp2 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
 #'
-#' @return a \code{scalar} \code{numeric}
+#' @return a \code{numeric} \code{scalar} with the polygons' spatial
+#'  association measure for the corresponding objects.
 #' @export
 #'
-pam <- function(obj_sp1, obj_sp2) {
+psam <- function(obj_sp1, obj_sp2) {
   m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
   min_row <- apply(m_dist, 1, min)
@@ -347,4 +348,87 @@ pam <- function(obj_sp1, obj_sp2) {
 
   return(M)
 
+}
+
+#' \eqn{K_{1,2}} adaptation for polygons
+#'
+#' @description test statistic for the MC test.
+#'
+#' @param obj_sp1 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
+#' @param obj_sp2 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
+#' @param r_min a \code{numeric} representing the mininmun distance to calculate
+#' the function, \code{default = 0}.
+#' @param r_max a \code{numeric} representing the maximum distance to calculate
+#' the function \code{default = max(polygonds distance matrix)}.
+#' @param by a \code{numeric} value that represents the how many units
+#' between each \code{r} value.
+#'
+#' @return a \code{numeric} \code{matrix} corresponding to the estimated
+#'  \eqn{K_{1,2}} function in the interval \eqn{[r_{min}, r_{max}]}.
+#' @export
+#'
+pk12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
+  m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
+
+  if(is.null(r_max)) {
+    r_max = max(m_dist)
+  }
+
+  r <- seq(from = r_min, to = r_max, by = by)
+
+  output <- matrix(ncol = 2, nrow = length(r))
+
+  colnames(output) <- c('r', 'pk12')
+
+  rm(list = ls()[ls() != "output"])
+
+  warning('This function is not implemented yet.')
+
+  return(output)
+
+}
+
+#' F function adaptation for polygons
+#'
+#' @description test statistic for the MC test.
+#'
+#' @param obj_sp1 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
+#' @param obj_sp2 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
+#' @param r_min a \code{numeric} representing the mininmun distance to calculate
+#' the function, \code{default = 0}.
+#' @param r_max a \code{numeric} representing the maximum distance to calculate
+#' the function \code{default = max(polygonds distance matrix)}.
+#' @param by a \code{numeric} value that represents the how many units
+#' between each \code{r} value.
+#'
+#' @return a \code{numeric} \code{matrix} corresponding to the estimated
+#'  \eqn{F_{1,2}} and \eqn{F_{2,1}} function in the interval \eqn{[r_{min}, r_{max}]}.
+#' @export
+#'
+pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
+  m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
+
+  if(is.null(r_max)) {
+    r_max = max(m_dist)
+  }
+
+  r <- seq(from = r_min, to = r_max, by = by)
+
+  output <- matrix(ncol = 3, nrow = length(r))
+  colnames(output) <- c('r', 'pf12', 'pf21')
+  output[ ,1] <- r
+
+  ab <- apply(m_dist, 1, min)
+  ba <- apply(m_dist, 2, min)
+
+  for(i in seq_along(r)) {
+    output[i, 2] <- mean(ab <= r[i])
+    output[i, 3] <- mean(ba <= r[i])
+  }
+
+  rm(list = ls()[ls() != "output"])
+
+  class(output) <- pF(output)
+
+  return(output)
 }
