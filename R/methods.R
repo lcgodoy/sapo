@@ -23,7 +23,7 @@ psa_test <- function(x) {
 #' @export
 #'
 print.psa_test <- function(x, ...) {
-  if(!"psa_test" %in% class(object)) stop('Invalid object')
+  if(!"psa_test" %in% class(x)) stop('Invalid object')
 
   conf <- (1 - x$alpha)*100 %>%
     round(digits = 4)
@@ -110,6 +110,9 @@ pF <- function(x) {
 #'
 #' @aliases plot plot.pF
 #' @method plot pF
+#'
+#' @importFrom graphics legend lines
+#'
 #' @export
 plot.pF <- function(x, ...) {
   if(!"pF" %in% class(x)) stop('Invalid object')

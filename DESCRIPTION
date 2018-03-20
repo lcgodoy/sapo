@@ -16,6 +16,7 @@ Imports:
   Rcpp (>= 0.12.14),
   rgeos (>= 0.3-26),
   sp (>= 1.2-5),
+  graphics,
   methods,
   stats
 LinkingTo: Rcpp, RcppArmadillo
