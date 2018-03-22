@@ -197,6 +197,7 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
   if(output$p_value <= output$alpha) output$rejects <- TRUE
 
   # class(output) <- "psa_test"
+  class(output) <- psa_psam(output)
   class(output) <- psa_test(output)
 
   rm(list = ls()[!ls() %in% c("output", "mc_values")])

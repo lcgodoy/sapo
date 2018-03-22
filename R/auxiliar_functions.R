@@ -95,53 +95,111 @@ pt_rf <- function(obj_sp, bbox_max) {
 #' @param obj1_shift object from class \code{SpatialPolygons} or \code{SpatialPoints}
 #' @param obj_sp2 object from class \code{SpatialPolygons} or \code{SpatialPoints}
 #' @param niter \code{numeric} value indicating number of iterations
+#' @param ts \code{string} giving the test statistic, the options are \code{c('psam', 'pf12', 'pk12')}
+#' @param args \code{list} only necessary when the test statistic is different from psam
 #'
 #' @return a \code{numeric vector}.
 #'
-mc_iterations <- function(obj1_shift, obj_sp2, niter) {
+mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
 
-  output <- vector(mode = 'numeric', length = niter)
+  if(ts == 'psam') {
+    output <- vector(mode = 'numeric', length = niter)
 
-  if('SpatialPolygons' %in% class(obj1_shift)) {
-    if('SpatialPolygons' %in% class(obj_sp2)) {
-      for(i in seq_len(niter)) {
-        obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
-        obj1_aux <- obj1_shift
-        obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                  id = suppressWarnings(names(obj1_aux)))
-        attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-        output[i] <- psam(obj1_aux, obj2_rshift)
+    if('SpatialPolygons' %in% class(obj1_shift)) {
+      if('SpatialPolygons' %in% class(obj_sp2)) {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                    id = suppressWarnings(names(obj1_aux)))
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[i] <- psam(obj1_aux, obj2_rshift)
+        }
+      } else {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                    id = suppressWarnings(names(obj1_aux)))
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[i] <- psam(obj1_aux, obj2_rshift)
+        }
       }
     } else {
-      for(i in seq_len(niter)) {
-        obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
-        obj1_aux <- obj1_shift
-        obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                  id = suppressWarnings(names(obj1_aux)))
-        attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-        output[i] <- psam(obj1_aux, obj2_rshift)
+      if('SpatialPolygons' %in% class(obj_sp2)) {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
+          obj1_aux <- obj1_aux[k, ]
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[i] <- psam(obj1_aux, obj2_rshift)
+        }
+      } else {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
+          obj1_aux <- obj1_aux[k, ]
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[i] <- psam(obj1_aux, obj2_rshift)
+        }
       }
     }
-  } else {
-    if('SpatialPolygons' %in% class(obj_sp2)) {
-      for(i in seq_len(niter)) {
-        obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
-        obj1_aux <- obj1_shift
-        k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
-        obj1_aux <- obj1_aux[k, ]
-        attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-        output[i] <- psam(obj1_aux, obj2_rshift)
+  }
+
+  if(ts == 'pf12') {
+
+    output <- vector(mode = 'list', length = niter)
+
+    if('SpatialPolygons' %in% class(obj1_shift)) {
+      if('SpatialPolygons' %in% class(obj_sp2)) {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                    id = suppressWarnings(names(obj1_aux)))
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[[i]] <- pf12(obj1_aux, obj2_rshift,
+                              r_min = args$r_min, r_max = args$r_max)
+        }
+      } else {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                    id = suppressWarnings(names(obj1_aux)))
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[[i]] <- pf12(obj1_aux, obj2_rshift,
+                              r_min = args$r_min, r_max = args$r_max)
+        }
       }
     } else {
-      for(i in seq_len(niter)) {
-        obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
-        obj1_aux <- obj1_shift
-        k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
-        obj1_aux <- obj1_aux[k, ]
-        attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-        output[i] <- psam(obj1_aux, obj2_rshift)
+      if('SpatialPolygons' %in% class(obj_sp2)) {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
+          obj1_aux <- obj1_aux[k, ]
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[[i]] <- pf12(obj1_aux, obj2_rshift,
+                              r_min = args$r_min, r_max = args$r_max)
+        }
+      } else {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
+          obj1_aux <- obj1_aux[k, ]
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[[i]] <- pf12(obj1_aux, obj2_rshift,
+                              r_min = args$r_min, r_max = args$r_max)
+        }
       }
     }
+
+    output <- do.call('rbind', output) %>% as.data.frame
+
   }
 
   rm(list = ls()[ls() != 'output'])

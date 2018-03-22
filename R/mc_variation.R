@@ -17,7 +17,7 @@
 #'  of the second spatial object
 #' @param alpha a \code{numeric} indicating the confidence level
 #' @param ts a \code{character} indicating the test statistic used in the test, the options are
-#'  \code{c('psam', 'k12', 'f')}.
+#'  \code{c('psam', 'pk12', 'pf12')}.
 #' @param alternative a \code{character} indicating the alternative hypothesis, it can be: "independece",
 #' "repulsion", or "attraction" if you interest is  only check if the sets are independent
 #'           or not, if the two sets repulses each other, or if the two sets attracts each other,
@@ -25,6 +25,7 @@
 #'
 #' @importFrom rgeos gIntersection
 #' @importFrom methods slot
+#' @importFrom stats quantile
 #' @import sp
 #'
 #' @return a list from class \code{\link{psa_test}}, with values: \describe{
@@ -38,9 +39,9 @@
 #'
 #' @export
 #'
-psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
+psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
                      same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
-                     alpha = 0.05, ts = 'psam',
+                     alpha = 0.01, ts = 'psam',
                      alternative = "two_sided") {
 
   if(!(class(obj_sp1) %in% c("SpatialPolygons",
@@ -92,11 +93,6 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
     obj_sp1 <- gIntersection(obj_sp1, limits_to_sp(unique_bbox), byid = T,
                              id = suppressWarnings(names(obj_sp1)))
   } else {
-    # id_aux <- slot(obj_sp1, 'data')
-    # obj_sp1 <- gIntersection(obj_sp1, limits_to_sp(unique_bbox),
-    #                          byid = T,
-    #                          id = as.character(id_aux$id))
-    # obj_sp1 <- sp::SpatialPointsDataFrame(obj_sp1, data = id_aux)
     k <- which(rgeos::gWithin(obj_sp1, limits_to_sp(unique_bbox), byid = T))
     obj_sp1 <- obj_sp1[k, ]
     rm(k)
@@ -106,12 +102,6 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
     obj_sp2 <- gIntersection(obj_sp2, limits_to_sp(unique_bbox), byid = T,
                              id = suppressWarnings(names(obj_sp2)))
   } else {
-    # id_aux <- slot(obj_sp2, 'data')
-    # obj_sp2 <- gIntersection(obj_sp2, limits_to_sp(unique_bbox),
-    #                          byid = T,
-    #                          id = as.character(id_aux$id))
-    # obj_sp2 <- sp::SpatialPointsDataFrame(obj_sp2, data = id_aux)
-
     k <- which(rgeos::gWithin(obj_sp2, limits_to_sp(unique_bbox), byid = T))
     obj_sp2 <- obj_sp2[k, ]
     rm(k)
@@ -125,39 +115,106 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
   obj2_shift <- poly_shift(obj_sp = obj_sp2, bbox_tot = unique_bbox)
 
   output <- vector(mode = "list", length = 6)
+
   names(output) <- c("p_value", "rejects",
                      "sample_ts", "mc_ts",
                      "alternative", "alpha")
 
   # mc_values <- vector(mode = "numeric", length = n_sim)
 
-  output$sample_ts <- psam(obj_sp1, obj_sp2)
   output$alternative <- alternative
   output$alpha <- alpha
-  output$rejects <- FALSE
-  mc_values <- vector(mode = 'numeric')
+  # output$rejects <- FALSE
 
-  mc_values <- c(mc_iterations(obj1_shift, obj_sp2,
-                               niter = round((n_sim/2) + .5)),
-                 mc_iterations(obj2_shift, obj_sp1,
-                               niter = round((n_sim/2))))
+  if(ts == 'psam') {
+    output$sample_ts <- psam(obj_sp1, obj_sp2)
 
-  output$mc_ts <- mc_values
+    output$mc_ts <- vector(mode = 'numeric')
 
-  if(alternative == "two_sided") {
-    output$p_value <- mean(output$sample_ts < mc_values | output$sample_ts > mc_values)
+    output$mc_ts <- c(mc_iterations(obj1_shift, obj_sp2,
+                                    niter = round((n_sim/2) + .5), ts = ts),
+                      mc_iterations(obj2_shift, obj_sp1,
+                                    niter = round((n_sim/2)), ts = ts))
+
+    if(alternative == "two_sided") {
+      output$p_value <- mean(output$sample_ts < output$mc_ts | output$sample_ts > output$mc_ts)
+    }
+    if(alternative == "attraction") {
+      output$p_value <- mean(output$sample_ts > output$mc_ts)
+    } else {
+      output$p_value <- mean(output$sample_ts < output$mc_ts)
+    }
+
+    if(output$p_value <= output$alpha) output$rejects <- TRUE
+
+    class(output) <- psa_psam(output)
   }
-  if(alternative == "attraction") {
-    output$p_value <- mean(output$sample_ts > mc_values)
-  } else {
-    output$p_value <- mean(output$sample_ts < mc_values)
+
+  if(ts == 'pf12') {
+    output$sample_ts <- pf12(obj_sp1, obj_sp2)
+
+    # mc_values <- vector(mode = 'numeric')
+
+    rmax <- max(sp_ID_dist(obj_sp1, obj_sp2))
+
+    mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
+                                  niter = round((n_sim/2) + .5), ts = ts,
+                                  args = list(r_min = 0, r_max = rmax)),
+                    mc_iterations(obj2_shift, obj_sp1,
+                                  niter = round((n_sim/2)), ts = ts,
+                                  args = list(r_min = 0, r_max = rmax)))
+
+    output$mc_ts <- data.frame(r = 0:rmax,
+                               f12_inf = tapply(mc_aux$pf12, mc_aux$r, quantile, p = (alpha/2)),
+                               f12_up = tapply(mc_aux$pf12, mc_aux$r, quantile, p = 1 - (alpha/2)),
+                               f21_inf = tapply(mc_aux$pf21, mc_aux$r, quantile, p = (alpha/2)),
+                               f21_up = tapply(mc_aux$pf21, mc_aux$r, quantile, p = 1 - (alpha/2)))
+
+    p12 <- vector(mode = 'numeric', length = nrow(output$sample_ts))
+    p21 <- vector(mode = 'numeric', length = nrow(output$sample_ts))
+
+    if(alternative == "two_sided") {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        p12[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] <= output$sample_ts[i,2] |
+                         mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] > output$sample_ts[i,2])
+
+        p21[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] <= output$sample_ts[i,3] |
+                         mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] > output$sample_ts[i,3])
+      }
+      output$p_value <- data.frame(p12 = p12, p21 = p21)
+    }
+
+    if(alternative == "attraction") {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        p12[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] > output$sample_ts[i,2])
+
+        p21[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] > output$sample_ts[i,3])
+      }
+
+      output$p_value <- data.frame(p12 = p12, p21 = p21)
+    } else {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        p12[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] < output$sample_ts[i,2])
+
+        p21[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] < output$sample_ts[i,3])
+      }
+
+      output$p_value <- data.frame(p12 = p12, p21 = p21)
+    }
+
+    output$rejects <- vector(mode = 'logical', length = 2)
+
+    output$rejects[1] <- ifelse(any(output$p_value$p12 <= output$alpha), TRUE, FALSE)
+    output$rejects[2] <- ifelse(any(output$p_value$p21 <= output$alpha), TRUE, FALSE)
+
+    names(output$rejects) <- c('f12', 'f21')
+
+    class(output) <- psa_pf12(output)
   }
 
-  if(output$p_value <= output$alpha) output$rejects <- TRUE
-  # class(output) <- "psa_test"
   class(output) <- psa_test(output)
 
-  rm(list = ls()[!ls() %in% c("output", "mc_values")])
+  rm(list = ls()[!ls() %in% c("output")])
 
   return(output)
 }

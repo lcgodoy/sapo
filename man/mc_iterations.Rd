@@ -4,7 +4,7 @@
 \alias{mc_iterations}
 \title{psat_mc2 - auxiliar function}
 \usage{
-mc_iterations(obj1_shift, obj_sp2, niter)
+mc_iterations(obj1_shift, obj_sp2, niter, ts, args = NULL)
 }
 \arguments{
 \item{obj1_shift}{object from class \code{SpatialPolygons} or \code{SpatialPoints}}
@@ -12,6 +12,10 @@ mc_iterations(obj1_shift, obj_sp2, niter)
 \item{obj_sp2}{object from class \code{SpatialPolygons} or \code{SpatialPoints}}
 
 \item{niter}{\code{numeric} value indicating number of iterations}
+
+\item{ts}{\code{string} giving the test statistic, the options are \code{c('psam', 'pf12', 'pk12')}}
+
+\item{args}{\code{list} only necessary when the test statistic is different from psam}
 }
 \value{
 a \code{numeric vector}.

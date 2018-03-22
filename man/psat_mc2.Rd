@@ -4,8 +4,8 @@
 \alias{psat_mc2}
 \title{Polygons Spatial Association Test (variation)}
 \usage{
-psat_mc2(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
-  same_bbox = T, bbox_1 = NULL, bbox_2 = NULL, alpha = 0.05,
+psat_mc2(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
+  same_bbox = T, bbox_1 = NULL, bbox_2 = NULL, alpha = 0.01,
   ts = "psam", alternative = "two_sided")
 }
 \arguments{
@@ -30,7 +30,7 @@ of the second spatial object}
 \item{alpha}{a \code{numeric} indicating the confidence level}
 
 \item{ts}{a \code{character} indicating the test statistic used in the test, the options are
-\code{c('psam', 'k12', 'f')}.}
+\code{c('psam', 'pk12', 'pf12')}.}
 
 \item{alternative}{a \code{character} indicating the alternative hypothesis, it can be: "independece",
 "repulsion", or "attraction" if you interest is  only check if the sets are independent
