@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>psat_mc2 - auxiliar function — mc_iterations • tpsa</title>
+<title>Class of the output from <code><a href='psat_mc.html'>psat_mc</a></code> when the test statistic is <code><a href='pf12.html'>pf12</a></code> — psa_pf12 • tpsa</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -87,43 +87,23 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>psat_mc2 - auxiliar function</h1>
+    <h1>Class of the output from <code><a href='psat_mc.html'>psat_mc</a></code> when the test statistic is <code><a href='pf12.html'>pf12</a></code></h1>
     </div>
 
     
-    <p>Internal use.</p>
+    <p>Internal use</p>
     
 
-    <pre class="usage"><span class='fu'>mc_iterations</span>(<span class='no'>obj1_shift</span>, <span class='no'>obj_sp2</span>, <span class='no'>niter</span>, <span class='no'>ts</span>, <span class='kw'>args</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>psa_pf12</span>(<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>obj1_shift</th>
-      <td><p>object from class <code>SpatialPolygons</code> or <code>SpatialPoints</code></p></td>
-    </tr>
-    <tr>
-      <th>obj_sp2</th>
-      <td><p>object from class <code>SpatialPolygons</code> or <code>SpatialPoints</code></p></td>
-    </tr>
-    <tr>
-      <th>niter</th>
-      <td><p><code>numeric</code> value indicating number of iterations</p></td>
-    </tr>
-    <tr>
-      <th>ts</th>
-      <td><p><code>string</code> giving the test statistic, the options are <code>c('psam', 'pf12', 'pk12')</code></p></td>
-    </tr>
-    <tr>
-      <th>args</th>
-      <td><p><code>list</code> only necessary when the test statistic is different from psam</p></td>
+      <th>x</th>
+      <td><p>Output from <code><a href='psat_mc.html'>psat_mc</a></code></p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a <code>numeric vector</code>.</p>
     
 
   </div>
@@ -131,9 +111,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

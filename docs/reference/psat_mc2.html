@@ -96,8 +96,8 @@
    <code>psat_mc</code> is that here you can choose the test statistic.</p>
     
 
-    <pre class="usage"><span class='fu'>psat_mc2</span>(<span class='no'>obj_sp1</span>, <span class='no'>obj_sp2</span>, <span class='kw'>n_sim</span> <span class='kw'>=</span> <span class='fl'>100L</span>, <span class='kw'>unique_bbox</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>same_bbox</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>bbox_1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>bbox_2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+    <pre class="usage"><span class='fu'>psat_mc2</span>(<span class='no'>obj_sp1</span>, <span class='no'>obj_sp2</span>, <span class='kw'>n_sim</span> <span class='kw'>=</span> <span class='fl'>500L</span>, <span class='kw'>unique_bbox</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>same_bbox</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>bbox_1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>bbox_2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
   <span class='kw'>ts</span> <span class='kw'>=</span> <span class='st'>"psam"</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"two_sided"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -142,7 +142,7 @@ of the second spatial object</p></td>
     <tr>
       <th>ts</th>
       <td><p>a <code>character</code> indicating the test statistic used in the test, the options are
-<code>c('psam', 'k12', 'f')</code>.</p></td>
+<code>c('psam', 'pk12', 'pf12')</code>.</p></td>
     </tr>
     <tr>
       <th>alternative</th>
