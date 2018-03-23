@@ -2,7 +2,6 @@
 % Please edit documentation in R/methods.R
 \name{plot.pF}
 \alias{plot.pF}
-\alias{plot}
 \title{Plot method for \code{\link{pF}}}
 \usage{
 \method{plot}{pF}(x, ...)

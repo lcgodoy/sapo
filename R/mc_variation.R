@@ -127,6 +127,9 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   # output$rejects <- FALSE
 
   if(ts == 'psam') {
+
+    output$rejects <- FALSE
+
     output$sample_ts <- psam(obj_sp1, obj_sp2)
 
     output$mc_ts <- vector(mode = 'numeric')
@@ -154,8 +157,9 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     output$sample_ts <- pf12(obj_sp1, obj_sp2)
 
     # mc_values <- vector(mode = 'numeric')
-
-    rmax <- max(sp_ID_dist(obj_sp1, obj_sp2))
+    rmax <- sp_ID_dist(obj_sp1, obj_sp2)
+    rmax <- c(apply(rmax, 1, min), apply(rmax, 2, min))
+    rmax = max(rmax)
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
@@ -175,28 +179,38 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
 
     if(alternative == "two_sided") {
       for(i in seq_along(nrow(output$sample_ts))) {
-        p12[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] <= output$sample_ts[i,2] |
-                         mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] > output$sample_ts[i,2])
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
-        p21[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] <= output$sample_ts[i,3] |
-                         mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] > output$sample_ts[i,3])
+        p12[i] <- mean(aux$pf12 > output$sample_ts[i,2] | aux$pf12 < output$sample_ts[i,2])
+
+        p21[i] <- mean(aux$pf12 > output$sample_ts[i,3] | aux$pf12 < output$sample_ts[i,3])
+
+        rm(aux)
       }
       output$p_value <- data.frame(p12 = p12, p21 = p21)
     }
 
     if(alternative == "attraction") {
       for(i in seq_along(nrow(output$sample_ts))) {
-        p12[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] > output$sample_ts[i,2])
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
-        p21[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] > output$sample_ts[i,3])
+        p12[i] <- mean(aux$pf12 < output$sample_ts[i,2])
+
+        p21[i] <- mean(aux$pf12 < output$sample_ts[i,3])
+
+        rm(aux)
       }
 
       output$p_value <- data.frame(p12 = p12, p21 = p21)
     } else {
       for(i in seq_along(nrow(output$sample_ts))) {
-        p12[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] < output$sample_ts[i,2])
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
-        p21[i] <- mean(mc_aux$pf12[mc_aux$r == output$sample_ts[i,1]] < output$sample_ts[i,3])
+        p12[i] <- mean(aux$pf12 > output$sample_ts[i,2])
+
+        p21[i] <- mean(aux$pf12 > output$sample_ts[i,3])
+
+        rm(aux)
       }
 
       output$p_value <- data.frame(p12 = p12, p21 = p21)

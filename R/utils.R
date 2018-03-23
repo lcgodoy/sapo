@@ -409,7 +409,9 @@ pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
   m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
   if(is.null(r_max)) {
-    r_max = max(m_dist)
+    aux <- c(apply(m_dist, 1, min), apply(m_dist, 2, min))
+    r_max = max(aux)
+    rm(aux)
   }
 
   r <- seq(from = r_min, to = r_max, by = by)

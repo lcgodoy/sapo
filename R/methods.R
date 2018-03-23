@@ -60,7 +60,7 @@ print.psa_test <- function(x, ...) {
                 "attraction" = "The sets attracts each other.",
                 "repulsion" = "The sets repulses each other.")
 
-  if('psa_psam' %in% class(x)){
+  if('psa_psam' %in% class(x)) {
 
     if(FALSE) invisible(a <- print(x, ...))
 
@@ -71,7 +71,7 @@ print.psa_test <- function(x, ...) {
     cat(paste('p-value:', round(x$p_value, 8), "\n", sep = " "))
   }
 
-  if('psa_pf12' %in% class(x)){
+  if('psa_pf12' %in% class(x)) {
     cat(format('Monte Carlo Polygons Spatial Association Test', ...), '\n', '\n')
     cat(paste('Confidence level:', paste(conf, "%", sep = ""), "\n", sep = " "))
     cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
@@ -127,11 +127,46 @@ summary.psa_test <- function(object, ...) {
   }
 }
 
-# plot.psa_test <- function(x) {
-#   if(!class(x) %in% "psa_test") stop('Invalid object')
-#
-#
-# }
+#' PLot method for \code{\link{psa_test}}
+#'
+#' @param x a \code{\link{psa_test}} object
+#' @param ... inherits from \code{plot}
+#'
+#' @import graphics
+#' @aliases plot plot.psa_test
+#' @method plot psa_test
+#' @export
+#'
+plot.psa_test <- function(x, ...) {
+  if(!"psa_test" %in% class(x)) stop('Invalid object')
+
+  if('psa_psam' %in% class(x)){
+    stop('plot not implemented yet for this test statistic')
+  }
+
+  if('psa_pf12' %in% class(x)) {
+    par(mfrow = c(1, 2))
+    plot(x$sample_ts[, 1], x$sample_ts[, 2],
+         type = 'l',
+         xlab = 'Distance',
+         ylab = '',
+         main = expression(F['12'](d)),
+         bty = 'l', ...)
+    grid()
+    lines(x$mc_ts$r, x$mc_ts$f12_up, lty = 2, col = 'red')
+    lines(x$mc_ts$r, x$mc_ts$f12_inf, lty = 2, col = 'red')
+    plot(x$sample_ts[, 1], x$sample_ts[, 3],
+         type = 'l',
+         xlab = 'Distance',
+         ylab = '',
+         main = expression(F['21'](d)),
+         bty = 'l', ...)
+    grid()
+    lines(x$mc_ts$r, x$mc_ts$f21_up, lty = 2, col = 'red')
+    lines(x$mc_ts$r, x$mc_ts$f21_inf, lty = 2, col = 'red')
+    par(mfrow = c(1, 1))
+  }
+}
 
 #' Class of the output from \code{\link{psat_mc}}
 #'
@@ -152,7 +187,7 @@ pF <- function(x) {
 #' @param x a \code{\link{pF}} object
 #' @param ... inherits from \code{plot}.
 #'
-#' @aliases plot plot.pF
+#' @aliases plot.pF
 #' @method plot pF
 #'
 #' @importFrom graphics legend lines
