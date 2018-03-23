@@ -145,26 +145,51 @@ plot.psa_test <- function(x, ...) {
   }
 
   if('psa_pf12' %in% class(x)) {
-    par(mfrow = c(1, 2))
-    plot(x$sample_ts[, 1], x$sample_ts[, 2],
-         type = 'l',
-         xlab = 'Distance',
-         ylab = '',
-         main = expression(F['12'](d)),
-         bty = 'l', ...)
-    grid()
-    lines(x$mc_ts$r, x$mc_ts$f12_up, lty = 2, col = 'red')
-    lines(x$mc_ts$r, x$mc_ts$f12_inf, lty = 2, col = 'red')
-    plot(x$sample_ts[, 1], x$sample_ts[, 3],
-         type = 'l',
-         xlab = 'Distance',
-         ylab = '',
-         main = expression(F['21'](d)),
-         bty = 'l', ...)
-    grid()
-    lines(x$mc_ts$r, x$mc_ts$f21_up, lty = 2, col = 'red')
-    lines(x$mc_ts$r, x$mc_ts$f21_inf, lty = 2, col = 'red')
-    par(mfrow = c(1, 1))
+
+    if (requireNamespace("ggplot2", quietly = TRUE)) {
+      df_gg <- x$mc_ts[,1:3]
+      names(df_gg) <- c('r', 'f_inf', 'f_up')
+      df_gg$obs <- x$sample_ts[,2]
+      df_gg$func <- 'F(d)[12]'
+
+      df_gg2 <- x$mc_ts[,c(1, 4, 5)]
+      names(df_gg2) <- c('r', 'f_inf', 'f_up')
+      df_gg2$func <- 'F(d)[21]'
+      df_gg2$obs <- x$sample_ts[,3]
+
+      df_gg <- rbind(df_gg, df_gg2)
+
+      rm(df_gg2)
+
+      ggplot2::ggplot(data = df_gg) +
+        ggplot2::geom_line(ggplot2::aes(x = r, y = obs)) +
+        ggplot2::geom_ribbon(ggplot2::aes(x = r, ymin = f_inf, ymax = f_up),
+                             fill = 'blue', alpha = .2) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(x = 'Distance', y = '') +
+        ggplot2::facet_grid(func~., labeller = ggplot2::label_parsed)
+    } else {
+      par(mfrow = c(1, 2))
+      plot(x$sample_ts[, 1], x$sample_ts[, 2],
+           type = 'l',
+           xlab = 'Distance',
+           ylab = '',
+           main = expression(F['12'](d)),
+           bty = 'l', ...)
+      grid()
+      lines(x$mc_ts$r, x$mc_ts$f12_up, lty = 2, col = 'red')
+      lines(x$mc_ts$r, x$mc_ts$f12_inf, lty = 2, col = 'red')
+      plot(x$sample_ts[, 1], x$sample_ts[, 3],
+           type = 'l',
+           xlab = 'Distance',
+           ylab = '',
+           main = expression(F['21'](d)),
+           bty = 'l', ...)
+      grid()
+      lines(x$mc_ts$r, x$mc_ts$f21_up, lty = 2, col = 'red')
+      lines(x$mc_ts$r, x$mc_ts$f21_inf, lty = 2, col = 'red')
+      par(mfrow = c(1, 1))
+    }
   }
 }
 
