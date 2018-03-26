@@ -140,55 +140,112 @@ summary.psa_test <- function(object, ...) {
 plot.psa_test <- function(x, ...) {
   if(!"psa_test" %in% class(x)) stop('Invalid object')
 
-  if('psa_psam' %in% class(x)){
-    stop('plot not implemented yet for this test statistic')
-  }
+  if('psa_psam' %in% class(x)) {
+    df_den <- stats::density(x$mc_ts)
+    df_den <- data.frame(X = df_den$x, Y = df_den$y)
 
-  if('psa_pf12' %in% class(x)) {
+    if(x$alternative == 'two_sided') {
+      df_den2 <- df_den[df_den$X <= quantile(df_den$X, probs = x$alpha/2),]
+      df_den3 <- df_den[df_den$X >= quantile(df_den$X, probs = 1 - (x$alpha/2)),]
 
-    if (requireNamespace("ggplot2", quietly = TRUE)) {
-      df_gg <- x$mc_ts[,1:3]
-      names(df_gg) <- c('r', 'f_inf', 'f_up')
-      df_gg$obs <- x$sample_ts[,2]
-      df_gg$func <- 'F(d)[12]'
-
-      df_gg2 <- x$mc_ts[,c(1, 4, 5)]
-      names(df_gg2) <- c('r', 'f_inf', 'f_up')
-      df_gg2$func <- 'F(d)[21]'
-      df_gg2$obs <- x$sample_ts[,3]
-
-      df_gg <- rbind(df_gg, df_gg2)
-
-      rm(df_gg2)
-
-      ggplot2::ggplot(data = df_gg) +
-        ggplot2::geom_line(ggplot2::aes(x = r, y = obs)) +
-        ggplot2::geom_ribbon(ggplot2::aes(x = r, ymin = f_inf, ymax = f_up),
-                             fill = 'blue', alpha = .2) +
-        ggplot2::theme_bw() +
-        ggplot2::labs(x = 'Distance', y = '') +
-        ggplot2::facet_grid(func~., labeller = ggplot2::label_parsed)
+      if (requireNamespace("ggplot2", quietly = TRUE)) {
+        ggplot2::ggplot(data = df_den) +
+          ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
+          ggplot2::geom_ribbon(data = df_den2, ggplot2::aes(x = X, ymin = 0, ymax = Y),
+                               fill = 'red', alpha = .4) +
+          ggplot2::geom_ribbon(data = df_den3, ggplot2::aes(x = X, ymin = 0, ymax = Y),
+                               fill = 'red', alpha = .4) +
+          ggplot2::geom_vline(xintercept = x$sample_ts,
+                              linetype = 'dashed', col = 'red') +
+          ggplot2::theme_bw() +
+          ggplot2::labs(x = 'Test Statistic', y = 'Kernel density')
+      } else {
+        stop('install ggplot2 to visualize the plot.')
+      }
     } else {
-      par(mfrow = c(1, 2))
-      plot(x$sample_ts[, 1], x$sample_ts[, 2],
-           type = 'l',
-           xlab = 'Distance',
-           ylab = '',
-           main = expression(F['12'](d)),
-           bty = 'l', ...)
-      grid()
-      lines(x$mc_ts$r, x$mc_ts$f12_up, lty = 2, col = 'red')
-      lines(x$mc_ts$r, x$mc_ts$f12_inf, lty = 2, col = 'red')
-      plot(x$sample_ts[, 1], x$sample_ts[, 3],
-           type = 'l',
-           xlab = 'Distance',
-           ylab = '',
-           main = expression(F['21'](d)),
-           bty = 'l', ...)
-      grid()
-      lines(x$mc_ts$r, x$mc_ts$f21_up, lty = 2, col = 'red')
-      lines(x$mc_ts$r, x$mc_ts$f21_inf, lty = 2, col = 'red')
-      par(mfrow = c(1, 1))
+      if(x$alternative == 'repulsion') {
+        df_den2 <- df_den[df_den$X >= quantile(df_den$Y, probs = 1 - x$alpha),]
+
+        if (requireNamespace("ggplot2", quietly = TRUE)) {
+          ggplot2::ggplot(data = df_den) +
+            ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
+            ggplot2::geom_ribbon(data = df_den2, ggplot2::aes(x = X, ymin = 0, ymax = Y),
+                                 fill = 'red', alpha = .4) +
+            ggplot2::geom_vline(xintercept = x$sample_ts,
+                                linetype = 'dashed', col = 'red') +
+            ggplot2::theme_bw() +
+            ggplot2::labs(x = 'Test Statistic', y = 'Kernel density')
+        } else {
+          stop('install ggplot2 to visualize the plot.')
+        }
+      } else {
+        if(x$alternative == 'attraction') {
+          df_den2 <- df_den[df_den$X <= quantile(df_den$X, probs = x$alpha),]
+
+          if (requireNamespace("ggplot2", quietly = TRUE)) {
+            ggplot2::ggplot(data = df_den) +
+              ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
+              ggplot2::geom_ribbon(data = df_den2, ggplot2::aes(x = X, ymin = 0, ymax = Y),
+                                   fill = 'red', alpha = .4) +
+              ggplot2::geom_vline(xintercept = x$sample_ts,
+                                  linetype = 'dashed', col = 'red') +
+              ggplot2::theme_bw() +
+              ggplot2::labs(x = 'Test Statistic', y = 'Kernel density')
+
+          } else {
+            stop('install ggplot2 to visualize the plot.')
+          }
+        }
+      }
+    }
+
+  } else {
+    if('psa_pf12' %in% class(x)) {
+
+      if (requireNamespace("ggplot2", quietly = TRUE)) {
+        df_gg <- x$mc_ts[,1:3]
+        names(df_gg) <- c('r', 'f_inf', 'f_up')
+        df_gg$obs <- x$sample_ts[,2]
+        df_gg$func <- 'F(d)[12]'
+
+        df_gg2 <- x$mc_ts[,c(1, 4, 5)]
+        names(df_gg2) <- c('r', 'f_inf', 'f_up')
+        df_gg2$func <- 'F(d)[21]'
+        df_gg2$obs <- x$sample_ts[,3]
+
+        df_gg <- rbind(df_gg, df_gg2)
+
+        rm(df_gg2)
+
+        ggplot2::ggplot(data = df_gg) +
+          ggplot2::geom_line(ggplot2::aes(x = r, y = obs)) +
+          ggplot2::geom_ribbon(ggplot2::aes(x = r, ymin = f_inf, ymax = f_up),
+                               fill = 'blue', alpha = .2) +
+          ggplot2::theme_bw() +
+          ggplot2::labs(x = 'Distance', y = '') +
+          ggplot2::facet_grid(func~., labeller = ggplot2::label_parsed)
+      } else {
+        par(mfrow = c(1, 2))
+        plot(x$sample_ts[, 1], x$sample_ts[, 2],
+             type = 'l',
+             xlab = 'Distance',
+             ylab = '',
+             main = expression(F['12'](d)),
+             bty = 'l', ...)
+        grid()
+        lines(x$mc_ts$r, x$mc_ts$f12_up, lty = 2, col = 'red')
+        lines(x$mc_ts$r, x$mc_ts$f12_inf, lty = 2, col = 'red')
+        plot(x$sample_ts[, 1], x$sample_ts[, 3],
+             type = 'l',
+             xlab = 'Distance',
+             ylab = '',
+             main = expression(F['21'](d)),
+             bty = 'l', ...)
+        grid()
+        lines(x$mc_ts$r, x$mc_ts$f21_up, lty = 2, col = 'red')
+        lines(x$mc_ts$r, x$mc_ts$f21_inf, lty = 2, col = 'red')
+        par(mfrow = c(1, 1))
+      }
     }
   }
 }
