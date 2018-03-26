@@ -4,7 +4,7 @@
 \alias{pf12}
 \title{F function adaptation for polygons}
 \usage{
-pf12(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1)
+pf12(obj_sp1, obj_sp2, r_min = 1, r_max = NULL, by = 1)
 }
 \arguments{
 \item{obj_sp1}{a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object}

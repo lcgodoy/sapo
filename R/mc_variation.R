@@ -163,10 +163,10 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
-                                  args = list(r_min = 0, r_max = rmax)),
+                                  args = list(r_min = 1, r_max = rmax)),
                     mc_iterations(obj2_shift, obj_sp1,
                                   niter = round((n_sim/2)), ts = ts,
-                                  args = list(r_min = 0, r_max = rmax)))
+                                  args = list(r_min = 1, r_max = rmax)))
 
     output$mc_ts <- data.frame(r = 0:rmax,
                                f12_inf = tapply(mc_aux$pf12, mc_aux$r, quantile, p = (alpha/2)),

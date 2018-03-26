@@ -405,7 +405,7 @@ pk12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
 #'  \eqn{F_{1,2}} and \eqn{F_{2,1}} function in the interval \eqn{[r_{min}, r_{max}]}.
 #' @export
 #'
-pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
+pf12 <- function(obj_sp1, obj_sp2, r_min = 1, r_max = NULL, by = 1) {
   m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
   if(is.null(r_max)) {
