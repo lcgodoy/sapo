@@ -202,6 +202,52 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
 
   }
 
+  if(ts == 'pk_dist12') {
+
+    output <- vector(mode = 'list', length = niter)
+
+    if('SpatialPolygons' %in% class(obj1_shift)) {
+      if('SpatialPolygons' %in% class(obj_sp2)) {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                    id = suppressWarnings(names(obj1_aux)))
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[[i]] <- pk_dist12(obj1_aux, obj2_rshift,
+                                   r_min = args$r_min, r_max = args$r_max,
+                                   bbox = obj1_aux@bbox)
+        }
+      }
+    }
+
+    output <- do.call('rbind', output) %>% as.data.frame
+
+  }
+
+  if(ts == 'pk_area12') {
+
+    output <- vector(mode = 'list', length = niter)
+
+    if('SpatialPolygons' %in% class(obj1_shift)) {
+      if('SpatialPolygons' %in% class(obj_sp2)) {
+        for(i in seq_len(niter)) {
+          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
+          obj1_aux <- obj1_shift
+          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                    id = suppressWarnings(names(obj1_aux)))
+          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+          output[[i]] <- pk_area12(obj1_aux, obj2_rshift,
+                                   r_min = args$r_min, r_max = args$r_max,
+                                   bbox = obj1_aux@bbox)
+        }
+      }
+    }
+
+    output <- do.call('rbind', output) %>% as.data.frame
+
+  }
+
   rm(list = ls()[ls() != 'output'])
 
   return(output)

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Polygons Spatial Association Test (variation) — psat_mc2 • tpsa</title>
+<title>\(K_{1,2}\) - distance-based adaptation for polygons — pk_dist12 • tpsa</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -87,83 +87,51 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Polygons Spatial Association Test (variation)</h1>
+    <h1>\(K_{1,2}\) - distance-based adaptation for polygons</h1>
     </div>
 
     
-    <p>A Monte Carlo test to verify if two sets of polygons are
-   associated. The difference bewtween this function and the function
-   <code>psat_mc</code> is that here you can choose the test statistic.</p>
+    <p>test statistic for the MC test.</p>
     
 
-    <pre class="usage"><span class='fu'>psat_mc2</span>(<span class='no'>obj_sp1</span>, <span class='no'>obj_sp2</span>, <span class='kw'>n_sim</span> <span class='kw'>=</span> <span class='fl'>500L</span>, <span class='kw'>unique_bbox</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>same_bbox</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>bbox_1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>bbox_2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
-  <span class='kw'>ts</span> <span class='kw'>=</span> <span class='st'>"psam"</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"two_sided"</span>)</pre>
+    <pre class="usage"><span class='fu'>pk_dist12</span>(<span class='no'>obj_sp1</span>, <span class='no'>obj_sp2</span>, <span class='kw'>r_min</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>r_max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>bbox</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>obj_sp1</th>
-      <td><p>an object from class <code>SpatialPolygons</code> or <code>SpatialPointsDataFrame</code></p></td>
+      <td><p>a <code>SpatialPolygons</code> or <code>SpatialPointsDataFrame</code> object</p></td>
     </tr>
     <tr>
       <th>obj_sp2</th>
-      <td><p>an object from class <code>SpatialPolygons</code> or <code>SpatialPointsDataFrame</code></p></td>
+      <td><p>a <code>SpatialPolygons</code> or <code>SpatialPointsDataFrame</code> object</p></td>
     </tr>
     <tr>
-      <th>n_sim</th>
-      <td><p>an <code>integer</code> corresponding to the number of Monte Carlo simulations
-for the test</p></td>
+      <th>r_min</th>
+      <td><p>a <code>numeric</code> representing the mininmun distance to calculate
+the function, <code>default = 0</code>.</p></td>
     </tr>
     <tr>
-      <th>unique_bbox</th>
-      <td><p>a <code>matrix</code> \(2 \times 2\) corresponding to the boundary box
-that contains the both sets</p></td>
+      <th>r_max</th>
+      <td><p>a <code>numeric</code> representing the maximum distance to calculate
+the function <code>default = max(polygonds distance matrix)</code>.</p></td>
     </tr>
     <tr>
-      <th>same_bbox</th>
-      <td><p>a <code>boolean</code> - (desnecessario)</p></td>
+      <th>by</th>
+      <td><p>a <code>numeric</code> value that represents the how many units
+between each <code>r</code> value.</p></td>
     </tr>
     <tr>
-      <th>bbox_1</th>
-      <td><p>a <code>matrix</code> \(2 \times 2\) corresponding to the boundary box
-of the first spatial object</p></td>
-    </tr>
-    <tr>
-      <th>bbox_2</th>
-      <td><p>a <code>matrix</code> \(2 \times 2\) corresponding to the boundary box
-of the second spatial object</p></td>
-    </tr>
-    <tr>
-      <th>alpha</th>
-      <td><p>a <code>numeric</code> indicating the confidence level</p></td>
-    </tr>
-    <tr>
-      <th>ts</th>
-      <td><p>a <code>character</code> indicating the test statistic used in the test, the options are
-<code>c('psam', 'pk_dist12', 'pk_area12', 'pf12')</code>.</p></td>
-    </tr>
-    <tr>
-      <th>alternative</th>
-      <td><p>a <code>character</code> indicating the alternative hypothesis, it can be: "independece",
-"repulsion", or "attraction" if you interest is  only check if the sets are independent
-          or not, if the two sets repulses each other, or if the two sets attracts each other,
-          respectively.</p></td>
+      <th>bbox</th>
+      <td><p>a <code>matrix</code> giving the region of study</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a list from class <code><a href='psa_test.html'>psa_test</a></code>, with values:</p><dl class='dl-horizontal'>
-    <dt>p_value</dt><dd><p>a <code>numeric</code> scalar giving the p-value of the test</p></dd>
-    <dt>sample_ts</dt><dd><p>a <code>numeric</code> scalar giving the test statistic calculated in the original sample</p></dd>
-    <dt>mc_ts</dt><dd><p>a <code>numeric</code> vector giving the test statistic for each of the Monte Carlo simulations</p></dd>
-    <dt>alternative</dt><dd><p>a <code>character</code> giving the alternative hypothesis</p></dd>
-    <dt>alpha</dt><dd><p>a <code>numeric</code> scalar giving the significance level used on the test</p></dd>
-    <dt>rejects</dt><dd><p>a <code>logical</code> scalar, TRUE if the null hypothesis is reject</p></dd>
-  </dl>
-
+    <p>a <code>data.frame</code> corresponding to the estimated
+ \(K_{1,2}\) function in the interval \([r_{min}, r_{max}]\).</p>
     
 
   </div>

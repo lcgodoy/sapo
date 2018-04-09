@@ -350,44 +350,6 @@ psam <- function(obj_sp1, obj_sp2) {
 
 }
 
-#' \eqn{K_{1,2}} adaptation for polygons
-#'
-#' @description test statistic for the MC test.
-#'
-#' @param obj_sp1 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
-#' @param obj_sp2 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
-#' @param r_min a \code{numeric} representing the mininmun distance to calculate
-#' the function, \code{default = 0}.
-#' @param r_max a \code{numeric} representing the maximum distance to calculate
-#' the function \code{default = max(polygonds distance matrix)}.
-#' @param by a \code{numeric} value that represents the how many units
-#' between each \code{r} value.
-#'
-#' @return a \code{numeric} \code{matrix} corresponding to the estimated
-#'  \eqn{K_{1,2}} function in the interval \eqn{[r_{min}, r_{max}]}.
-#' @export
-#'
-pk12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
-  m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
-
-  if(is.null(r_max)) {
-    r_max = max(m_dist)
-  }
-
-  r <- seq(from = r_min, to = r_max, by = by)
-
-  output <- matrix(ncol = 2, nrow = length(r))
-
-  colnames(output) <- c('r', 'pk12')
-
-  rm(list = ls()[ls() != "output"])
-
-  warning('This function is not implemented yet.')
-
-  return(output)
-
-}
-
 #' F function adaptation for polygons
 #'
 #' @description test statistic for the MC test.
@@ -405,13 +367,11 @@ pk12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
 #'  \eqn{F_{1,2}} and \eqn{F_{2,1}} function in the interval \eqn{[r_{min}, r_{max}]}.
 #' @export
 #'
-pf12 <- function(obj_sp1, obj_sp2, r_min = 1, r_max = NULL, by = 1) {
+pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
   m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
   if(is.null(r_max)) {
-    aux <- c(apply(m_dist, 1, min), apply(m_dist, 2, min))
-    r_max = max(aux)
-    rm(aux)
+    r_max = max(m_dist)
   }
 
   r <- seq(from = r_min, to = r_max, by = by)
@@ -431,6 +391,123 @@ pf12 <- function(obj_sp1, obj_sp2, r_min = 1, r_max = NULL, by = 1) {
   rm(list = ls()[ls() != "output"])
 
   class(output) <- pF(output)
+
+  return(output)
+}
+
+#' \eqn{K_{1,2}} - area-based adaptation for polygons
+#'
+#' @description test statistic for the MC test.
+#'
+#' @param obj_sp1 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
+#' @param obj_sp2 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
+#' @param r_min a \code{numeric} representing the mininmun distance to calculate
+#' the function, \code{default = 0}.
+#' @param r_max a \code{numeric} representing the maximum distance to calculate
+#' the function \code{default = max(polygonds distance matrix)}.
+#' @param by a \code{numeric} value that represents the how many units
+#' between each \code{r} value.
+#' @param bbox a \code{matrix} giving the region of study.
+#'
+#' @return a \code{data.frame} corresponding to the estimated
+#'  \eqn{K_{1,2}} function in the interval \eqn{[r_{min}, r_{max}]}.
+#'
+#' @export
+#'
+pk_area12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1, bbox) {
+  mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
+
+  if(is.null(r_max)) {
+    r_max <- max(mat_dist)
+  }
+
+  N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
+  tot_1 <- rgeos::gArea(obj_sp1)
+  tot_2 <- rgeos::gArea(obj_sp2)
+  l_1 <- tot_1/N
+  l_2 <- tot_2/N
+
+  r <- seq(from = r_min, to = r_max, by = by)
+
+
+  output <- data.frame(r = rep(NA, length(r)), pk12 = rep(NA, length(r)))
+  output$r <- r
+
+  areas_1 <- vector(mode = 'numeric', length = length(obj_sp1))
+  areas_2 <- vector(mode = 'numeric', length = length(obj_sp2))
+
+  for(i in seq_along(r)) {
+
+    for(j in seq_along(obj_sp1)) {
+      aux <- rgeos::gBuffer(obj_sp1[j], width = r[i])
+      aux <- rgeos::gIntersection(aux, obj_sp2)
+      areas_1[j] <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
+      rm(aux)
+    }
+
+    for(j in seq_along(obj_sp2)) {
+      aux <- rgeos::gBuffer(obj_sp2[j], width = r[i])
+      aux <- rgeos::gIntersection(aux, obj_sp1)
+      areas_2[j] <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
+      rm(aux)
+    }
+
+    k12 <- (l_2^(-1)) * sum(areas_2)/N
+    k21 <- (l_1^(-1)) * sum(areas_1)/N
+    output$pk12[i] <- (tot_1*k21 + tot_2*k12)/(tot_1 + tot_2)
+  }
+
+  rm(list = ls()[ls() != 'output'])
+  return(output)
+
+}
+
+#' \eqn{K_{1,2}} - distance-based adaptation for polygons
+#'
+#' @description test statistic for the MC test.
+#'
+#' @param obj_sp1 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
+#' @param obj_sp2 a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object
+#' @param r_min a \code{numeric} representing the mininmun distance to calculate
+#' the function, \code{default = 0}.
+#' @param r_max a \code{numeric} representing the maximum distance to calculate
+#' the function \code{default = max(polygonds distance matrix)}.
+#' @param by a \code{numeric} value that represents the how many units
+#' between each \code{r} value.
+#' @param bbox a \code{matrix} giving the region of study
+#'
+#' @return a \code{data.frame} corresponding to the estimated
+#'  \eqn{K_{1,2}} function in the interval \eqn{[r_{min}, r_{max}]}.
+#'
+#' @export
+#'
+pk_dist12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1, bbox) {
+
+  mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
+
+  if(is.null(r_max)) {
+    r_max <- max(mat_dist)
+  }
+
+  N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
+
+  r <- seq(from = r_min, to = r_max, by = by)
+
+  output <- data.frame(r = rep(NA, length(r)), pk12 = rep(NA, length(r)))
+  output$r <- r
+
+  tot_1 <- length(obj_sp1)
+  tot_2 <- length(obj_sp2)
+  l_1 <- tot_1/N
+  l_2 <- tot_2/N
+
+  for(i in seq_along(r)) {
+    k12 <- (l_2^(-1)) * sum(mat_dist < r[i])/N
+    k21 <- (l_1^(-1)) * sum(mat_dist < r[i])/N
+    output$pk12[i] <- (tot_1*k21 + tot_2*k12)/(tot_1 + tot_2)
+  }
+
+  rm(list = ls()[ls() != "output"])
 
   return(output)
 }

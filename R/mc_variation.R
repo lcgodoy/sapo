@@ -17,7 +17,7 @@
 #'  of the second spatial object
 #' @param alpha a \code{numeric} indicating the confidence level
 #' @param ts a \code{character} indicating the test statistic used in the test, the options are
-#'  \code{c('psam', 'pk12', 'pf12')}.
+#'  \code{c('psam', 'pk_dist12', 'pk_area12', 'pf12')}.
 #' @param alternative a \code{character} indicating the alternative hypothesis, it can be: "independece",
 #' "repulsion", or "attraction" if you interest is  only check if the sets are independent
 #'           or not, if the two sets repulses each other, or if the two sets attracts each other,
@@ -158,15 +158,14 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
 
     # mc_values <- vector(mode = 'numeric')
     rmax <- sp_ID_dist(obj_sp1, obj_sp2)
-    rmax <- c(apply(rmax, 1, min), apply(rmax, 2, min))
-    rmax = max(rmax)
+    rmax <- max(rmax)
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
-                                  args = list(r_min = 1, r_max = rmax)),
+                                  args = list(r_min = 0, r_max = rmax)),
                     mc_iterations(obj2_shift, obj_sp1,
                                   niter = round((n_sim/2)), ts = ts,
-                                  args = list(r_min = 1, r_max = rmax)))
+                                  args = list(r_min = 0, r_max = rmax)))
 
     output$mc_ts <- data.frame(r = 0:rmax,
                                f12_inf = tapply(mc_aux$pf12, mc_aux$r, quantile, p = (alpha/2)),
@@ -224,6 +223,122 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     names(output$rejects) <- c('f12', 'f21')
 
     class(output) <- psa_pf12(output)
+  }
+
+  if(ts == 'pk_dist12') {
+    rmax <- sp_ID_dist(obj_sp1, obj_sp2)
+    rmax <- max(rmax)
+
+    output$sample_ts <- pk_dist12(obj_sp1, obj_sp2, r_max = rmax, bbox = obj_sp1@bbox)
+
+    mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
+                                  niter = round((n_sim/2) + .5), ts = ts,
+                                  args = list(r_min = 0, r_max = rmax)),
+                    mc_iterations(obj2_shift, obj_sp1,
+                                  niter = round((n_sim/2)), ts = ts,
+                                  args = list(r_min = 0, r_max = rmax)))
+
+    output$mc_ts <- data.frame(r = 0:rmax,
+                               k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
+                               k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
+                               )
+
+    p_value <- vector(mode = 'numeric', length = nrow(output$sample_ts))
+
+    if(alternative == "two_sided") {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+
+        p_value[i] <- mean(aux$pk12 > output$sample_ts[i,2] | aux$pk12 < output$sample_ts[i,2])
+
+        rm(aux)
+      }
+      output$p_value <- p_value
+    }
+
+    if(alternative == "attraction") {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+
+        p_value[i] <- mean(aux$pk12 < output$sample_ts[i,2])
+
+        rm(aux)
+      }
+
+      output$p_value <- p_value
+    } else {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+
+        p_value[i] <- mean(aux$pk12 > output$sample_ts[i,2])
+
+        rm(aux)
+      }
+
+      output$p_value <- p_value
+    }
+
+    output$rejects <- ifelse(any(output$p_value <= output$alpha), TRUE, FALSE)
+
+    class(output) <- psa_pk12(output)
+  }
+
+  if(ts == 'pk_area12') {
+    rmax <- sp_ID_dist(obj_sp1, obj_sp2)
+    rmax <- max(rmax)
+
+    output$sample_ts <- pk_area12(obj_sp1, obj_sp2, r_max = rmax, bbox = obj_sp1@bbox)
+
+    mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
+                                  niter = round((n_sim/2) + .5), ts = ts,
+                                  args = list(r_min = 0, r_max = rmax)),
+                    mc_iterations(obj2_shift, obj_sp1,
+                                  niter = round((n_sim/2)), ts = ts,
+                                  args = list(r_min = 0, r_max = rmax)))
+
+    output$mc_ts <- data.frame(r = 0:rmax,
+                               k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
+                               k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
+    )
+
+    p_value <- vector(mode = 'numeric', length = nrow(output$sample_ts))
+
+    if(alternative == "two_sided") {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+
+        p_value[i] <- mean(aux$pk12 > output$sample_ts[i,2] | aux$pk12 < output$sample_ts[i,2])
+
+        rm(aux)
+      }
+      output$p_value <- p_value
+    }
+
+    if(alternative == "attraction") {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+
+        p_value[i] <- mean(aux$pk12 < output$sample_ts[i,2])
+
+        rm(aux)
+      }
+
+      output$p_value <- p_value
+    } else {
+      for(i in seq_along(nrow(output$sample_ts))) {
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+
+        p_value[i] <- mean(aux$pk12 > output$sample_ts[i,2])
+
+        rm(aux)
+      }
+
+      output$p_value <- p_value
+    }
+
+    output$rejects <- ifelse(any(output$p_value <= output$alpha), TRUE, FALSE)
+
+    class(output) <- psa_pk12(output)
   }
 
   class(output) <- psa_test(output)

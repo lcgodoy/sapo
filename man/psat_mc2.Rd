@@ -30,7 +30,7 @@ of the second spatial object}
 \item{alpha}{a \code{numeric} indicating the confidence level}
 
 \item{ts}{a \code{character} indicating the test statistic used in the test, the options are
-\code{c('psam', 'pk12', 'pf12')}.}
+\code{c('psam', 'pk_dist12', 'pk_area12', 'pf12')}.}
 
 \item{alternative}{a \code{character} indicating the alternative hypothesis, it can be: "independece",
 "repulsion", or "attraction" if you interest is  only check if the sets are independent

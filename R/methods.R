@@ -40,6 +40,21 @@ psa_pf12 <- function(x) {
   x <- append(class(x), "psa_pf12")
 }
 
+#' Class of the output from \code{\link{psat_mc}} when the test statistic is \code{\link{pk_dist12}}
+#' or \code{\link{pk_area12}}
+#'
+#' Internal use
+#'
+#' @param x Output from \code{\link{psat_mc}}
+#'
+#' @aliases psa_pk12
+#'
+#' @export
+#'
+psa_pk12 <- function(x) {
+  x <- append(class(x), "psa_pk12")
+}
+
 #' Print method for \code{\link{psa_test}}
 #'
 #' @param x A \code{\link{psa_test}} object
@@ -80,6 +95,16 @@ print.psa_test <- function(x, ...) {
     cat(paste('\t', 'F12:', ifelse(x$rejects[1], 'Reject H0', 'Do not reject H0'), '\n', sep = " "))
     cat(paste('\t', 'F21:', ifelse(x$rejects[2], 'Reject H0', 'Do not reject H0'), sep = " "))
   }
+
+  if('psa_pk12' %in% class(x)) {
+    cat(format('Monte Carlo Polygons Spatial Association Test', ...), '\n', '\n')
+    cat(paste('Confidence level:', paste(conf, "%", sep = ""), "\n", sep = " "))
+    cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
+    cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
+    cat(paste('Decision:', "\n", sep = " "))
+    cat(paste('\t', 'F12:', ifelse(x$rejects, 'Reject H0', 'Do not reject H0'), sep = " "))
+  }
+
 }
 
 #' Summary method for \code{\link{psa_test}}
@@ -206,11 +231,11 @@ plot.psa_test <- function(x, ...) {
         df_gg <- x$mc_ts[,1:3]
         names(df_gg) <- c('r', 'f_inf', 'f_up')
         df_gg$obs <- x$sample_ts[,2]
-        df_gg$func <- 'F(d)[12]'
+        df_gg$func <- 'F[12](d)'
 
         df_gg2 <- x$mc_ts[,c(1, 4, 5)]
         names(df_gg2) <- c('r', 'f_inf', 'f_up')
-        df_gg2$func <- 'F(d)[21]'
+        df_gg2$func <- 'F[21](d)'
         df_gg2$obs <- x$sample_ts[,3]
 
         df_gg <- rbind(df_gg, df_gg2)
@@ -245,6 +270,30 @@ plot.psa_test <- function(x, ...) {
         lines(x$mc_ts$r, x$mc_ts$f21_up, lty = 2, col = 'red')
         lines(x$mc_ts$r, x$mc_ts$f21_inf, lty = 2, col = 'red')
         par(mfrow = c(1, 1))
+      }
+    } else {
+      if (requireNamespace("ggplot2", quietly = TRUE)) {
+        df_gg <- x$mc_ts[,1:3]
+        names(df_gg) <- c('r', 'k_inf', 'k_up')
+        df_gg$obs <- x$sample_ts[,2]
+        df_gg$func <- 'K[12](d)'
+
+        ggplot2::ggplot(data = df_gg) +
+          ggplot2::geom_line(ggplot2::aes(x = r, y = obs)) +
+          ggplot2::geom_ribbon(ggplot2::aes(x = r, ymin = k_inf, ymax = k_up),
+                               fill = 'blue', alpha = .2) +
+          ggplot2::theme_bw() +
+          ggplot2::labs(x = 'Distance', y = expression(K[12](d)))
+      } else {
+        plot(x$sample_ts[, 1], x$sample_ts[, 2],
+             type = 'l',
+             xlab = 'Distance',
+             ylab = '',
+             main = expression(K['12'](d)),
+             bty = 'l', ...)
+        grid()
+        lines(x$mc_ts$r, x$mc_ts$k12_up, lty = 2, col = 'red')
+        lines(x$mc_ts$r, x$mc_ts$k12_inf, lty = 2, col = 'red')
       }
     }
   }
