@@ -140,11 +140,12 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
                                     niter = round((n_sim/2)), ts = ts))
 
     if(alternative == "two_sided") {
-      output$p_value <- mean(output$sample_ts < output$mc_ts | output$sample_ts > output$mc_ts)
+      output$p_value <- min(mean(output$sample_ts < output$mc_ts), mean(output$sample_ts > output$mc_ts))
     }
     if(alternative == "attraction") {
       output$p_value <- mean(output$sample_ts > output$mc_ts)
-    } else {
+    }
+    if(alternative == "repulsion") {
       output$p_value <- mean(output$sample_ts < output$mc_ts)
     }
 
@@ -157,8 +158,10 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     output$sample_ts <- pf12(obj_sp1, obj_sp2)
 
     # mc_values <- vector(mode = 'numeric')
-    rmax <- sp_ID_dist(obj_sp1, obj_sp2)
-    rmax <- max(rmax)
+    r_x <- unique_bbox[1,2] - unique_bbox[1,1]
+    r_y <- unique_bbox[2,2] - unique_bbox[2,1]
+    rmax <- .4*max(r_x, r_y)
+    rm(r_x, r_y)
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
@@ -167,7 +170,7 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
                                   niter = round((n_sim/2)), ts = ts,
                                   args = list(r_min = 0, r_max = rmax)))
 
-    output$mc_ts <- data.frame(r = 0:rmax,
+    output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                f12_inf = tapply(mc_aux$pf12, mc_aux$r, quantile, p = (alpha/2)),
                                f12_up = tapply(mc_aux$pf12, mc_aux$r, quantile, p = 1 - (alpha/2)),
                                f21_inf = tapply(mc_aux$pf21, mc_aux$r, quantile, p = (alpha/2)),
@@ -180,9 +183,9 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
       for(i in seq_along(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
-        p12[i] <- mean(aux$pf12 > output$sample_ts[i,2] | aux$pf12 < output$sample_ts[i,2])
+        p12[i] <- min(mean(aux$pf12 > output$sample_ts[i,2]), mean(aux$pf12 < output$sample_ts[i,2]))
 
-        p21[i] <- mean(aux$pf12 > output$sample_ts[i,3] | aux$pf12 < output$sample_ts[i,3])
+        p21[i] <- min(mean(aux$pf12 > output$sample_ts[i,3]), mean(aux$pf12 < output$sample_ts[i,3]))
 
         rm(aux)
       }
@@ -201,7 +204,9 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
       }
 
       output$p_value <- data.frame(p12 = p12, p21 = p21)
-    } else {
+    }
+
+    if(alternative == "repulsion") {
       for(i in seq_along(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
@@ -226,8 +231,10 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   }
 
   if(ts == 'pk_dist12') {
-    rmax <- sp_ID_dist(obj_sp1, obj_sp2)
-    rmax <- max(rmax)
+    r_x <- unique_bbox[1,2] - unique_bbox[1,1]
+    r_y <- unique_bbox[2,2] - unique_bbox[2,1]
+    rmax <- .4*max(r_x, r_y)
+    rm(r_x, r_y)
 
     output$sample_ts <- pk_dist12(obj_sp1, obj_sp2, r_max = rmax, bbox = obj_sp1@bbox)
 
@@ -238,7 +245,7 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
                                   niter = round((n_sim/2)), ts = ts,
                                   args = list(r_min = 0, r_max = rmax)))
 
-    output$mc_ts <- data.frame(r = 0:rmax,
+    output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
                                k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
                                )
@@ -249,7 +256,7 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
       for(i in seq_along(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
-        p_value[i] <- mean(aux$pk12 > output$sample_ts[i,2] | aux$pk12 < output$sample_ts[i,2])
+        p_value[i] <- min(mean(aux$pk12 > output$sample_ts[i,2]), mean(aux$pk12 < output$sample_ts[i,2]))
 
         rm(aux)
       }
@@ -266,7 +273,9 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
       }
 
       output$p_value <- p_value
-    } else {
+    }
+
+    if(alternative == "repulsion") {
       for(i in seq_along(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
@@ -284,8 +293,10 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   }
 
   if(ts == 'pk_area12') {
-    rmax <- sp_ID_dist(obj_sp1, obj_sp2)
-    rmax <- max(rmax)
+    r_x <- unique_bbox[1,2] - unique_bbox[1,1]
+    r_y <- unique_bbox[2,2] - unique_bbox[2,1]
+    rmax <- .4*max(r_x, r_y)
+    rm(r_x, r_y)
 
     output$sample_ts <- pk_area12(obj_sp1, obj_sp2, r_max = rmax, bbox = obj_sp1@bbox)
 
@@ -296,7 +307,7 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
                                   niter = round((n_sim/2)), ts = ts,
                                   args = list(r_min = 0, r_max = rmax)))
 
-    output$mc_ts <- data.frame(r = 0:rmax,
+    output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
                                k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
     )
@@ -307,7 +318,7 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
       for(i in seq_along(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
-        p_value[i] <- mean(aux$pk12 > output$sample_ts[i,2] | aux$pk12 < output$sample_ts[i,2])
+        p_value[i] <- min(mean(aux$pk12 > output$sample_ts[i,2]), mean(aux$pk12 < output$sample_ts[i,2]))
 
         rm(aux)
       }
@@ -324,7 +335,9 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
       }
 
       output$p_value <- p_value
-    } else {
+    }
+
+    if(alternative == "repulsion") {
       for(i in seq_along(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 

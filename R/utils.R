@@ -290,15 +290,17 @@ poly_rf <- function(obj_sp, bbox_max) {
 #' @return a distance matrix
 #'
 sp_ID_dist <- function(obj_sp1, obj_sp2) {
-  nameaux <- suppressWarnings(row.names(obj_sp1))
+  nameaux1 <- names(obj_sp1)
 
-  n_poly1 <- length(table(nameaux))
+  n_poly1 <- length(unique(nameaux1))
 
-  matrix_dist <- matrix(data = rep(0, n_poly1*length(obj_sp2)), nrow = length(obj_sp2),
-                        ncol = n_poly1)
+  nameaux2 <- names(obj_sp2)
 
-  colnames(matrix_dist) <- names(table(nameaux))
-  rownames(matrix_dist) <- suppressWarnings(row.names(obj_sp2))
+  n_poly2 <- length(unique(nameaux2))
+
+  matrix_dist <- matrix(data = rep(0, n_poly1*n_poly2), nrow = n_poly2,
+                        ncol = n_poly1, dimnames = list(unique(nameaux2),
+                                                        unique(nameaux1)))
 
   matrix_aux <- gDistance(obj_sp1, obj_sp2, byid = T)
 
@@ -310,12 +312,13 @@ sp_ID_dist <- function(obj_sp1, obj_sp2) {
     }
   }
   if(any(duplicated(rownames(matrix_aux)))) {
-    for(i in 1:ncol(matrix_dist)) {
+    for(i in 1:nrow(matrix_dist)) {
       aux <- matrix_aux[which(rownames(matrix_aux) == rownames(matrix_dist)[i]), , drop = F]
       matrix_dist[i, ] <- apply(aux, 2, min)
       rm(aux)
     }
-  } else {
+  }
+  if(!(any(duplicated(colnames(matrix_aux)))) & (!any(duplicated(rownames(matrix_aux))))) {
     matrix_dist <- matrix_aux
   }
 
@@ -367,11 +370,19 @@ psam <- function(obj_sp1, obj_sp2) {
 #'  \eqn{F_{1,2}} and \eqn{F_{2,1}} function in the interval \eqn{[r_{min}, r_{max}]}.
 #' @export
 #'
-pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
+pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL) {
   m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
+  bbox <- obj_sp1@bbox
 
   if(is.null(r_max)) {
-    r_max = max(m_dist)
+    r_x <- bbox[1,2] - bbox[1,1]
+    r_y <- bbox[2,2] - bbox[2,1]
+    r_max <- .4*max(r_x, r_y)
+    rm(r_x, r_y)
+  }
+
+  if(is.null(by)) {
+    by <- .5*(r_max - r_min)/sqrt(12)
   }
 
   r <- seq(from = r_min, to = r_max, by = by)
@@ -414,13 +425,21 @@ pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1) {
 #'
 #' @export
 #'
-pk_area12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1, bbox) {
-  mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
+pk_area12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL, bbox) {
+  # mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
   if(is.null(r_max)) {
-    r_max <- max(mat_dist)
+    r_x <- bbox[1,2] - bbox[1,1]
+    r_y <- bbox[2,2] - bbox[2,1]
+    r_max <- .4*max(r_x, r_y)
+    rm(r_x, r_y)
   }
 
+  if(is.null(by)) {
+    by <- .5*(r_max - r_min)/sqrt(12)
+  }
+
+  # this calculations can be done outside the function
   N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
   tot_1 <- rgeos::gArea(obj_sp1)
   tot_2 <- rgeos::gArea(obj_sp2)
@@ -428,7 +447,6 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1, bbox) {
   l_2 <- tot_2/N
 
   r <- seq(from = r_min, to = r_max, by = by)
-
 
   output <- data.frame(r = rep(NA, length(r)), pk12 = rep(NA, length(r)))
   output$r <- r
@@ -481,14 +499,22 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1, bbox) {
 #'
 #' @export
 #'
-pk_dist12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1, bbox) {
+pk_dist12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL, bbox) {
 
   mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
   if(is.null(r_max)) {
-    r_max <- max(mat_dist)
+    r_x <- bbox[1,2] - bbox[1,1]
+    r_y <- bbox[2,2] - bbox[2,1]
+    r_max <- .4*max(r_x, r_y)
+    rm(r_x, r_y)
   }
 
+  if(is.null(by)) {
+    by <- .5*(r_max - r_min)/sqrt(12)
+  }
+
+  # this calculations can be done outside the function
   N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
 
   r <- seq(from = r_min, to = r_max, by = by)

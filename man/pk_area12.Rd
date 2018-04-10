@@ -4,7 +4,7 @@
 \alias{pk_area12}
 \title{\eqn{K_{1,2}} - area-based adaptation for polygons}
 \usage{
-pk_area12(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = 1, bbox)
+pk_area12(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL, bbox)
 }
 \arguments{
 \item{obj_sp1}{a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object}
