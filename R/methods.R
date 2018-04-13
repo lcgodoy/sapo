@@ -102,7 +102,7 @@ print.psa_test <- function(x, ...) {
     cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
     cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
     cat(paste('Decision:', "\n", sep = " "))
-    cat(paste('\t', 'F12:', ifelse(x$rejects, 'Reject H0', 'Do not reject H0'), sep = " "))
+    cat(paste('\t', 'K12:', ifelse(x$rejects, 'Reject H0', 'Do not reject H0'), sep = " "))
   }
 
 }

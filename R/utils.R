@@ -435,7 +435,7 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
   }
 
   if(is.null(r_min)) {
-    r_min <- 0.0001
+    r_min <- 0
   }
 
   if(is.null(by)) {
@@ -514,7 +514,7 @@ pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
   }
 
   if(is.null(r_min)) {
-    r_min <- 0.0001
+    r_min <- 0
   }
 
   if(is.null(by)) {
