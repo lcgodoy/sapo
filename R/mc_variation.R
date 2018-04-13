@@ -155,7 +155,7 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   }
 
   if(ts == 'pf12') {
-    output$sample_ts <- pf12(obj_sp1, obj_sp2)
+    output$sample_ts <- as.data.frame(pf12(obj_sp1, obj_sp2))
 
     # mc_values <- vector(mode = 'numeric')
     r_x <- unique_bbox[1,2] - unique_bbox[1,1]
@@ -165,10 +165,10 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
-                                  args = list(r_min = 0, r_max = rmax)),
+                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)),
                     mc_iterations(obj2_shift, obj_sp1,
                                   niter = round((n_sim/2)), ts = ts,
-                                  args = list(r_min = 0, r_max = rmax)))
+                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)))
 
     output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                f12_inf = tapply(mc_aux$pf12, mc_aux$r, quantile, p = (alpha/2)),
@@ -240,10 +240,10 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
-                                  args = list(r_min = 0, r_max = rmax)),
+                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)),
                     mc_iterations(obj2_shift, obj_sp1,
                                   niter = round((n_sim/2)), ts = ts,
-                                  args = list(r_min = 0, r_max = rmax)))
+                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)))
 
     output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),

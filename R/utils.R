@@ -400,7 +400,6 @@ pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL) {
   }
 
   rm(list = ls()[ls() != "output"])
-
   class(output) <- pF(output)
 
   return(output)
@@ -425,7 +424,7 @@ pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL) {
 #'
 #' @export
 #'
-pk_area12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL, bbox) {
+pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox) {
   # mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
   if(is.null(r_max)) {
@@ -433,6 +432,10 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL, bbox
     r_y <- bbox[2,2] - bbox[2,1]
     r_max <- .4*max(r_x, r_y)
     rm(r_x, r_y)
+  }
+
+  if(is.null(r_min)) {
+    r_min <- 0.0001
   }
 
   if(is.null(by)) {
@@ -499,7 +502,7 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL, bbox
 #'
 #' @export
 #'
-pk_dist12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL, bbox) {
+pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox) {
 
   mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
@@ -508,6 +511,10 @@ pk_dist12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL, bbox
     r_y <- bbox[2,2] - bbox[2,1]
     r_max <- .4*max(r_x, r_y)
     rm(r_x, r_y)
+  }
+
+  if(is.null(r_min)) {
+    r_min <- 0.0001
   }
 
   if(is.null(by)) {
