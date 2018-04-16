@@ -34,10 +34,21 @@ poly_rf2 <- function(obj_sp, bbox_max) {
   attr(obj_sp, "bbox") <- bbox2
 
   for(i in 1:length(obj_sp)) {
-    aux <- obj_sp@polygons[[i]]@Polygons[[1]]@coords
-    aux[,1] <- aux[,1] + jump_x
-    aux[,2] <- aux[,2] + jump_y
-    attr(obj_sp@polygons[[i]]@Polygons[[1]], "coords") <- aux
+    npolyaux <- obj_sp@polygons[[i]]@Polygons %>% length
+    if(!npolyaux > 1) {
+      aux <- obj_sp@polygons[[i]]@Polygons[[1]]@coords
+      aux[,1] <- aux[,1] + jump_x
+      aux[,2] <- aux[,2] + jump_y
+      attr(obj_sp@polygons[[i]]@Polygons[[1]], "coords") <- aux
+    } else {
+      for(k in seq_along(npolyaux)) {
+        aux <- obj_sp@polygons[[i]]@Polygons[[k]]@coords
+        aux[,1] <- aux[,1] + jump_x
+        aux[,2] <- aux[,2] + jump_y
+        attr(obj_sp@polygons[[i]]@Polygons[[k]], "coords") <- aux
+      }
+    }
+
   }
 
   return(obj_sp)

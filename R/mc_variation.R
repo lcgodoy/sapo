@@ -107,6 +107,11 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     rm(k)
   }
 
+  # if(ts == 'pk_area12') {
+  #   if(sp::is.projected(obj_sp1)) obj_sp1 <- rgeos::gBuffer(obj_sp1, byid = T, width = 0)
+  #   if(sp::is.projected(obj_sp2)) obj_sp2 <- rgeos::gBuffer(obj_sp2, byid = T, width = 0)
+  # }
+
   attr(obj_sp1, "bbox") <- unique_bbox
 
   attr(obj_sp2, "bbox") <- unique_bbox
@@ -297,11 +302,6 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     r_y <- unique_bbox[2,2] - unique_bbox[2,1]
     rmax <- .4*max(r_x, r_y)
     rm(r_x, r_y)
-
-    if(sp::is.projected(obj_sp1)) obj_sp1 <- rgeos::gBuffer(obj_sp1, byid = T, width = 0)
-    if(sp::is.projected(obj_sp2)) obj_sp2 <- rgeos::gBuffer(obj_sp2, byid = T, width = 0)
-    if(sp::is.projected(obj1_shift)) obj1_shift <- rgeos::gBuffer(obj1_shift, byid = T, width = 0)
-    if(sp::is.projected(obj2_shift)) obj2_shift <- rgeos::gBuffer(obj2_shift, byid = T, width = 0)
 
     output$sample_ts <- pk_area12(obj_sp1, obj_sp2, r_max = rmax, bbox = obj_sp1@bbox)
 

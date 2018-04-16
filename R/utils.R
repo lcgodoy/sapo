@@ -76,9 +76,19 @@ poly_shift <- function(obj_sp, bbox_tot = NULL) {
     #index_aux <- as.numeric(row.names(obj2sp))
 
     for(i in 1:length(obj_sp2)) {
-      aux <- obj_sp2@polygons[[i]]@Polygons[[1]]@coords
-      aux[,1] <- aux[,1] + range_x
-      attr(obj_sp2@polygons[[i]]@Polygons[[1]], "coords") <- aux
+      npolyaux <- obj_sp2@polygons[[i]]@Polygons %>% length
+      if(!npolyaux > 1) {
+        aux <- obj_sp2@polygons[[i]]@Polygons[[1]]@coords
+        aux[,1] <- aux[,1] + range_x
+        attr(obj_sp2@polygons[[i]]@Polygons[[1]], "coords") <- aux
+      } else {
+        for(k in seq_len(npolyaux)) {
+          aux <- obj_sp2@polygons[[i]]@Polygons[[k]]@coords
+          aux[,1] <- aux[,1] + range_x
+          attr(obj_sp2@polygons[[i]]@Polygons[[k]], "coords") <- aux
+
+        }
+      }
     }
 
     rm(aux)
@@ -102,9 +112,18 @@ poly_shift <- function(obj_sp, bbox_tot = NULL) {
     # Shifting each polygon
 
     for(i in 1:length(obj_sp3)) {
-      aux <- obj_sp3@polygons[[i]]@Polygons[[1]]@coords
-      aux[,2] <- aux[,2] + range_y
-      attr(obj_sp3@polygons[[i]]@Polygons[[1]], "coords") <- aux
+      npolyaux <- obj_sp3@polygons[[i]]@Polygons %>% length
+      if(!npolyaux > 1) {
+        aux <- obj_sp3@polygons[[i]]@Polygons[[1]]@coords
+        aux[,2] <- aux[,2] + range_y
+        attr(obj_sp3@polygons[[i]]@Polygons[[1]], "coords") <- aux
+      } else {
+        for(k in seq_len(npolyaux)) {
+          aux <- obj_sp3@polygons[[i]]@Polygons[[k]]@coords
+          aux[,2] <- aux[,2] + range_y
+          attr(obj_sp3@polygons[[i]]@Polygons[[k]], "coords") <- aux
+        }
+      }
     }
 
     rm(aux)
@@ -129,10 +148,20 @@ poly_shift <- function(obj_sp, bbox_tot = NULL) {
     # Shifting each polygon
 
     for(i in 1:length(obj_sp4)) {
-      aux <- obj_sp4@polygons[[i]]@Polygons[[1]]@coords
-      aux[,1] <- aux[,1] + range_x
-      aux[,2] <- aux[,2] + range_y
-      attr(obj_sp4@polygons[[i]]@Polygons[[1]], "coords") <- aux
+      npolyaux <- obj_sp4@polygons[[i]]@Polygons %>% length
+      if(!npolyaux > 1) {
+        aux <- obj_sp4@polygons[[i]]@Polygons[[1]]@coords
+        aux[,1] <- aux[,1] + range_x
+        aux[,2] <- aux[,2] + range_y
+        attr(obj_sp4@polygons[[i]]@Polygons[[1]], "coords") <- aux
+      } else {
+       for(k in seq_len(npolyaux)) {
+         aux <- obj_sp4@polygons[[i]]@Polygons[[k]]@coords
+         aux[,1] <- aux[,1] + range_x
+         aux[,2] <- aux[,2] + range_y
+         attr(obj_sp4@polygons[[i]]@Polygons[[k]], "coords") <- aux
+       }
+      }
     }
 
     output <- shift_aux(obj_sp, obj_sp2, obj_sp3, obj_sp4,
@@ -261,10 +290,21 @@ poly_rf <- function(obj_sp, bbox_max) {
 
   if(class(obj_sp) %in% 'SpatialPolygons') {
     for(i in 1:length(obj_sp)) {
-      aux <- obj_sp@polygons[[i]]@Polygons[[1]]@coords
-      aux[,1] <- aux[,1] + jump_x
-      aux[,2] <- aux[,2] + jump_y
-      attr(obj_sp@polygons[[i]]@Polygons[[1]], "coords") <- aux
+      npolyaux <- obj_sp@polygons[[i]]@Polygons %>% length
+      if(!npolyaux > 1) {
+        aux <- obj_sp@polygons[[i]]@Polygons[[1]]@coords
+        aux[,1] <- aux[,1] + jump_x
+        aux[,2] <- aux[,2] + jump_y
+        attr(obj_sp@polygons[[i]]@Polygons[[1]], "coords") <- aux
+      } else {
+        for(k in seq_along(npolyaux)) {
+          aux <- obj_sp@polygons[[i]]@Polygons[[k]]@coords
+          aux[,1] <- aux[,1] + jump_x
+          aux[,2] <- aux[,2] + jump_y
+          attr(obj_sp@polygons[[i]]@Polygons[[k]], "coords") <- aux
+        }
+      }
+
     }
   } else {
     aux <- obj_sp@coords
@@ -427,8 +467,8 @@ pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL) {
 pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox) {
   # mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
-  if(sp::is.projected(obj_sp1)) obj_sp1 <- rgeos::gBuffer(obj_sp1, byid = T, width = 0)
-  if(sp::is.projected(obj_sp2)) obj_sp2 <- rgeos::gBuffer(obj_sp2, byid = T, width = 0)
+  # if(sp::is.projected(obj_sp1)) obj_sp1 <- rgeos::gBuffer(obj_sp1, byid = T, width = 0)
+  # if(sp::is.projected(obj_sp2)) obj_sp2 <- rgeos::gBuffer(obj_sp2, byid = T, width = 0)
 
   if(is.null(r_max)) {
     r_x <- bbox[1,2] - bbox[1,1]
