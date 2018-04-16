@@ -427,6 +427,9 @@ pf12 <- function(obj_sp1, obj_sp2, r_min = 0, r_max = NULL, by = NULL) {
 pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox) {
   # mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
+  if(sp::is.projected(obj_sp1)) obj_sp1 <- rgeos::gBuffer(obj_sp1, byid = T, width = 0)
+  if(sp::is.projected(obj_sp2)) obj_sp2 <- rgeos::gBuffer(obj_sp2, byid = T, width = 0)
+
   if(is.null(r_max)) {
     r_x <- bbox[1,2] - bbox[1,1]
     r_y <- bbox[2,2] - bbox[2,1]
@@ -503,9 +506,6 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
 #' @export
 #'
 pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox) {
-
-  if(sp::is.projected(obj_sp1)) obj_sp1 <- rgeos::gBuffer(obj_sp1, byid = T, width = 0)
-  if(sp::is.projected(obj_sp2)) obj_sp2 <- rgeos::gBuffer(obj_sp2, byid = T, width = 0)
 
   mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
