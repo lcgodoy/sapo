@@ -1,4 +1,4 @@
-#' Polygons Spatial Association Test (variation)
+#' Polygons Spatial Association Test
 #'
 #' @description A Monte Carlo test to verify if two sets of polygons are
 #'    associated. The difference bewtween this function and the function
@@ -39,7 +39,7 @@
 #'
 #' @export
 #'
-psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
+psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
                      same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
                      alpha = 0.01, ts = 'psam',
                      alternative = "two_sided") {
