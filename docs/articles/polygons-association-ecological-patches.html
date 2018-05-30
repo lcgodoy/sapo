@@ -8,17 +8,14 @@
 <title>Testing Polygons Spatial Association • tpsa</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/journal/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Testing Polygons Spatial Association">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
-<!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body>
-    <div class="container template-article">
+    <div class="container template-vignette">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -27,12 +24,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">tpsa</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.0.0.9000</span>
-      </span>
+      <a class="navbar-brand" href="../index.html">tpsa</a>
     </div>
-
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
@@ -67,21 +60,18 @@
 
       
       </header><div class="row">
-  <div class="col-md-9 contents">
+  <div class="col-md-9">
     <div class="page-header toc-ignore">
       <h1>Testing Polygons Spatial Association</h1>
             <h3 class="subtitle">Testing Ecological Patches</h3>
                         <h4 class="author">Lucas da Cunha Godoy</h4>
             
             <h4 class="date">01-24-2017</h4>
-      
-      
-      <div class="hidden name"><code>polygons-association-ecological-patches.Rmd</code></div>
-
-    </div>
+          </div>
 
     
     
+<div class="contents">
 <p>Testing if two sets of polygons have some kind of association is not an easy task. The proof of that is that we don’t have a method implemented in neither in <em>R</em> or <em>ArcGIS</em> to do it. So, by a request from researchers from <em>ESRI</em> (the company from <em>ArcGIS</em>), I developed an algorithm based on the paper from <span class="citation">(Lotwick and Silverman 1982)</span>. The usage is illustrated below.</p>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
@@ -93,6 +83,7 @@
 <div id="refs" class="references">
 <div id="ref-lotwick1982">
 <p>Lotwick, HW, and BW Silverman. 1982. “Methods for Analysing Spatial Processes of Several Types of Points.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em>. JSTOR, 406–13.</p>
+</div>
 </div>
 </div>
 </div>
@@ -122,8 +113,6 @@
 
       </footer>
 </div>
-
-  
 
   </body>
 </html>

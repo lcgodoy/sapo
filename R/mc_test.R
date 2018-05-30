@@ -210,5 +210,4 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 100L, unique_bbox = NULL,
 #' @useDynLib tpsa
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
-#' @import magrittr
 NULL
