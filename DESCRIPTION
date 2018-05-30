@@ -10,7 +10,7 @@ Description: This is a developing R package whose main purpose is to create a
   have some association.
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/lcgodoy/pat/issues
-Depends: R (>= 3.4.1)
+Depends: R (>= 3.4.3)
 Imports: 
     magrittr,
     Rcpp (>= 0.12.14),
