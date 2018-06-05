@@ -155,12 +155,12 @@ poly_shift <- function(obj_sp, bbox_tot = NULL) {
         aux[,2] <- aux[,2] + range_y
         attr(obj_sp4@polygons[[i]]@Polygons[[1]], "coords") <- aux
       } else {
-       for(k in seq_len(npolyaux)) {
-         aux <- obj_sp4@polygons[[i]]@Polygons[[k]]@coords
-         aux[,1] <- aux[,1] + range_x
-         aux[,2] <- aux[,2] + range_y
-         attr(obj_sp4@polygons[[i]]@Polygons[[k]], "coords") <- aux
-       }
+        for(k in seq_len(npolyaux)) {
+          aux <- obj_sp4@polygons[[i]]@Polygons[[k]]@coords
+          aux[,1] <- aux[,1] + range_x
+          aux[,2] <- aux[,2] + range_y
+          attr(obj_sp4@polygons[[i]]@Polygons[[k]], "coords") <- aux
+        }
       }
     }
 
@@ -497,28 +497,24 @@ pk_area12m <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, 
   output <- data.frame(r = rep(NA, length(r)), pk12 = rep(NA, length(r)))
   output$r <- r
 
-  areas_1 <- vector(mode = 'numeric', length = length(obj_sp1))
-  areas_2 <- vector(mode = 'numeric', length = length(obj_sp2))
+  # areas_1 <- vector(mode = 'numeric', length = length(obj_sp1))
+  # areas_2 <- vector(mode = 'numeric', length = length(obj_sp2))
 
   for(i in seq_along(r)) {
 
-    for(j in seq_along(obj_sp1)) {
-      aux <- rgeos::gBuffer(obj_sp1[j], width = r[i])
-      aux <- rgeos::gIntersection(aux, obj_sp2)
-      areas_1[j] <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
-      rm(aux)
-    }
+    buff_poly1 <- rgeos::gBuffer(obj_sp1, width = r[i])
+    aux <- rgeos::gIntersection(buff_poly1, obj_sp2)
+    areas_1 <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
+    rm(aux)
 
-    for(j in seq_along(obj_sp2)) {
-      aux <- rgeos::gBuffer(obj_sp2[j], width = r[i])
-      aux <- rgeos::gIntersection(aux, obj_sp1)
-      areas_2[j] <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
-      rm(aux)
-    }
+    buff_poly2 <- rgeos::gBuffer(obj_sp2, width = r[i])
+    aux <- rgeos::gIntersection(buff_poly2, obj_sp1)
+    areas_2 <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
+    rm(aux)
 
-    k12 <- (l_2^(-1)) * sum(areas_2)/N
-    k21 <- (l_1^(-1)) * sum(areas_1)/N
-    output$pk12[i] <- (tot_1*k21 + tot_2*k12)/(tot_1 + tot_2)
+    k12 <- (l_2^-1)*areas_2/rgeos::gArea(rgeos::gIntersection(buff_poly1, limits_to_sp(obj_sp2@bbox)))
+    k21 <- (l_1^-1)*areas_1/rgeos::gArea(rgeos::gIntersection(buff_poly2, limits_to_sp(obj_sp1@bbox)))
+    output$pk12[i] <- (l_1*k21 + l_2*k12)/(l_1 + l_2)
   }
 
   rm(list = ls()[ls() != 'output'])
@@ -567,7 +563,7 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
   }
 
   # this calculations can be done outside the function
-  # N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
+  N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
   tot_1 <- rgeos::gArea(obj_sp1)
   tot_2 <- rgeos::gArea(obj_sp2)
   # l_1 <- tot_1/N
@@ -583,19 +579,19 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
 
   for(i in seq_along(r)) {
 
-      aux <- rgeos::gBuffer(obj_sp1, width = r[i])
-      aux <- rgeos::gIntersection(aux, obj_sp2)
-      areas_1 <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
-      rm(aux)
+    aux <- rgeos::gBuffer(obj_sp1, width = r[i])
+    aux <- rgeos::gIntersection(aux, obj_sp2)
+    areas_1 <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
+    rm(aux)
 
-      aux <- rgeos::gBuffer(obj_sp2, width = r[i])
-      aux <- rgeos::gIntersection(aux, obj_sp1)
-      areas_2 <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
-      rm(aux)
+    aux <- rgeos::gBuffer(obj_sp2, width = r[i])
+    aux <- rgeos::gIntersection(aux, obj_sp1)
+    areas_2 <- ifelse(is.null(aux), 0, rgeos::gArea(aux))
+    rm(aux)
 
-    k12 <- areas_2
-    k21 <- areas_1
-    output$pk12[i] <- (k21 + k12)/(tot_1 + tot_2)
+    k12 <- tot_1*areas_2
+    k21 <- tot_2*areas_1
+    output$pk12[i] <- ((tot_1*tot_2)^(-1))*N*(k21 + k12)/(tot_1 + tot_2)
   }
 
   rm(list = ls()[ls() != 'output'])
@@ -643,7 +639,7 @@ pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
   }
 
   # this calculations can be done outside the function
-  # N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
+  N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
 
   r <- seq(from = r_min, to = r_max, by = by)
 
@@ -658,9 +654,7 @@ pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
   for(i in seq_along(r)) {
     # k12 <- (l_2^(-1)) * sum(mat_dist < r[i])/N
     # k21 <- (l_1^(-1)) * sum(mat_dist < r[i])/N
-    k12 <- sum(mat_dist < r[i])
-    k21 <- sum(mat_dist < r[i])
-    output$pk12[i] <- (k21 + k12)/(tot_1 + tot_2)
+    output$pk12[i] <- ((tot_1*tot_2)^(-1))*N*sum(mat_dist < r[i])
   }
 
   rm(list = ls()[ls() != "output"])
