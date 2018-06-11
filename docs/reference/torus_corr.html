@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot method for <code><a href='pF.html'>pF</a></code> — plot.pF • tpsa</title>
+<title>Toroidal edge correction — torus_corr • tpsa</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Plot method for <code><a href='pF.html'>pF</a></code> — plot.pF" />
+<meta property="og:title" content="Toroidal edge correction — torus_corr" />
 
-<meta property="og:description" content="Plot method for pF" />
+<meta property="og:description" content="Toroidal edge correction" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -101,30 +101,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot method for <code><a href='pF.html'>pF</a></code></h1>
+    <h1>Toroidal edge correction</h1>
     
-    <div class="hidden name"><code>plot.pF.Rd</code></div>
+    <div class="hidden name"><code>torus_corr.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Plot method for <code><a href='pF.html'>pF</a></code></p>
+    <p>Toroidal edge correction</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for pF</span>
-<span class='fu'><a href='plot.psa_test.html'>plot</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>torus_corr</span>(<span class='no'>objsp</span>, <span class='kw'>bbox_tot</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>a <code><a href='pF.html'>pF</a></code> object</p></td>
+      <th>objsp</th>
+      <td><p>a <code>SpatialPolygon</code></p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>inherits from <code>plot</code>.</p></td>
+      <th>bbox_tot</th>
+      <td><p>a <code>numeric matrix</code></p></td>
     </tr>
     </table>
     

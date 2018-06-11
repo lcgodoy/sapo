@@ -23,9 +23,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// torus_corr
+S4 torus_corr(S4& objsp, Rcpp::Nullable<Rcpp::NumericMatrix> bbox_tot);
+RcppExport SEXP _tpsa_torus_corr(SEXP objspSEXP, SEXP bbox_totSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4& >::type objsp(objspSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::NumericMatrix> >::type bbox_tot(bbox_totSEXP);
+    rcpp_result_gen = Rcpp::wrap(torus_corr(objsp, bbox_tot));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_tpsa_shift_aux", (DL_FUNC) &_tpsa_shift_aux, 7},
+    {"_tpsa_torus_corr", (DL_FUNC) &_tpsa_torus_corr, 2},
     {NULL, NULL, 0}
 };
 

@@ -15,3 +15,14 @@ shift_aux <- function(obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_
     .Call('_tpsa_shift_aux', PACKAGE = 'tpsa', obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_y)
 }
 
+#' Toroidal edge correction
+#'
+#' @param objsp a \code{SpatialPolygon}
+#' @param bbox_tot a \code{numeric matrix}
+#'
+#' @export
+#'
+torus_corr <- function(objsp, bbox_tot = NULL) {
+    .Call('_tpsa_torus_corr', PACKAGE = 'tpsa', objsp, bbox_tot)
+}
+
