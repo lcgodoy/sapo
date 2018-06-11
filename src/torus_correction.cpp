@@ -409,10 +409,14 @@ S4 torus_corr(S4& objsp, Rcpp::Nullable<Rcpp::NumericMatrix> bbox_tot = R_NilVal
   box_aux(1,1) = box_aux(1,1) + range_y;
   box_aux(1,0) = box_aux(1,0) - range_y;
 
-  CharacterVector rNames = {"x", "y"};
+  CharacterVector rNames(2);
+  rNames(0) = 'x';
+  rNames(1) = 'y';
   rownames(box_aux) = rNames;
 
-  CharacterVector cNames = {"min", "max"};
+  CharacterVector cNames(2);
+  cNames(0) = "min";
+  cNames(1) = "max";
   colnames(box_aux) = cNames;
 
   S4 output = clone(objsp);

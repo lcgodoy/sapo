@@ -6,7 +6,7 @@
 \usage{
 psat_mc(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL, same_bbox = T,
   bbox_1 = NULL, bbox_2 = NULL, alpha = 0.01, ts = "psam",
-  alternative = "two_sided")
+  alternative = "two_sided", correction = "none")
 }
 \arguments{
 \item{obj_sp1}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}

@@ -42,7 +42,8 @@
 psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
                      same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
                      alpha = 0.01, ts = 'psam',
-                     alternative = "two_sided") {
+                     alternative = "two_sided",
+                     correction = 'none') {
 
   if(!(class(obj_sp1) %in% c("SpatialPolygons",
                              "SpatialPointsDataFrame") &
