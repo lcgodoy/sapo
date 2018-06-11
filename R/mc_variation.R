@@ -22,6 +22,9 @@
 #' "repulsion", or "attraction" if you interest is  only check if the sets are independent
 #'           or not, if the two sets repulses each other, or if the two sets attracts each other,
 #'           respectively.
+#' @param correction a \code{character} giving the edge correction to be used. Possible
+#' entries are \code{c('none', 'torus', 'guard', 'adjust')}.
+#' @param ... parameters for test statistics functions
 #'
 #' @importFrom rgeos gIntersection
 #' @importFrom methods slot
@@ -40,10 +43,11 @@
 #' @export
 #'
 psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
-                     same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
-                     alpha = 0.01, ts = 'psam',
-                     alternative = "two_sided",
-                     correction = 'none') {
+                    same_bbox = T, bbox_1 = NULL, bbox_2 = NULL,
+                    alpha = 0.01, ts = 'psam',
+                    alternative = "two_sided",
+                    correction = 'none',
+                    ...) {
 
   if(!(class(obj_sp1) %in% c("SpatialPolygons",
                              "SpatialPointsDataFrame") &
@@ -57,6 +61,11 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     warning("if obj_sp1 and obj_sp2 are from class SpatialPolygons,
             then an approach for multitype point patterns
             would be more appropiated.")
+  }
+
+  if(ts == 'psam' & correction == 'adjust') {
+    warning('This edge correction is not available for psam, none will be used.')
+    correction <- 'none'
   }
 
   if(is.null(bbox_1)) {
@@ -89,6 +98,21 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   if(!alternative %in% c("attraction", "two_sided", "repulsion")) {
     stop('alternative value must be: attraction, two_sided or repulsion!')
   }
+
+  if(!correction %in% c("none", "torus", "guard", "adjust")) {
+    stop('correction value must be: none, torus, guard or adjust!')
+  }
+
+  # if(is.null(r_max)) {
+  #   r_x <- bbox[1,2] - bbox[1,1]
+  #   r_y <- bbox[2,2] - bbox[2,1]
+  #   r_max <- .4*max(r_x, r_y)
+  #   rm(r_x, r_y)
+  # }
+  #
+  # if(is.null(r_min)) {
+  #   r_min <- 0.0001
+  # }
 
   if(class(obj_sp1) %in% 'SpatialPolygons') {
     obj_sp1 <- gIntersection(obj_sp1, limits_to_sp(unique_bbox), byid = T,
@@ -136,14 +160,16 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
 
     output$rejects <- FALSE
 
-    output$sample_ts <- psam(obj_sp1, obj_sp2)
+    output$sample_ts <- psam(obj_sp1, obj_sp2, correction = correction)
 
     output$mc_ts <- vector(mode = 'numeric')
 
     output$mc_ts <- c(mc_iterations(obj1_shift, obj_sp2,
-                                    niter = round((n_sim/2) + .5), ts = ts),
+                                    niter = round((n_sim/2) + .5), ts = ts,
+                                    correction = correction, ...),
                       mc_iterations(obj2_shift, obj_sp1,
-                                    niter = round((n_sim/2)), ts = ts))
+                                    niter = round((n_sim/2)), ts = ts,
+                                    correction = correction, ...))
 
     if(alternative == "two_sided") {
       output$p_value <- min(mean(output$sample_ts < output$mc_ts), mean(output$sample_ts > output$mc_ts))
@@ -163,18 +189,21 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   if(ts == 'pf12') {
     output$sample_ts <- as.data.frame(pf12(obj_sp1, obj_sp2))
 
+    if(is.null(r_max)) {
+      r_x <- unique_bbox[1,2] - unique_bbox[1,1]
+      r_y <- unique_bbox[2,2] - unique_bbox[2,1]
+      rmax <- .4*max(r_x, r_y)
+      rm(r_x, r_y)
+    }
     # mc_values <- vector(mode = 'numeric')
-    r_x <- unique_bbox[1,2] - unique_bbox[1,1]
-    r_y <- unique_bbox[2,2] - unique_bbox[2,1]
-    rmax <- .4*max(r_x, r_y)
-    rm(r_x, r_y)
+
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
-                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)),
+                                  correction = correction, ...),
                     mc_iterations(obj2_shift, obj_sp1,
                                   niter = round((n_sim/2)), ts = ts,
-                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)))
+                                  correction = correction, ...))
 
     output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                f12_inf = tapply(mc_aux$pf12, mc_aux$r, quantile, p = (alpha/2)),
@@ -237,24 +266,21 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   }
 
   if(ts == 'pk_dist12') {
-    r_x <- unique_bbox[1,2] - unique_bbox[1,1]
-    r_y <- unique_bbox[2,2] - unique_bbox[2,1]
-    rmax <- .4*max(r_x, r_y)
-    rm(r_x, r_y)
 
-    output$sample_ts <- pk_dist12(obj_sp1, obj_sp2, r_max = rmax, bbox = obj_sp1@bbox)
+    output$sample_ts <- pk_dist12(obj_sp1, obj_sp2, bbox = obj_sp1@bbox,
+                                  correction = correction, ...)
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
-                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)),
+                                  correction = correction, ...),
                     mc_iterations(obj2_shift, obj_sp1,
                                   niter = round((n_sim/2)), ts = ts,
-                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)))
+                                  correction = correction, ...))
 
     output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
                                k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
-                               )
+    )
 
     p_value <- vector(mode = 'numeric', length = nrow(output$sample_ts))
 
@@ -299,19 +325,18 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   }
 
   if(ts == 'pk_area12') {
-    r_x <- unique_bbox[1,2] - unique_bbox[1,1]
-    r_y <- unique_bbox[2,2] - unique_bbox[2,1]
-    rmax <- .4*max(r_x, r_y)
-    rm(r_x, r_y)
 
-    output$sample_ts <- pk_area12(obj_sp1, obj_sp2, r_max = rmax, bbox = obj_sp1@bbox)
+    output$sample_ts <- pk_area12(obj_sp1, obj_sp2, bbox = obj_sp1@bbox,
+                                  correction = correction, ...)
 
     mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
                                   niter = round((n_sim/2) + .5), ts = ts,
-                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)),
+                                  correction = correction,
+                                  ...),
                     mc_iterations(obj2_shift, obj_sp1,
                                   niter = round((n_sim/2)), ts = ts,
-                                  args = list(r_min = min(output$sample_ts$r), r_max = rmax)))
+                                  correction = correction,
+                                  ...))
 
     output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),

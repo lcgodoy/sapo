@@ -6,7 +6,7 @@
 \usage{
 psat_mc(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL, same_bbox = T,
   bbox_1 = NULL, bbox_2 = NULL, alpha = 0.01, ts = "psam",
-  alternative = "two_sided", correction = "none")
+  alternative = "two_sided", correction = "none", ...)
 }
 \arguments{
 \item{obj_sp1}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}
@@ -36,6 +36,11 @@ of the second spatial object}
 "repulsion", or "attraction" if you interest is  only check if the sets are independent
           or not, if the two sets repulses each other, or if the two sets attracts each other,
           respectively.}
+
+\item{correction}{a \code{character} giving the edge correction to be used. Possible
+entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
+
+\item{...}{parameters for test statistics functions}
 }
 \value{
 a list from class \code{\link{psa_test}}, with values: \describe{

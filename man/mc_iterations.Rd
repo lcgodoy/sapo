@@ -4,7 +4,7 @@
 \alias{mc_iterations}
 \title{psat_mc2 - auxiliar function}
 \usage{
-mc_iterations(obj1_shift, obj_sp2, niter, ts, args = NULL)
+mc_iterations(obj1_shift, obj_sp2, niter, ts, correction, ...)
 }
 \arguments{
 \item{obj1_shift}{object from class \code{SpatialPolygons} or \code{SpatialPoints}}
@@ -15,7 +15,10 @@ mc_iterations(obj1_shift, obj_sp2, niter, ts, args = NULL)
 
 \item{ts}{\code{string} giving the test statistic, the options are \code{c('psam', 'pf12', 'pk12')}}
 
-\item{args}{\code{list} only necessary when the test statistic is different from psam}
+\item{correction}{a \code{character} giving the edge correction to be used. Possible
+entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
+
+\item{...}{parameters for test statistics functions}
 }
 \value{
 a \code{numeric vector}.

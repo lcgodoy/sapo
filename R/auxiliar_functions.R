@@ -107,11 +107,13 @@ pt_rf <- function(obj_sp, bbox_max) {
 #' @param obj_sp2 object from class \code{SpatialPolygons} or \code{SpatialPoints}
 #' @param niter \code{numeric} value indicating number of iterations
 #' @param ts \code{string} giving the test statistic, the options are \code{c('psam', 'pf12', 'pk12')}
-#' @param args \code{list} only necessary when the test statistic is different from psam
+#' @param correction a \code{character} giving the edge correction to be used. Possible
+#' entries are \code{c('none', 'torus', 'guard', 'adjust')}.
 #'
+#' @param ... parameters for test statistics functions
 #' @return a \code{numeric vector}.
 #'
-mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
+mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, correction, ...) {
 
   if(ts == 'psam') {
     output <- vector(mode = 'numeric', length = niter)
@@ -124,7 +126,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
           obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
                                     id = suppressWarnings(names(obj1_aux)))
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[i] <- psam(obj1_aux, obj2_rshift)
+          output[i] <- psam(obj1_aux, obj2_rshift, correction = correction)
         }
       } else {
         for(i in seq_len(niter)) {
@@ -133,7 +135,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
           obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
                                     id = suppressWarnings(names(obj1_aux)))
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[i] <- psam(obj1_aux, obj2_rshift)
+          output[i] <- psam(obj1_aux, obj2_rshift, correction = correction)
         }
       }
     } else {
@@ -144,7 +146,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
           k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
           obj1_aux <- obj1_aux[k, ]
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[i] <- psam(obj1_aux, obj2_rshift)
+          output[i] <- psam(obj1_aux, obj2_rshift, correction = correction)
         }
       } else {
         for(i in seq_len(niter)) {
@@ -153,7 +155,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
           k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
           obj1_aux <- obj1_aux[k, ]
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[i] <- psam(obj1_aux, obj2_rshift)
+          output[i] <- psam(obj1_aux, obj2_rshift, correction = correction)
         }
       }
     }
@@ -172,7 +174,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
                                     id = suppressWarnings(names(obj1_aux)))
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
           output[[i]] <- pf12(obj1_aux, obj2_rshift,
-                              r_min = args$r_min, r_max = args$r_max)
+                              r_min = r_min, r_max = r_max)
         }
       } else {
         for(i in seq_len(niter)) {
@@ -182,7 +184,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
                                     id = suppressWarnings(names(obj1_aux)))
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
           output[[i]] <- pf12(obj1_aux, obj2_rshift,
-                              r_min = args$r_min, r_max = args$r_max)
+                              r_min = r_min, r_max = r_max)
         }
       }
     } else {
@@ -194,7 +196,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
           obj1_aux <- obj1_aux[k, ]
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
           output[[i]] <- pf12(obj1_aux, obj2_rshift,
-                              r_min = args$r_min, r_max = args$r_max)
+                              r_min = r_min, r_max = r_max)
         }
       } else {
         for(i in seq_len(niter)) {
@@ -204,7 +206,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
           obj1_aux <- obj1_aux[k, ]
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
           output[[i]] <- pf12(obj1_aux, obj2_rshift,
-                              r_min = args$r_min, r_max = args$r_max)
+                              r_min = r_min, r_max = r_max)
         }
       }
     }
@@ -226,8 +228,9 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
                                     id = suppressWarnings(names(obj1_aux)))
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
           output[[i]] <- pk_dist12(obj1_aux, obj2_rshift,
-                                   r_min = args$r_min, r_max = args$r_max,
-                                   bbox = obj1_aux@bbox)
+                                   r_min = r_min, r_max = r_max,
+                                   bbox = obj1_aux@bbox,
+                                   correction = correction)
         }
       }
     }
@@ -249,8 +252,9 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, args = NULL) {
                                     id = suppressWarnings(names(obj1_aux)))
           attr(obj1_aux, "bbox") <- obj2_rshift@bbox
           output[[i]] <- pk_area12(obj1_aux, obj2_rshift,
-                                   r_min = args$r_min, r_max = args$r_max,
-                                   bbox = obj1_aux@bbox)
+                                   r_min = r_min, r_max = r_max,
+                                   bbox = obj1_aux@bbox,
+                                   correction = correction)
         }
       }
     }
