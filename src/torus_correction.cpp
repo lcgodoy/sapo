@@ -12,14 +12,12 @@ using namespace Rcpp;
 //' @export
 //'
 // [[Rcpp::export]]
-S4 torus_corr(S4& objsp, Rcpp::Nullable<Rcpp::NumericMatrix> bbox_tot = R_NilValue) {
+S4 torus_corr(S4& objsp, Rcpp::NumericMatrix& bbox_tot) {
 
   // Verifying if there are a bbox
 
-  if (bbox_tot.isNotNull())
-  {
-    objsp.slot("bbox") = bbox_tot;
-  }
+  objsp.slot("bbox") = bbox_tot;
+
 
   // Setting object bbox
 

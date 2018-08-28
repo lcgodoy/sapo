@@ -1,8 +1,8 @@
 Package: tpsa
 Type: Package
 Title: Testing Polygons Spatial Association
-Version: 0.0.0.9000
-Date: 2018-01-05
+Version: 0.1.0
+Date: 2018-08-13
 Authors@R: person("Godoy", "Lucas", email = "lucasdac.godoy@gmail.com",
   role = c("aut", "cre"))
 Description: This is a developing R package whose main purpose is to create a 
@@ -11,13 +11,16 @@ Description: This is a developing R package whose main purpose is to create a
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/lcgodoy/pat/issues
 Depends: R (>= 3.4)
+SystemRequirements: GEOS (>= 3.4.0)
 Imports: 
     magrittr,
     Rcpp (>= 0.12.14),
+    RcppArmadillo,
     rgeos (>= 0.3-26),
     sp (>= 1.2-5),
     graphics,
     methods,
+    data.table,
     stats
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1

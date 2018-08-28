@@ -5,7 +5,7 @@
 \title{\eqn{K_{1,2}} - distance-based adaptation for polygons}
 \usage{
 pk_dist12(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox,
-  correction = "none")
+  correction = "none", ...)
 }
 \arguments{
 \item{obj_sp1}{a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object}
@@ -25,6 +25,8 @@ between each \code{r} value.}
 
 \item{correction}{a \code{character} giving the edge correction to be used. Possible
 entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
+
+\item{...}{parameters associated with edge correction.}
 }
 \value{
 a \code{data.frame} corresponding to the estimated

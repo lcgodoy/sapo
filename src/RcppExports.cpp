@@ -6,6 +6,42 @@
 
 using namespace Rcpp;
 
+// PolyDist
+List PolyDist(S4& objsp1, S4& objsp2);
+RcppExport SEXP _tpsa_PolyDist(SEXP objsp1SEXP, SEXP objsp2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4& >::type objsp1(objsp1SEXP);
+    Rcpp::traits::input_parameter< S4& >::type objsp2(objsp2SEXP);
+    rcpp_result_gen = Rcpp::wrap(PolyDist(objsp1, objsp2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// PolyInter
+S4 PolyInter(S4& objsp1, S4& objsp2);
+RcppExport SEXP _tpsa_PolyInter(SEXP objsp1SEXP, SEXP objsp2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4& >::type objsp1(objsp1SEXP);
+    Rcpp::traits::input_parameter< S4& >::type objsp2(objsp2SEXP);
+    rcpp_result_gen = Rcpp::wrap(PolyInter(objsp1, objsp2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// poly_rf2
+S4 poly_rf2(const S4& objsp, NumericMatrix& bbox_max);
+RcppExport SEXP _tpsa_poly_rf2(SEXP objspSEXP, SEXP bbox_maxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const S4& >::type objsp(objspSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix& >::type bbox_max(bbox_maxSEXP);
+    rcpp_result_gen = Rcpp::wrap(poly_rf2(objsp, bbox_max));
+    return rcpp_result_gen;
+END_RCPP
+}
 // shift_aux
 S4 shift_aux(S4 obj_sp, S4 obj_sp2, S4 obj_sp3, S4 obj_sp4, int n_poly, double range_x, double range_y);
 RcppExport SEXP _tpsa_shift_aux(SEXP obj_spSEXP, SEXP obj_sp2SEXP, SEXP obj_sp3SEXP, SEXP obj_sp4SEXP, SEXP n_polySEXP, SEXP range_xSEXP, SEXP range_ySEXP) {
@@ -23,21 +59,37 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// poly_shift
+S4 poly_shift(S4& obj_sp, NumericMatrix& bbox_tot);
+RcppExport SEXP _tpsa_poly_shift(SEXP obj_spSEXP, SEXP bbox_totSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4& >::type obj_sp(obj_spSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix& >::type bbox_tot(bbox_totSEXP);
+    rcpp_result_gen = Rcpp::wrap(poly_shift(obj_sp, bbox_tot));
+    return rcpp_result_gen;
+END_RCPP
+}
 // torus_corr
-S4 torus_corr(S4& objsp, Rcpp::Nullable<Rcpp::NumericMatrix> bbox_tot);
+S4 torus_corr(S4& objsp, Rcpp::NumericMatrix& bbox_tot);
 RcppExport SEXP _tpsa_torus_corr(SEXP objspSEXP, SEXP bbox_totSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4& >::type objsp(objspSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::NumericMatrix> >::type bbox_tot(bbox_totSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type bbox_tot(bbox_totSEXP);
     rcpp_result_gen = Rcpp::wrap(torus_corr(objsp, bbox_tot));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_tpsa_PolyDist", (DL_FUNC) &_tpsa_PolyDist, 2},
+    {"_tpsa_PolyInter", (DL_FUNC) &_tpsa_PolyInter, 2},
+    {"_tpsa_poly_rf2", (DL_FUNC) &_tpsa_poly_rf2, 2},
     {"_tpsa_shift_aux", (DL_FUNC) &_tpsa_shift_aux, 7},
+    {"_tpsa_poly_shift", (DL_FUNC) &_tpsa_poly_shift, 2},
     {"_tpsa_torus_corr", (DL_FUNC) &_tpsa_torus_corr, 2},
     {NULL, NULL, 0}
 };

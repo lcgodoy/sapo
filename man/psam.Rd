@@ -4,7 +4,7 @@
 \alias{psam}
 \title{Polygons' Spatial Association Measure}
 \usage{
-psam(obj_sp1, obj_sp2, correction = "none")
+psam(obj_sp1, obj_sp2, correction = "none", ...)
 }
 \arguments{
 \item{obj_sp1}{a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object}
@@ -13,6 +13,8 @@ psam(obj_sp1, obj_sp2, correction = "none")
 
 \item{correction}{a \code{character} giving the edge correction to be used. Possible
 entries are \code{c('none', 'torus', 'guard')}.}
+
+\item{...}{parameters associated with edge correction.}
 }
 \value{
 a \code{numeric} \code{scalar} with the polygons' spatial

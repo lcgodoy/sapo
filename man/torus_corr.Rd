@@ -4,7 +4,7 @@
 \alias{torus_corr}
 \title{Toroidal edge correction}
 \usage{
-torus_corr(objsp, bbox_tot = NULL)
+torus_corr(objsp, bbox_tot)
 }
 \arguments{
 \item{objsp}{a \code{SpatialPolygon}}

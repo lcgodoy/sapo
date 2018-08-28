@@ -198,12 +198,12 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     # mc_values <- vector(mode = 'numeric')
 
 
-    mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
-                                  niter = round((n_sim/2) + .5), ts = ts,
-                                  correction = correction, ...),
-                    mc_iterations(obj2_shift, obj_sp1,
-                                  niter = round((n_sim/2)), ts = ts,
-                                  correction = correction, ...))
+    mc_aux <- data.table::rbindlist(mc_iterations(obj1_shift, obj_sp2,
+                                                  niter = round((n_sim/2) + .5), ts = ts,
+                                                  correction = correction, ...),
+                                    mc_iterations(obj2_shift, obj_sp1,
+                                                  niter = round((n_sim/2)), ts = ts,
+                                                  correction = correction, ...))
 
     output$mc_ts <- data.frame(r = unique(mc_aux$r),
                                f12_inf = tapply(mc_aux$pf12, mc_aux$r, quantile, p = (alpha/2)),
@@ -270,21 +270,20 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     output$sample_ts <- pk_dist12(obj_sp1, obj_sp2, bbox = obj_sp1@bbox,
                                   correction = correction, ...)
 
-    mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
-                                  niter = round((n_sim/2) + .5), ts = ts,
-                                  correction = correction, ...),
-                    mc_iterations(obj2_shift, obj_sp1,
-                                  niter = round((n_sim/2)), ts = ts,
-                                  correction = correction, ...))
-
-    output$mc_ts <- data.frame(r = unique(mc_aux$r),
-                               k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
-                               k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
-    )
+    mc_aux <- data.table::rbindlist(mc_iterations(obj1_shift, obj_sp2,
+                                                  niter = round((n_sim/2) + .5), ts = ts,
+                                                  correction = correction, ...),
+                                    mc_iterations(obj2_shift, obj_sp1,
+                                                  niter = round((n_sim/2)), ts = ts,
+                                                  correction = correction, ...))
 
     p_value <- vector(mode = 'numeric', length = nrow(output$sample_ts))
 
     if(alternative == "two_sided") {
+      output$mc_ts <- data.frame(r = unique(mc_aux$r),
+                                 k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
+                                 k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
+      )
       for(i in seq_len(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
@@ -296,6 +295,10 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     }
 
     if(alternative == "attraction") {
+      output$mc_ts <- data.frame(r = unique(mc_aux$r),
+                                 k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = alpha),
+                                 k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - alpha)
+      )
       for(i in seq_len(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
@@ -308,6 +311,10 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     }
 
     if(alternative == "repulsion") {
+      output$mc_ts <- data.frame(r = unique(mc_aux$r),
+                                 k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = alpha),
+                                 k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - alpha)
+      )
       for(i in seq_len(nrow(output$sample_ts))) {
         aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
 
@@ -319,7 +326,7 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
       output$p_value <- p_value
     }
 
-    output$rejects <- ifelse(any(output$p_value <= output$alpha), TRUE, FALSE)
+    output$rejects <- ifelse(any(output$p_value < output$alpha), TRUE, FALSE)
 
     class(output) <- psa_pk12(output)
   }
@@ -329,27 +336,26 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     output$sample_ts <- pk_area12(obj_sp1, obj_sp2, bbox = obj_sp1@bbox,
                                   correction = correction, ...)
 
-    mc_aux <- rbind(mc_iterations(obj1_shift, obj_sp2,
-                                  niter = round((n_sim/2) + .5), ts = ts,
-                                  correction = correction,
-                                  ...),
-                    mc_iterations(obj2_shift, obj_sp1,
-                                  niter = round((n_sim/2)), ts = ts,
-                                  correction = correction,
-                                  ...))
-
-    output$mc_ts <- data.frame(r = unique(mc_aux$r),
-                               k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
-                               k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
-    )
+    mc_aux <- data.table::rbindlist(mc_iterations(obj1_shift, obj_sp2,
+                                                  niter = round((n_sim/2) + .5), ts = ts,
+                                                  correction = correction,
+                                                  ...),
+                                    mc_iterations(obj2_shift, obj_sp1,
+                                                  niter = round((n_sim/2)), ts = ts,
+                                                  correction = correction,
+                                                  ...))
 
     p_value <- vector(mode = 'numeric', length = nrow(output$sample_ts))
 
     if(alternative == "two_sided") {
+      output$mc_ts <- data.frame(r = unique(mc_aux$r),
+                                 k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = (alpha/2)),
+                                 k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - (alpha/2))
+      )
       for(i in seq_along(nrow(output$sample_ts))) {
-        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i, 1])
 
-        p_value[i] <- min(mean(aux$pk12 > output$sample_ts[i,2]), mean(aux$pk12 < output$sample_ts[i,2]))
+        p_value[i] <- min(mean(aux$pk12 > output$sample_ts[i, 2]), mean(aux$pk12 < output$sample_ts[i, 2]))
 
         rm(aux)
       }
@@ -357,10 +363,14 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     }
 
     if(alternative == "attraction") {
+      output$mc_ts <- data.frame(r = unique(mc_aux$r),
+                                 k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = alpha),
+                                 k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - alpha)
+      )
       for(i in seq_along(nrow(output$sample_ts))) {
-        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i, 1])
 
-        p_value[i] <- mean(aux$pk12 < output$sample_ts[i,2])
+        p_value[i] <- mean(aux$pk12 < output$sample_ts[i, 2])
 
         rm(aux)
       }
@@ -369,10 +379,14 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
     }
 
     if(alternative == "repulsion") {
+      output$mc_ts <- data.frame(r = unique(mc_aux$r),
+                                 k12_inf = tapply(mc_aux$pk12, mc_aux$r, quantile, p = alpha),
+                                 k12_up = tapply(mc_aux$pk12, mc_aux$r, quantile, p = 1 - alpha)
+      )
       for(i in seq_along(nrow(output$sample_ts))) {
-        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i,1])
+        aux <- subset(mc_aux, mc_aux$r == output$sample_ts[i, 1])
 
-        p_value[i] <- mean(aux$pk12 > output$sample_ts[i,2])
+        p_value[i] <- mean(aux$pk12 > output$sample_ts[i, 2])
 
         rm(aux)
       }
@@ -380,7 +394,7 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
       output$p_value <- p_value
     }
 
-    output$rejects <- ifelse(any(output$p_value <= output$alpha), TRUE, FALSE)
+    output$rejects <- ifelse(any(output$p_value < output$alpha), TRUE, FALSE)
 
     class(output) <- psa_pk12(output)
   }

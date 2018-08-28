@@ -238,7 +238,7 @@ plot.psa_test <- function(x, ...) {
         df_gg2$func <- 'F[21](d)'
         df_gg2$obs <- x$sample_ts[,3]
 
-        df_gg <- rbind(df_gg, df_gg2)
+        df_gg <- data.table::rbindlist(df_gg, df_gg2)
 
         rm(df_gg2)
 
