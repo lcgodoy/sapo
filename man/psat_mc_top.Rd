@@ -2,7 +2,7 @@
 % Please edit documentation in R/mc_test.R
 \name{psat_mc_top}
 \alias{psat_mc_top}
-\title{Polygons Spatial Association Test}
+\title{Polygons Spatial Association Test - alternative version}
 \usage{
 psat_mc_top(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   alpha = 0.01, ts = "psam", alternative = "two_sided",
@@ -37,14 +37,6 @@ shift or the first will be fixed in half of iterations and then the other one. \
 \code{FALSE}, respectively.}
 
 \item{...}{parameters for test statistics functions}
-
-\item{same_bbox}{a \code{boolean} - (desnecessario)}
-
-\item{bbox_1}{a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
-of the first spatial object}
-
-\item{bbox_2}{a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
-of the second spatial object}
 }
 \value{
 a list from class \code{\link{psa_test}}, with values: \describe{

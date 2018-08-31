@@ -406,7 +406,7 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   return(output)
 }
 
-#' Polygons Spatial Association Test
+#' Polygons Spatial Association Test - alternative version
 #'
 #' @description A Monte Carlo test to verify if two sets of polygons are
 #'    associated. The difference bewtween this function and the function
@@ -418,11 +418,6 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
 #'  for the test
 #' @param unique_bbox a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
 #'  that contains the both sets
-#' @param same_bbox a \code{boolean} - (desnecessario)
-#' @param bbox_1 a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
-#'  of the first spatial object
-#' @param bbox_2 a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
-#'  of the second spatial object
 #' @param alpha a \code{numeric} indicating the confidence level
 #' @param ts a \code{character} indicating the test statistic used in the test, the options are
 #'  \code{c('psam', 'pk_dist12', 'pk_area12', 'pf12')}.
@@ -582,7 +577,7 @@ psat_mc_top <- function(obj_sp1, obj_sp2, n_sim = 500L,
       output$p_value <- p_value
     }
 
-    output$rejects <- min(output$p_value) < output$alpha
+    output$rejects <- (min(output$p_value, na.rm = T) < output$alpha)
 
     class(output) <- psa_pk12(output)
   }
@@ -655,7 +650,7 @@ psat_mc_top <- function(obj_sp1, obj_sp2, n_sim = 500L,
       output$p_value <- p_value
     }
 
-    output$rejects <- min(output$p_value) < output$alpha
+    output$rejects <- min(output$p_value, na.rm = T) < output$alpha
 
     class(output) <- psa_pk12(output)
   }

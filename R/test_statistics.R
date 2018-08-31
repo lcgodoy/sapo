@@ -17,7 +17,6 @@ psam <- function(obj_sp1, obj_sp2, correction = 'none', ...) {
   switch (correction,
           'none' = {
             m_dist <- sp_ID_dist(obj_sp1, obj_sp2, ...)
-
             min_row <- apply(m_dist, 1, min)
             min_col <- apply(m_dist, 2, min)
           },
@@ -445,9 +444,9 @@ pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
             obj_sp1_ng <- rgeos::gIntersection(obj_sp1, limits_to_sp(new_bbox), byid = T)
             obj_sp2_ng <- rgeos::gIntersection(obj_sp2, limits_to_sp(new_bbox), byid = T)
             tot_1 <- length(obj_sp1_ng)
-            tot_1 <- ifelse(tot_1 == 0, 1e-16, tot_1)
+            tot_1 <- ifelse(tot_1 == 0, 1e-10, tot_1)
             tot_2 <- length(obj_sp2_ng)
-            tot_1 <- ifelse(tot_2 == 0, 1e-16, tot_2)
+            tot_1 <- ifelse(tot_2 == 0, 1e-10, tot_2)
             mat_dist1 <- sp_ID_dist(obj_sp1_ng, obj_sp2, ...)
             mat_dist2 <- sp_ID_dist(obj_sp1, obj_sp2_ng, ...)
             for(i in seq_along(r)) {
