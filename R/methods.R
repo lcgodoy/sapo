@@ -158,6 +158,7 @@ summary.psa_test <- function(object, ...) {
 #' @param ... inherits from \code{plot}
 #'
 #' @import graphics
+#' @importFrom stats quantile
 #' @aliases plot plot.psa_test
 #' @method plot psa_test
 #' @export
@@ -170,52 +171,62 @@ plot.psa_test <- function(x, ...) {
     df_den <- data.frame(X = df_den$x, Y = df_den$y)
 
     if(x$alternative == 'two_sided') {
-      df_den2 <- df_den[df_den$X <= quantile(df_den$X, probs = x$alpha/2),]
-      df_den3 <- df_den[df_den$X >= quantile(df_den$X, probs = 1 - (x$alpha/2)),]
-
       if (requireNamespace("ggplot2", quietly = TRUE)) {
         ggplot2::ggplot(data = df_den) +
           ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
-          ggplot2::geom_ribbon(data = df_den2, ggplot2::aes(x = X, ymin = 0, ymax = Y),
-                               fill = 'red', alpha = .4) +
-          ggplot2::geom_ribbon(data = df_den3, ggplot2::aes(x = X, ymin = 0, ymax = Y),
-                               fill = 'red', alpha = .4) +
+          ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
+                                 fill = {X >= quantile(df_den$X, 1 - (x$alpha/2))}
+          )
+          ) +
+          ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
+                                 fill = {X <= quantile(df_den$X, x$alpha/2)}
+          )
+          ) +
+          ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
           ggplot2::geom_vline(xintercept = x$sample_ts,
                               linetype = 'dashed', col = 'red') +
-          ggplot2::theme_bw() +
-          ggplot2::labs(x = 'Test Statistic', y = 'Kernel density')
+          theme_tpsa() +
+          ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
+          ggplot2::ggtitle(label = 'Monte Carlo Test',
+                           subtitle = 'Polygons Spatial Association Measure')
       } else {
         stop('install ggplot2 to visualize the plot.')
       }
     } else {
       if(x$alternative == 'repulsion') {
-        df_den2 <- df_den[df_den$X >= quantile(df_den$Y, probs = 1 - x$alpha),]
-
         if (requireNamespace("ggplot2", quietly = TRUE)) {
           ggplot2::ggplot(data = df_den) +
             ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
-            ggplot2::geom_ribbon(data = df_den2, ggplot2::aes(x = X, ymin = 0, ymax = Y),
-                                 fill = 'red', alpha = .4) +
+            ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
+                                   fill = {X >= quantile(df_den$X, 1 - x$alpha/2)}
+            )
+            ) +
+            ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
             ggplot2::geom_vline(xintercept = x$sample_ts,
                                 linetype = 'dashed', col = 'red') +
-            ggplot2::theme_bw() +
-            ggplot2::labs(x = 'Test Statistic', y = 'Kernel density')
+            theme_tpsa() +
+            ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
+            ggplot2::ggtitle(label = 'Monte Carlo Test',
+                             subtitle = 'Polygons Spatial Association Measure')
         } else {
           stop('install ggplot2 to visualize the plot.')
         }
       } else {
         if(x$alternative == 'attraction') {
-          df_den2 <- df_den[df_den$X <= quantile(df_den$X, probs = x$alpha),]
-
           if (requireNamespace("ggplot2", quietly = TRUE)) {
             ggplot2::ggplot(data = df_den) +
               ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
-              ggplot2::geom_ribbon(data = df_den2, ggplot2::aes(x = X, ymin = 0, ymax = Y),
-                                   fill = 'red', alpha = .4) +
+              ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
+                                     fill = {X <= quantile(df_den$X, x$alpha/2)}
+              )
+              ) +
+              ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
               ggplot2::geom_vline(xintercept = x$sample_ts,
                                   linetype = 'dashed', col = 'red') +
-              ggplot2::theme_bw() +
-              ggplot2::labs(x = 'Test Statistic', y = 'Kernel density')
+              theme_tpsa() +
+              ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
+              ggplot2::ggtitle(label = 'Monte Carlo Test',
+                               subtitle = 'Polygons Spatial Association Measure')
 
           } else {
             stop('install ggplot2 to visualize the plot.')
@@ -246,7 +257,7 @@ plot.psa_test <- function(x, ...) {
           ggplot2::geom_line(ggplot2::aes(x = r, y = obs)) +
           ggplot2::geom_ribbon(ggplot2::aes(x = r, ymin = f_inf, ymax = f_up),
                                fill = 'blue', alpha = .2) +
-          ggplot2::theme_bw() +
+          theme_tpsa() +
           ggplot2::labs(x = 'Distance', y = '') +
           ggplot2::facet_grid(func~., labeller = ggplot2::label_parsed)
       } else {
@@ -280,10 +291,13 @@ plot.psa_test <- function(x, ...) {
 
         ggplot2::ggplot(data = df_gg) +
           ggplot2::geom_line(ggplot2::aes(x = r, y = obs)) +
-          ggplot2::geom_ribbon(ggplot2::aes(x = r, ymin = k_inf, ymax = k_up),
-                               fill = 'blue', alpha = .2) +
-          ggplot2::theme_bw() +
-          ggplot2::labs(x = 'Distance', y = expression(K[12](d)))
+          ggplot2::geom_line(ggplot2::aes(x = r, y = k_inf),
+                             color = 'red', linetype = 2, inherit.aes = F) +
+          ggplot2::geom_line(ggplot2::aes(x = r, y = k_up),
+                             color = 'red', linetype = 2, inherit.aes = F) +
+          theme_tpsa() +
+          ggplot2::labs(x = 'Distance', y = expression(K[12](d))) +
+          ggplot2::ggtitle(label = 'Monte Carlo Test')
       } else {
         plot(x$sample_ts[, 1], x$sample_ts[, 2],
              type = 'l',
