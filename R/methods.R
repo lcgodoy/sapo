@@ -167,20 +167,17 @@ plot.psa_test <- function(x, ...) {
   if(!"psa_test" %in% class(x)) stop('Invalid object')
 
   if('psa_psam' %in% class(x)) {
-    df_den <- stats::density(x$mc_ts)
-    df_den <- data.frame(X = df_den$x, Y = df_den$y)
-
     if(x$alternative == 'two_sided') {
       if (requireNamespace("ggplot2", quietly = TRUE)) {
-        ggplot2::ggplot(data = df_den) +
-          ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
-          ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
-                                 fill = {X >= quantile(df_den$X, 1 - (x$alpha/2))}
-          )
+        ggplot2::ggplot() +
+          ggplot2::geom_line(ggplot2::aes(x = x$mc_ts), stat = 'density') +
+          ggplot2::geom_area(ggplot2::aes(x = x$mc_ts,
+                                 fill = {x$mc_ts >= quantile(x$mc_ts, 1 - (x$alpha/2))}
+          ), stat = 'density'
           ) +
-          ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
-                                 fill = {X <= quantile(df_den$X, x$alpha/2)}
-          )
+          ggplot2::geom_area(ggplot2::aes(x$mc_ts,
+                                 fill = {x$mc_ts <= quantile(x$mc_ts, x$alpha/2)}
+          ), stat = 'density'
           ) +
           ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
           ggplot2::geom_vline(xintercept = x$sample_ts,
@@ -196,11 +193,11 @@ plot.psa_test <- function(x, ...) {
     } else {
       if(x$alternative == 'repulsion') {
         if (requireNamespace("ggplot2", quietly = TRUE)) {
-          ggplot2::ggplot(data = df_den) +
-            ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
-            ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
-                                   fill = {X >= quantile(df_den$X, 1 - x$alpha)}
-            )
+          ggplot2::ggplot() +
+            ggplot2::geom_line(ggplot2::aes(x = x$mc_ts), stat = 'density') +
+            ggplot2::geom_area(ggplot2::aes(x = x$mc_ts,
+                                            fill = {x$mc_ts >= quantile(x$mc_ts, 1 - (x$alpha/2))}
+            ), stat = 'density'
             ) +
             ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
             ggplot2::geom_vline(xintercept = x$sample_ts,
@@ -216,11 +213,11 @@ plot.psa_test <- function(x, ...) {
       } else {
         if(x$alternative == 'attraction') {
           if (requireNamespace("ggplot2", quietly = TRUE)) {
-            ggplot2::ggplot(data = df_den) +
-              ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
-              ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
-                                     fill = {X <= quantile(df_den$X, x$alpha)}
-              )
+            ggplot2::ggplot() +
+              ggplot2::geom_line(ggplot2::aes(x = x$mc_ts), stat = 'density') +
+              ggplot2::geom_area(ggplot2::aes(x = x$mc_ts,
+                                              fill = {x$mc_ts <= quantile(x$mc_ts, 1 - (x$alpha/2))}
+              ), stat = 'density'
               ) +
               ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
               ggplot2::geom_vline(xintercept = x$sample_ts,
