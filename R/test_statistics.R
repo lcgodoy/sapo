@@ -21,8 +21,8 @@ psam <- function(obj_sp1, obj_sp2, correction = 'none', ...) {
             min_col <- apply(m_dist, 2, min)
           },
           'torus' = {
-            obj_sp1_t <- torus_corr(obj_sp1)
-            obj_sp2_t <- torus_corr(obj_sp2)
+            obj_sp1_t <- torus_corr(obj_sp1, obj_sp1@bbox)
+            obj_sp2_t <- torus_corr(obj_sp2, obj_sp2@bbox)
             min_row <- apply(sp_ID_dist(obj_sp1, obj_sp2_t, ...), 1, min)
             min_col <- apply(sp_ID_dist(obj_sp1_t, obj_sp2, ...), 2, min)
           },

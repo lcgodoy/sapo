@@ -188,7 +188,8 @@ plot.psa_test <- function(x, ...) {
           theme_tpsa() +
           ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
           ggplot2::ggtitle(label = 'Monte Carlo Test',
-                           subtitle = 'Polygons Spatial Association Measure')
+                           subtitle = 'Polygons Spatial Association Measure') +
+          guides(fill = F)
       } else {
         stop('install ggplot2 to visualize the plot.')
       }
@@ -198,7 +199,7 @@ plot.psa_test <- function(x, ...) {
           ggplot2::ggplot(data = df_den) +
             ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
             ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
-                                   fill = {X >= quantile(df_den$X, 1 - x$alpha/2)}
+                                   fill = {X >= quantile(df_den$X, 1 - x$alpha)}
             )
             ) +
             ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
@@ -207,7 +208,8 @@ plot.psa_test <- function(x, ...) {
             theme_tpsa() +
             ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
             ggplot2::ggtitle(label = 'Monte Carlo Test',
-                             subtitle = 'Polygons Spatial Association Measure')
+                             subtitle = 'Polygons Spatial Association Measure') +
+            guides(fill = F)
         } else {
           stop('install ggplot2 to visualize the plot.')
         }
@@ -217,7 +219,7 @@ plot.psa_test <- function(x, ...) {
             ggplot2::ggplot(data = df_den) +
               ggplot2::geom_line(ggplot2::aes(x = X, y = Y)) +
               ggplot2::geom_area(ggplot2::aes(x = X, y = Y,
-                                     fill = {X <= quantile(df_den$X, x$alpha/2)}
+                                     fill = {X <= quantile(df_den$X, x$alpha)}
               )
               ) +
               ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
@@ -226,7 +228,8 @@ plot.psa_test <- function(x, ...) {
               theme_tpsa() +
               ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
               ggplot2::ggtitle(label = 'Monte Carlo Test',
-                               subtitle = 'Polygons Spatial Association Measure')
+                               subtitle = 'Polygons Spatial Association Measure') +
+              guides(fill = F)
 
           } else {
             stop('install ggplot2 to visualize the plot.')
