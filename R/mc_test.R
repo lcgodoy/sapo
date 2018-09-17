@@ -85,10 +85,21 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
   if((!is.null(unique_bbox)) & (!is.matrix(unique_bbox)))
     stop('unique_bbox must be NULL or matrix.')
 
+  if(is.null(unique_bbox)) {
+    bbox_1 <- obj_sp1@bbox
+    bbox_2 <- obj_sp2@bbox
+    unique_bbox <- matrix(c(min(c(bbox_1[1, 1], bbox_2[1, 1])),
+                            max(c(bbox_1[1, 2], bbox_2[1, 2])),
+                            min(c(bbox_1[2, 1], bbox_2[2, 1])),
+                            max(c(bbox_1[2, 2], bbox_2[2, 2]))),
+                          ncol = 2, byrow = T)
+    rm(bbox_1, bbox_2)
+  }
+
   if(ts != 'psam') {
     if(is.null(r_max) | is.null(r_min)) {
-      r_x <- unique_bbox[1,2] - unique_bbox[1,1]
-      r_y <- unique_bbox[2,2] - unique_bbox[2,1]
+      r_x <- unique_bbox[1, 2] - unique_bbox[1, 1]
+      r_y <- unique_bbox[2, 2] - unique_bbox[2, 1]
     }
 
     if(is.null(r_max)) {
@@ -102,17 +113,6 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
     if(is.null(by)) {
       by <- (r_max - r_min)/sqrt(12)
     }
-  }
-
-  if(is.null(unique_bbox)) {
-    bbox_1 <- obj_sp1@bbox
-    bbox_2 <- obj_sp2@bbox
-    unique_bbox <- matrix(c(min(c(bbox_1[1, 1], bbox_2[1, 1])),
-                            max(c(bbox_1[1, 2], bbox_2[1, 2])),
-                            min(c(bbox_1[2, 1], bbox_2[2, 1])),
-                            max(c(bbox_1[2, 2], bbox_2[2, 2]))),
-                          ncol = 2, byrow = T)
-    rm(bbox_1, bbox_2)
   }
 
   if(correction == 'torus') {
