@@ -2,7 +2,7 @@
 % Please edit documentation in R/auxiliar_functions.R
 \name{mc_iterations}
 \alias{mc_iterations}
-\title{psat_mc2 - auxiliar function}
+\title{psat_mc - auxiliar function}
 \usage{
 mc_iterations(obj1_shift, obj_sp2, niter, ts, correction, ...)
 }
