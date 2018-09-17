@@ -486,9 +486,9 @@ psat_mc_top <- function(obj_sp1, obj_sp2, n_sim = 500L,
     stop("obj_sp1 and obj_sp2 must be from class 'SpatialPolygons'")
 
   if(correction == 'torus') {
-    obj1_shift <- torus_corr(obj_sp = obj_sp1, bbox_tot = unique_bbox)
+    obj1_shift <- torus_corr(objsp = obj_sp1, bbox_tot = unique_bbox)
     if(!fixed) {
-      obj2_shift <- torus_corr(obj_sp = obj_sp2, bbox_tot = unique_bbox)
+      obj2_shift <- torus_corr(objsp = obj_sp2, bbox_tot = unique_bbox)
     }
   } else {
     obj1_shift <- poly_shift(obj_sp = obj_sp1, bbox_tot = unique_bbox)
