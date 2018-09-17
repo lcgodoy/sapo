@@ -456,6 +456,36 @@ psat_mc_top <- function(obj_sp1, obj_sp2, n_sim = 500L,
                         ...) {
 
 
+  if(length(alternative) > 1)
+    stop("Provide just one alternative.")
+
+  if(length(ts) > 1)
+    stop("Provide just one ts")
+
+  if(length(correction) > 1)
+    stop("Provide just one correction")
+
+  if(! alternative %in% c('two_sided', 'attraction', 'repulsion'))
+    stop("Alternative must be 'two_sided', 'attraction' or 'repulsion'.")
+
+  if(! ts %in% c('psam', 'pk_dist12', 'pk_area12'))
+    stop("alternative must be 'psam', 'pk_dist12' or 'pk_area12'.")
+
+
+  if(! correction %in% c('none', 'guard', 'torus', 'adjust'))
+    stop("correction must be 'none', 'guard', 'torus' or 'adjust'.")
+
+
+  if(length(alpha) > 1 | length(n_sim) > 1)
+    stop('alpha and n_sim must be scalars.')
+
+  if((!is.null(unique_bbox)) & (!is.matrix(unique_bbox)))
+    stop('unique_bbox must be NULL or matrix.')
+
+  if((! "SpatialPolygons" %in% class(obj_sp1)) | (! "SpatialPolygons" %in% class(obj_sp2)))
+    stop("obj_sp1 and obj_sp2 must be from class 'SpatialPolygons'")
+
+
   obj1_shift <- poly_shift(obj_sp = obj_sp1, bbox_tot = unique_bbox)
   if(!fixed) {
     obj2_shift <- poly_shift(obj_sp = obj_sp2, bbox_tot = unique_bbox)
