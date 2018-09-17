@@ -94,13 +94,11 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
   # l_1 <- tot_1/N
   # l_2 <- tot_2/N
 
-  r <- seq(from = r_min, to = r_max, by = by)
+  r <- seq(from = r_min, to = r_max, by = by)/2
 
-  if(r[length(r)] != r_max) {
-    r <- c(r, r_max)
+  if(r[length(r)] != r_max/2) {
+    r <- c(r, r_max/2)
   }
-
-  r <- r/2
 
   output <- data.frame(r = r, pk12 = rep(NA, length(r)))
 
@@ -286,10 +284,10 @@ pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
   # this calculations can be done outside the function
   N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
 
-  r <- seq(from = r_min, to = r_max, by = by)/2
+  r <- seq(from = r_min, to = r_max, by = by)
 
-  if(r[length(r)] != r_max/2) {
-    r <- c(r, r_max/2)
+  if(r[length(r)] != r_max) {
+    r <- c(r, r_max)
   }
 
   output <- data.frame(r = r, pk12 = rep(NA, length(r)))
