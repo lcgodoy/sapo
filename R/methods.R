@@ -163,7 +163,7 @@ plot.psa_test <- function(x, ...) {
           ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
           ggplot2::ggtitle(label = 'Monte Carlo Test',
                            subtitle = 'Polygons Spatial Association Measure') +
-          guides(fill = F)
+          ggplot2::guides(fill = F)
       } else {
         stop('install ggplot2 to visualize the plot.')
       }
@@ -183,7 +183,7 @@ plot.psa_test <- function(x, ...) {
             ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
             ggplot2::ggtitle(label = 'Monte Carlo Test',
                              subtitle = 'Polygons Spatial Association Measure') +
-            guides(fill = F)
+            ggplot2::guides(fill = F)
         } else {
           stop('install ggplot2 to visualize the plot.')
         }
@@ -203,7 +203,7 @@ plot.psa_test <- function(x, ...) {
               ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
               ggplot2::ggtitle(label = 'Monte Carlo Test',
                                subtitle = 'Polygons Spatial Association Measure') +
-              guides(fill = F)
+              ggplo2::guides(fill = F)
 
           } else {
             stop('install ggplot2 to visualize the plot.')

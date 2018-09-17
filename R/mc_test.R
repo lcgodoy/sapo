@@ -22,6 +22,10 @@
 #' @param fixed a \code{boolean} indicating if the first pattern should be fixed on the toroidal
 #' shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or
 #' \code{FALSE}, respectively.
+#' @param r_min min distance to calculate \eqn{K_{1,2}} functions. Used only if ts != 'psam'
+#' @param r_max max distance to calculate \eqn{K_{1,2}} functions. Used only if ts != 'psam'
+#' @param by controls how many values between \code{r_min} and \code{r_max} will by used
+#' to calculate \eqn{K_{1,2}} functions. Used only if ts != 'psam'
 #' @param ... parameters for test statistics functions
 #'
 #' @importFrom rgeos gIntersection
@@ -45,7 +49,12 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
                     alpha = 0.01, ts = 'psam',
                     alternative = "two_sided",
                     correction = 'none', fixed = FALSE,
+                    r_min = NULL, r_max = NULL,
+                    by = NULL,
                     ...) {
+
+  if((! "SpatialPolygons" %in% class(obj_sp1)) | (! "SpatialPolygons" %in% class(obj_sp2)))
+    stop("obj_sp1 and obj_sp2 must be from class 'SpatialPolygons'")
 
   if(length(alternative) > 1)
     stop("Provide just one alternative.")
@@ -70,12 +79,30 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
   if(! correction %in% c('none', 'guard', 'torus', 'adjust'))
     stop("correction must be 'none', 'guard', 'torus' or 'adjust'.")
 
-
   if(length(alpha) > 1 | length(n_sim) > 1)
     stop('alpha and n_sim must be scalars.')
 
   if((!is.null(unique_bbox)) & (!is.matrix(unique_bbox)))
     stop('unique_bbox must be NULL or matrix.')
+
+  if(ts != 'psam') {
+    if(is.null(r_max) | is.null(r_min)) {
+      r_x <- bbox[1,2] - bbox[1,1]
+      r_y <- bbox[2,2] - bbox[2,1]
+    }
+
+    if(is.null(r_max)) {
+      r_max <- .15*max(r_x, r_y)
+    }
+
+    if(is.null(r_min)) {
+      r_min <- .05*max(r_x, r_y)
+    }
+
+    if(is.null(by)) {
+      by <- (r_max - r_min)/sqrt(12)
+    }
+  }
 
   if(is.null(unique_bbox)) {
     bbox_1 <- obj_sp1@bbox
@@ -87,9 +114,6 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
                           ncol = 2, byrow = T)
     rm(bbox_1, bbox_2)
   }
-
-  if((! "SpatialPolygons" %in% class(obj_sp1)) | (! "SpatialPolygons" %in% class(obj_sp2)))
-    stop("obj_sp1 and obj_sp2 must be from class 'SpatialPolygons'")
 
   if(correction == 'torus') {
     obj1_shift <- torus_corr(objsp = obj_sp1, bbox_tot = unique_bbox)
@@ -154,19 +178,26 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
   if(ts == 'pk_dist12') {
 
     output$sample_ts <- pk_dist12(obj_sp1, obj_sp2, bbox = obj_sp1@bbox,
-                                  correction = correction, ...)
+                                  correction = correction, r_min = r_min,
+                                  r_max = r_max, by = by, ...)
 
     if(fixed) {
       mc_aux <-mc_iterations(obj1_shift, obj_sp2,
                              niter = n_sim, ts = ts,
-                             correction = correction, ...)
+                             correction = correction,
+                             r_min = r_min, r_max = r_max,
+                             by = by, ...)
     } else {
       mc_aux <- data.table::rbindlist(list(mc_iterations(obj1_shift, obj_sp2,
                                                          niter = length(1:(n_sim/2)), ts = ts,
-                                                         correction = correction, ...),
+                                                         correction = correction,
+                                                         r_min = r_min, r_max = r_max,
+                                                         by = by, ...),
                                            mc_iterations(obj2_shift, obj_sp1,
                                                          niter = length(trunc(n_sim/2 + 1):n_sim), ts = ts,
-                                                         correction = correction, ...)),
+                                                         correction = correction,
+                                                         r_min = r_min, r_max = r_max,
+                                                         by = by, ...)),
                                       use.names = F, fill = F, idcol = NULL)
     }
 
@@ -227,19 +258,27 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
   if(ts == 'pk_area12') {
 
     output$sample_ts <- pk_area12(obj_sp1, obj_sp2, bbox = obj_sp1@bbox,
-                                  correction = correction, ...)
+                                  correction = correction,
+                                  r_min = r_min, r_max = r_max,
+                                  by = by, ...)
 
     if(fixed) {
       mc_aux <-mc_iterations(obj1_shift, obj_sp2,
                              niter = n_sim, ts = ts,
-                             correction = correction, ...)
+                             correction = correction,
+                             r_min = r_min, r_max = r_max,
+                             by = by, ...)
     } else {
       mc_aux <- data.table::rbindlist(list(mc_iterations(obj1_shift, obj_sp2,
                                                          niter = length(1:(n_sim/2)), ts = ts,
-                                                         correction = correction, ...),
+                                                         correction = correction,
+                                                         r_min = r_min, r_max = r_max,
+                                                         by = by, ...),
                                            mc_iterations(obj2_shift, obj_sp1,
                                                          niter = length(trunc(n_sim/2 + 1):n_sim), ts = ts,
-                                                         correction = correction, ...)),
+                                                         correction = correction,
+                                                         r_min = r_min, r_max = r_max,
+                                                         by = by, ...)),
                                       use.names = F, fill = F, idcol = NULL)
     }
 
