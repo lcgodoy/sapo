@@ -1,48 +1,4 @@
-#' Points' Random Shift
-#'
-#' @param obj_sp object from class \code{SpatialPoints}
-#' @param bbox_max Boundary box from class \code{matrix}
-#'
-#' @importFrom stats runif
-#'
-#' @return an object from class \code{SpatialPoints} randomly translated
-#'
-pt_rf <- function(obj_sp, bbox_max) {
-  range_x <- (max(obj_sp@bbox[1,]) - min(obj_sp@bbox[1,]))
-  range_y <- (max(obj_sp@bbox[2,]) - min(obj_sp@bbox[2,]))
-
-  bbox_max2 <- bbox_max
-
-  bbox_max2[1,1] <- bbox_max[1,1] + range_x/2
-  bbox_max2[1,2] <- bbox_max[1,2] - range_x/2
-  bbox_max2[2,1] <- bbox_max[2,1] + range_y/2
-  bbox_max2[2,2] <- bbox_max[2,2] - range_y/2
-
-  n_x <- runif(1, bbox_max2[1,1], bbox_max2[1,2])
-  n_y <- runif(1, bbox_max2[2,1], bbox_max2[2,2])
-
-  bbox2 <- matrix(c(xmin = n_x - range_x/2,
-                    xmax = n_x + range_x/2,
-                    ymin = n_y - range_y/2,
-                    ymax = n_y + range_y/2),
-                  nrow = 2, byrow = T, dimnames = list(c("x", "y"),
-                                                       c("min", "max")))
-
-  jump_x <- bbox2[1,1] - sp::bbox(obj_sp)[1,1]
-  jump_y <- bbox2[2,1] - sp::bbox(obj_sp)[2,1]
-
-  attr(obj_sp, "bbox") <- bbox2
-
-  aux <- obj_sp@coords
-  aux[,1] <- aux[,1] + jump_x
-  aux[,2] <- aux[,2] + jump_y
-  attr(obj_sp, "coords") <- aux
-
-  return(obj_sp)
-
-}
-
-#' psat_mc2 - auxiliar function
+#' psat_mc - auxiliar function
 #'
 #' @description Internal use.
 #'
@@ -108,6 +64,7 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, correction, ...) {
     output <- vector(mode = 'list', length = niter)
 
     for(i in seq_len(niter)) {
+      obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
       if(correction == 'torus') {
         output[[i]] <- pk_area12(obj1_shift, obj2_rshift,
                                  bbox = obj1_shift@bbox,

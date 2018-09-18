@@ -6,7 +6,8 @@
 \usage{
 psat_mc(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
   alpha = 0.01, ts = "psam", alternative = "two_sided",
-  correction = "none", fixed = FALSE, ...)
+  correction = "none", fixed = FALSE, r_min = NULL, r_max = NULL,
+  by = NULL, ...)
 }
 \arguments{
 \item{obj_sp1}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}
@@ -35,6 +36,13 @@ entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
 \item{fixed}{a \code{boolean} indicating if the first pattern should be fixed on the toroidal
 shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or
 \code{FALSE}, respectively.}
+
+\item{r_min}{min distance to calculate \eqn{K_{1,2}} functions. Used only if ts != 'psam'}
+
+\item{r_max}{max distance to calculate \eqn{K_{1,2}} functions. Used only if ts != 'psam'}
+
+\item{by}{controls how many values between \code{r_min} and \code{r_max} will by used
+to calculate \eqn{K_{1,2}} functions. Used only if ts != 'psam'}
 
 \item{...}{parameters for test statistics functions}
 }

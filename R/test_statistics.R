@@ -141,7 +141,7 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
             for(i in seq_along(r)) {
               obj_sp1_t <- torus_corr(obj_sp1, bbox)
               obj_sp2_t <- torus_corr(obj_sp2, bbox)
-              aux <- rgeos::gBuffer(obj_sp1_t, width = r[i], byid = T)
+              aux <- rgeos::gBuffer(obj_sp1_t, width = r[i], byid = F)
               aux <- rgeos::gIntersection(aux, obj_sp2, byid = T)
               if(is.null(aux)) {
                 areas_1 <- 0
@@ -151,7 +151,7 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
               }
               rm(aux)
 
-              aux <- rgeos::gBuffer(obj_sp2_t, width = r[i], T)
+              aux <- rgeos::gBuffer(obj_sp2_t, width = r[i], F)
               aux <- rgeos::gIntersection(aux, obj_sp1, T)
               if(is.null(aux)) {
                 areas_2 <- 0
