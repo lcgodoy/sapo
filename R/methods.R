@@ -203,7 +203,7 @@ plot.psa_test <- function(x, ...) {
               ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
               ggplot2::ggtitle(label = 'Monte Carlo Test',
                                subtitle = 'Polygons Spatial Association Measure') +
-              ggplo2::guides(fill = F)
+              ggplot2::guides(fill = F)
 
           } else {
             stop('install ggplot2 to visualize the plot.')
