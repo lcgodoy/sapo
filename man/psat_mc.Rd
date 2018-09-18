@@ -4,9 +4,9 @@
 \alias{psat_mc}
 \title{Polygons Spatial Association Test}
 \usage{
-psat_mc(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL, same_bbox = T,
-  bbox_1 = NULL, bbox_2 = NULL, alpha = 0.01, ts = "psam",
-  alternative = "two_sided", correction = "none", ...)
+psat_mc(obj_sp1, obj_sp2, n_sim = 500L, unique_bbox = NULL,
+  alpha = 0.01, ts = "psam", alternative = "two_sided",
+  correction = "none", fixed = FALSE, ...)
 }
 \arguments{
 \item{obj_sp1}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}
@@ -19,26 +19,22 @@ for the test}
 \item{unique_bbox}{a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
 that contains the both sets}
 
-\item{same_bbox}{a \code{boolean} - (desnecessario)}
-
-\item{bbox_1}{a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
-of the first spatial object}
-
-\item{bbox_2}{a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
-of the second spatial object}
-
 \item{alpha}{a \code{numeric} indicating the confidence level}
 
 \item{ts}{a \code{character} indicating the test statistic used in the test, the options are
 \code{c('psam', 'pk_dist12', 'pk_area12', 'pf12')}.}
 
-\item{alternative}{a \code{character} indicating the alternative hypothesis, it can be: "independece",
+\item{alternative}{a \code{character} indicating the alternative hypothesis, it can be: "two_sided",
 "repulsion", or "attraction" if you interest is  only check if the sets are independent
           or not, if the two sets repulses each other, or if the two sets attracts each other,
           respectively.}
 
 \item{correction}{a \code{character} giving the edge correction to be used. Possible
 entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
+
+\item{fixed}{a \code{boolean} indicating if the first pattern should be fixed on the toroidal
+shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or
+\code{FALSE}, respectively.}
 
 \item{...}{parameters for test statistics functions}
 }

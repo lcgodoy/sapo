@@ -4,8 +4,8 @@
 \alias{pk_dist12}
 \title{\eqn{K_{1,2}} - distance-based adaptation for polygons}
 \usage{
-pk_dist12(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox,
-  correction = "none", ...)
+pk_dist12(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL,
+  bbox, correction = "none", ...)
 }
 \arguments{
 \item{obj_sp1}{a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object}

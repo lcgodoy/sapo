@@ -1,7 +1,7 @@
 Package: tpsa
 Type: Package
 Title: Testing Polygons Spatial Association
-Version: 0.1.0
+Version: 0.1.01
 Date: 2018-08-13
 Authors@R: person("Godoy", "Lucas", email = "lucasdac.godoy@gmail.com",
   role = c("aut", "cre"))
@@ -23,7 +23,7 @@ Imports:
     data.table,
     stats
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Suggests: knitr,
   rmarkdown,
   ggplot2 (>= 2.1)

@@ -61,97 +61,18 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, correction, ...) {
   if(ts == 'psam') {
     output <- vector(mode = 'numeric', length = niter)
 
-    if('SpatialPolygons' %in% class(obj1_shift)) {
-      if('SpatialPolygons' %in% class(obj_sp2)) {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                    id = suppressWarnings(names(obj1_aux)))
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[i] <- psam(obj1_aux, obj2_rshift, correction = correction, ...)
-        }
+    for(i in seq_len(niter)) {
+      obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
+      if(correction == 'torus') {
+        output[i] <- psam(obj1_shift, obj2_rshift, correction = 'none', ...)
       } else {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                    id = suppressWarnings(names(obj1_aux)))
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[i] <- psam(obj1_aux, obj2_rshift, correction = correction, ...)
-        }
-      }
-    } else {
-      if('SpatialPolygons' %in% class(obj_sp2)) {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
-          obj1_aux <- obj1_aux[k, ]
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[i] <- psam(obj1_aux, obj2_rshift, correction = correction, ...)
-        }
-      } else {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
-          obj1_aux <- obj1_aux[k, ]
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[i] <- psam(obj1_aux, obj2_rshift, correction = correction, ...)
-        }
+        obj1_aux <- obj1_shift
+        obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                  id = suppressWarnings(names(obj1_aux)))
+        attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+        output[i] <- psam(obj1_aux, obj2_rshift, correction = correction, ...)
       }
     }
-  }
-
-  if(ts == 'pf12') {
-
-    output <- vector(mode = 'list', length = niter)
-
-    if('SpatialPolygons' %in% class(obj1_shift)) {
-      if('SpatialPolygons' %in% class(obj_sp2)) {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                    id = suppressWarnings(names(obj1_aux)))
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[[i]] <- pf12(obj1_aux, obj2_rshift, ...)
-        }
-      } else {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                    id = suppressWarnings(names(obj1_aux)))
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[[i]] <- pf12(obj1_aux, obj2_rshift, ...)
-        }
-      }
-    } else {
-      if('SpatialPolygons' %in% class(obj_sp2)) {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
-          obj1_aux <- obj1_aux[k, ]
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[[i]] <- pf12(obj1_aux, obj2_rshift, ...)
-        }
-      } else {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- pt_rf(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          k <- which(rgeos::gWithin(obj1_aux, limits_to_sp(obj2_rshift@bbox), byid = T))
-          obj1_aux <- obj1_aux[k, ]
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[[i]] <- pf12(obj1_aux, obj2_rshift, ...)
-        }
-      }
-    }
-
-    output <- do.call('rbind', output) %>% as.data.frame
-
   }
 
   if(ts == 'pk_dist12') {
@@ -159,19 +80,22 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, correction, ...) {
     # output <- matrix(nrow = niter, ncol = 2)
     output <- vector(mode = 'list', length = niter)
 
-    if('SpatialPolygons' %in% class(obj1_shift)) {
-      if('SpatialPolygons' %in% class(obj_sp2)) {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                    id = suppressWarnings(names(obj1_aux)))
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[[i]] <- pk_dist12(obj1_aux, obj2_rshift,
-                                   bbox = obj1_aux@bbox,
-                                   correction = correction,
-                                   ...)
-        }
+    for(i in seq_len(niter)) {
+      obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
+      if(correction == 'torus') {
+        output[[i]] <- pk_dist12(obj1_shift, obj2_rshift,
+                                 bbox = obj1_shift@bbox,
+                                 correction = 'none',
+                                 ...)
+      } else {
+        obj1_aux <- obj1_shift
+        obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                  id = suppressWarnings(names(obj1_aux)))
+        attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+        output[[i]] <- pk_dist12(obj1_aux, obj2_rshift,
+                                 bbox = obj1_aux@bbox,
+                                 correction = correction,
+                                 ...)
       }
     }
 
@@ -183,19 +107,21 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, correction, ...) {
 
     output <- vector(mode = 'list', length = niter)
 
-    if('SpatialPolygons' %in% class(obj1_shift)) {
-      if('SpatialPolygons' %in% class(obj_sp2)) {
-        for(i in seq_len(niter)) {
-          obj2_rshift <- poly_rf2(obj_sp2, obj1_shift@bbox)
-          obj1_aux <- obj1_shift
-          obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
-                                    id = suppressWarnings(names(obj1_aux)))
-          attr(obj1_aux, "bbox") <- obj2_rshift@bbox
-          output[[i]] <- pk_area12(obj1_aux, obj2_rshift,
-                                   ...,
-                                   bbox = obj1_aux@bbox,
-                                   correction = correction)
-        }
+    for(i in seq_len(niter)) {
+      if(correction == 'torus') {
+        output[[i]] <- pk_area12(obj1_shift, obj2_rshift,
+                                 bbox = obj1_shift@bbox,
+                                 correction = 'none',
+                                 ...)
+      } else {
+        obj1_aux <- obj1_shift
+        obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+                                  id = suppressWarnings(names(obj1_aux)))
+        attr(obj1_aux, "bbox") <- obj2_rshift@bbox
+        output[[i]] <- pk_area12(obj1_aux, obj2_rshift,
+                                 bbox = obj1_aux@bbox,
+                                 correction = correction,
+                                 ...)
       }
     }
 

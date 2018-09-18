@@ -26,19 +26,6 @@ psa_psam <- function(x) {
   x <- append(class(x), "psa_psam")
 }
 
-#' Class of the output from \code{\link{psat_mc}} when the test statistic is \code{\link{pf12}}
-#'
-#' Internal use
-#'
-#' @param x Output from \code{\link{psat_mc}}
-#'
-#' @aliases psa_pf12
-#'
-#' @export
-#'
-psa_pf12 <- function(x) {
-  x <- append(class(x), "psa_pf12")
-}
 
 #' Class of the output from \code{\link{psat_mc}} when the test statistic is \code{\link{pk_dist12}}
 #' or \code{\link{pk_area12}}
@@ -84,16 +71,6 @@ print.psa_test <- function(x, ...) {
     cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
     cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
     cat(paste('p-value:', round(x$p_value, 8), "\n", sep = " "))
-  }
-
-  if('psa_pf12' %in% class(x)) {
-    cat(format('Monte Carlo Polygons Spatial Association Test', ...), '\n', '\n')
-    cat(paste('Confidence level:', paste(conf, "%", sep = ""), "\n", sep = " "))
-    cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
-    cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
-    cat(paste('Decision:', "\n", sep = " "))
-    cat(paste('\t', 'F12:', ifelse(x$rejects[1], 'Reject H0', 'Do not reject H0'), '\n', sep = " "))
-    cat(paste('\t', 'F21:', ifelse(x$rejects[2], 'Reject H0', 'Do not reject H0'), sep = " "))
   }
 
   if('psa_pk12' %in% class(x)) {
@@ -236,53 +213,6 @@ plot.psa_test <- function(x, ...) {
     }
 
   } else {
-    if('psa_pf12' %in% class(x)) {
-
-      if (requireNamespace("ggplot2", quietly = TRUE)) {
-        df_gg <- x$mc_ts[,1:3]
-        names(df_gg) <- c('r', 'f_inf', 'f_up')
-        df_gg$obs <- x$sample_ts[,2]
-        df_gg$func <- 'F[12](d)'
-
-        df_gg2 <- x$mc_ts[,c(1, 4, 5)]
-        names(df_gg2) <- c('r', 'f_inf', 'f_up')
-        df_gg2$func <- 'F[21](d)'
-        df_gg2$obs <- x$sample_ts[,3]
-
-        df_gg <- data.table::rbindlist(df_gg, df_gg2)
-
-        rm(df_gg2)
-
-        ggplot2::ggplot(data = df_gg) +
-          ggplot2::geom_line(ggplot2::aes(x = r, y = obs)) +
-          ggplot2::geom_ribbon(ggplot2::aes(x = r, ymin = f_inf, ymax = f_up),
-                               fill = 'blue', alpha = .2) +
-          theme_tpsa() +
-          ggplot2::labs(x = 'Distance', y = '') +
-          ggplot2::facet_grid(func~., labeller = ggplot2::label_parsed)
-      } else {
-        par(mfrow = c(1, 2))
-        plot(x$sample_ts[, 1], x$sample_ts[, 2],
-             type = 'l',
-             xlab = 'Distance',
-             ylab = '',
-             main = expression(F['12'](d)),
-             bty = 'l', ...)
-        grid()
-        lines(x$mc_ts$r, x$mc_ts$f12_up, lty = 2, col = 'red')
-        lines(x$mc_ts$r, x$mc_ts$f12_inf, lty = 2, col = 'red')
-        plot(x$sample_ts[, 1], x$sample_ts[, 3],
-             type = 'l',
-             xlab = 'Distance',
-             ylab = '',
-             main = expression(F['21'](d)),
-             bty = 'l', ...)
-        grid()
-        lines(x$mc_ts$r, x$mc_ts$f21_up, lty = 2, col = 'red')
-        lines(x$mc_ts$r, x$mc_ts$f21_inf, lty = 2, col = 'red')
-        par(mfrow = c(1, 1))
-      }
-    } else {
       if (requireNamespace("ggplot2", quietly = TRUE)) {
         df_gg <- x$mc_ts[,1:3]
         names(df_gg) <- c('r', 'k_inf', 'k_up')
@@ -310,52 +240,4 @@ plot.psa_test <- function(x, ...) {
         lines(x$mc_ts$r, x$mc_ts$k12_inf, lty = 2, col = 'red')
       }
     }
-  }
-}
-
-#' Class of the output from \code{\link{psat_mc}}
-#'
-#' Internal use
-#'
-#' @param x Output from \code{\link{pf12}}
-#'
-#' @aliases pF
-#'
-#' @export
-#'
-pF <- function(x) {
-  x <- append(class(x), "pF")
-}
-
-#' Plot method for \code{\link{pF}}
-#'
-#' @param x a \code{\link{pF}} object
-#' @param ... inherits from \code{plot}.
-#'
-#' @aliases plot.pF
-#' @method plot pF
-#'
-#' @importFrom graphics legend lines
-#'
-#' @export
-plot.pF <- function(x, ...) {
-  if(!"pF" %in% class(x)) stop('Invalid object')
-
-  plot(x[,1], x[,2],
-       type = 'l', xlab = 'd',
-       ylab = '', lty = 2,
-       col = 'red',
-       ylim = c(min(x[,2], x[,3]),
-                max(x[,2], x[,3])),
-       ...)
-
-  lines(x[,1], x[,2], lty = 3,
-        col = 'blue',
-        ...)
-
-  legend('bottomright', col = c('red', 'blue'),
-         lty = c(2, 3),
-         legend = c((expression(F[12])), (expression(F[21]))),
-         bg = 'n',
-         bty = 'n')
 }
