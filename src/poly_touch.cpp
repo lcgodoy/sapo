@@ -6,8 +6,8 @@ using namespace Rcpp;
 
 //' Polygons that touch a bbox
 //'
-//' @param objsp a \code{SpatialPolygon}
-//' @param bbox_tot a \code{numeric matrix}
+//' @param x a \code{SpatialPolygon}
+//' @param bbox a \code{numeric matrix}
 //'
 //' @export
 //'

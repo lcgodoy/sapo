@@ -7,9 +7,9 @@
 poly_touch(x, bbox)
 }
 \arguments{
-\item{objsp}{a \code{SpatialPolygon}}
+\item{x}{a \code{SpatialPolygon}}
 
-\item{bbox_tot}{a \code{numeric matrix}}
+\item{bbox}{a \code{numeric matrix}}
 }
 \description{
 Polygons that touch a bbox
