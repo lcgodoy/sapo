@@ -238,7 +238,6 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
 
 }
 
-
 #' \eqn{K_{1,2}} - distance-based adaptation for polygons
 #'
 #' @description test statistic for the MC test.
@@ -342,16 +341,29 @@ pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
           'adjust' = {
             tot_1 <- length(obj_sp1)
             tot_2 <- length(obj_sp2)
+            nm_1 <- row.names(obj_sp1)
+            nm_2 <- row.names(obj_sp2)
+            nm_aux_1 <- as.character(1:length(obj_sp1))
+            nm_aux_2 <- as.character(1:length(obj_sp2))
+            row.names(obj_sp1) <- nm_aux_1
+            row.names(obj_sp2) <- nm_aux_2
             for(i in seq_along(r)) {
               obj_sp1_bf <- rgeos::gBuffer(obj_sp1, width = r[i], byid = T)
               obj_sp2_bf <- rgeos::gBuffer(obj_sp2, width = r[i], byid = T)
+              row.names(obj_sp1_bf) <- nm_1
+              row.names(obj_sp2_bf) <- nm_2
               obj_sp1_bf <- rgeos::gArea(rgeos::gIntersection(obj_sp1_bf,
                                                               limits_to_sp(obj_sp1@bbox),byid = T),
                                          byid = T)/rgeos::gArea(obj_sp1_bf, byid = T)
               obj_sp2_bf <- rgeos::gArea(rgeos::gIntersection(obj_sp2_bf,
                                                               limits_to_sp(obj_sp2@bbox),
                                                               byid = T), byid = T)/rgeos::gArea(obj_sp2_bf, byid = T)
+
+              row.names(obj_sp1) <- nm_1
+              row.names(obj_sp2) <- nm_2
               mat_dist <- sp_ID_dist(obj_sp1, obj_sp2, ...)
+              row.names(obj_sp1) <- nm_aux_1
+              row.names(obj_sp2) <- nm_aux_2
               w <- (tot_1*obj_sp1_bf + tot_2*obj_sp2_bf)/(tot_1 + tot_2)
               output$pk12[i] <- (sum((mat_dist < r[i])/w[col(mat_dist)]))*(N/(tot_1*tot_2))
             }
