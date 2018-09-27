@@ -30,6 +30,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// poly_touch
+S4 poly_touch(S4& x, arma::mat& bbox);
+RcppExport SEXP _tpsa_poly_touch(SEXP xSEXP, SEXP bboxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type bbox(bboxSEXP);
+    rcpp_result_gen = Rcpp::wrap(poly_touch(x, bbox));
+    return rcpp_result_gen;
+END_RCPP
+}
 // poly_rf2
 S4 poly_rf2(const S4& objsp, NumericMatrix& bbox_max);
 RcppExport SEXP _tpsa_poly_rf2(SEXP objspSEXP, SEXP bbox_maxSEXP) {
@@ -87,6 +99,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_tpsa_PolyDist", (DL_FUNC) &_tpsa_PolyDist, 2},
     {"_tpsa_PolyInter", (DL_FUNC) &_tpsa_PolyInter, 2},
+    {"_tpsa_poly_touch", (DL_FUNC) &_tpsa_poly_touch, 2},
     {"_tpsa_poly_rf2", (DL_FUNC) &_tpsa_poly_rf2, 2},
     {"_tpsa_shift_aux", (DL_FUNC) &_tpsa_shift_aux, 7},
     {"_tpsa_poly_shift", (DL_FUNC) &_tpsa_poly_shift, 2},
