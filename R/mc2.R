@@ -85,8 +85,8 @@ psat_mc2 <- function(obj_sp1, obj_sp2, n_sim = 99L,
 
   if(ts != 'psam') {
     if(is.null(r_max) | is.null(r_min)) {
-      r_x <- bbox[1,2] - bbox[1,1]
-      r_y <- bbox[2,2] - bbox[2,1]
+      r_x <- unique_bbox[1,2] - unique_bbox[1,1]
+      r_y <- unique_bbox[2,2] - unique_bbox[2,1]
     }
 
     if(is.null(r_max)) {
