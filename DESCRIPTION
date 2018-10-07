@@ -1,7 +1,7 @@
 Package: tpsa
 Type: Package
 Title: Testing Polygons Spatial Association
-Version: 0.1.01
+Version: 0.2.0
 Date: 2018-08-13
 Authors@R: person("Godoy", "Lucas", email = "lucasdac.godoy@gmail.com",
   role = c("aut", "cre"))
