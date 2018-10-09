@@ -46,9 +46,9 @@ karea <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox,
 
   r <- seq(from = r_min, to = r_max, by = by)/2
 
-  if(r[length(r)] != r_max/2) {
-    r <- c(r, r_max/2)
-  }
+  # if(r[length(r)] != r_max/2) {
+  #   r <- c(r, r_max/2)
+  # }
 
   output <- data.frame(r = r, pk12 = rep(NA, length(r)))
 
@@ -130,9 +130,9 @@ kdist <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox,
 
   r <- seq(from = r_min, to = r_max, by = by)
 
-  if(r[length(r)] != r_max) {
-    r <- c(r, r_max)
-  }
+  # if(r[length(r)] != r_max) {
+  #   r <- c(r, r_max)
+  # }
 
   output <- data.frame(r = r, pk12 = rep(NA, length(r)))
 
