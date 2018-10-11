@@ -160,6 +160,8 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
                                       correction = correction, ...))
     }
 
+    output$mc_ts <- c(output$mc_ts, output$sample_ts)
+
     if(alternative == "two_sided") {
       output$p_value <- min(mean(output$sample_ts <= output$mc_ts), mean(output$sample_ts >= output$mc_ts))
     }
@@ -202,6 +204,8 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
     }
 
     p_value <- vector(mode = 'numeric', length = nrow(output$sample_ts))
+
+    mc_aux <- rbind(mc_aux, output$sample_ts)
 
     if(alternative == "two_sided") {
       output$mc_ts <- data.frame(r = unique(mc_aux$r),
@@ -283,6 +287,8 @@ psat_mc <- function(obj_sp1, obj_sp2, n_sim = 500L,
     }
 
     p_value <- vector(mode = 'numeric', length = nrow(output$sample_ts))
+
+    mc_aux <- rbind(mc_aux, output$sample_ts)
 
     if(alternative == "two_sided") {
       output$mc_ts <- data.frame(r = unique(mc_aux$r),
