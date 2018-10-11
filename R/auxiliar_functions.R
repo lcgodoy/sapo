@@ -23,7 +23,9 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, correction, ...) {
         output[i] <- psam(obj1_shift, obj2_rshift, correction = 'none', ...)
       } else {
         obj1_aux <- obj1_shift
-        obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+        lm_sp <- limits_to_sp(obj2_rshift@bbox)
+        lm_sp@proj4string <- obj2_rshift@proj4string
+        obj1_aux <- gIntersection(obj1_shift, lm_sp, byid = T,
                                   id = suppressWarnings(names(obj1_aux)))
         attr(obj1_aux, "bbox") <- obj2_rshift@bbox
         output[i] <- psam(obj1_aux, obj2_rshift, correction = correction, ...)
@@ -45,7 +47,9 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, correction, ...) {
                                  ...)
       } else {
         obj1_aux <- obj1_shift
-        obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+        lm_sp <- limits_to_sp(obj2_rshift@bbox)
+        lm_sp@proj4string <- obj2_rshift@proj4string
+        obj1_aux <- gIntersection(obj1_shift, lm_sp, byid = T,
                                   id = suppressWarnings(names(obj1_aux)))
         attr(obj1_aux, "bbox") <- obj2_rshift@bbox
         output[[i]] <- pk_dist12(obj1_aux, obj2_rshift,
@@ -72,7 +76,9 @@ mc_iterations <- function(obj1_shift, obj_sp2, niter, ts, correction, ...) {
                                  ...)
       } else {
         obj1_aux <- obj1_shift
-        obj1_aux <- gIntersection(obj1_shift, limits_to_sp(obj2_rshift@bbox), byid = T,
+        lm_sp <- limits_to_sp(obj2_rshift@bbox)
+        lm_sp@proj4string <- obj2_rshift@proj4string
+        obj1_aux <- gIntersection(obj1_shift, lm_sp, byid = T,
                                   id = suppressWarnings(names(obj1_aux)))
         attr(obj1_aux, "bbox") <- obj2_rshift@bbox
         output[[i]] <- pk_area12(obj1_aux, obj2_rshift,

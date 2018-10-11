@@ -419,13 +419,13 @@ S4 torus_corr(S4& objsp, Rcpp::NumericMatrix& bbox_tot) {
 
   S4 output = clone(objsp);
 
-  S4 projString("CRS");
+  // S4 projString("CRS");
 
-  String charac_aux = NA_STRING;
+  // String charac_aux = NA_STRING;
 
-  projString.slot("projargs") = charac_aux;
+  // projString.slot("projargs") = charac_aux;
 
-  output.slot("proj4string") = projString;
+  // output.slot("proj4string") = projString;
 
   output.slot("plotOrder") =  pOrder;
 
