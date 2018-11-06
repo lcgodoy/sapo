@@ -106,7 +106,7 @@ S4 poly_shift_noid(S4& obj_sp, NumericMatrix& bbox_tot) {
 
     out2.slot("labpt") = vec_aux;
 
-    String ID = 2*(i + 1);
+    String ID = (i + 1 + n_poly);
 
     // ID.push_front("a ");
 
@@ -155,7 +155,7 @@ S4 poly_shift_noid(S4& obj_sp, NumericMatrix& bbox_tot) {
 
     out3.slot("labpt") = vec_aux;
 
-    String ID = 3*(i + 1);
+    String ID = (i + 1 + 2*n_poly);
 
     // ID.push_front("a ");
 
@@ -209,7 +209,7 @@ S4 poly_shift_noid(S4& obj_sp, NumericMatrix& bbox_tot) {
 
     out4.slot("labpt") = vec_aux;
 
-    String ID = 4*(i + 1);
+    String ID = (i + 1 + 3*n_poly);
 
     // ID.push_front("a ");
 
