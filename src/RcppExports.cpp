@@ -71,6 +71,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// poly_shift_noid
+S4 poly_shift_noid(S4& obj_sp, NumericMatrix& bbox_tot);
+RcppExport SEXP _tpsa_poly_shift_noid(SEXP obj_spSEXP, SEXP bbox_totSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4& >::type obj_sp(obj_spSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix& >::type bbox_tot(bbox_totSEXP);
+    rcpp_result_gen = Rcpp::wrap(poly_shift_noid(obj_sp, bbox_tot));
+    return rcpp_result_gen;
+END_RCPP
+}
 // poly_shift
 S4 poly_shift(S4& obj_sp, NumericMatrix& bbox_tot);
 RcppExport SEXP _tpsa_poly_shift(SEXP obj_spSEXP, SEXP bbox_totSEXP) {
@@ -102,6 +114,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_tpsa_poly_touch", (DL_FUNC) &_tpsa_poly_touch, 2},
     {"_tpsa_poly_rf2", (DL_FUNC) &_tpsa_poly_rf2, 2},
     {"_tpsa_shift_aux", (DL_FUNC) &_tpsa_shift_aux, 7},
+    {"_tpsa_poly_shift_noid", (DL_FUNC) &_tpsa_poly_shift_noid, 2},
     {"_tpsa_poly_shift", (DL_FUNC) &_tpsa_poly_shift, 2},
     {"_tpsa_torus_corr", (DL_FUNC) &_tpsa_torus_corr, 2},
     {NULL, NULL, 0}

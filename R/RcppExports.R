@@ -62,6 +62,20 @@ shift_aux <- function(obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_
 #' @importFrom stats runif
 #' @return an object from class \code{SpatialPolygons}
 #'
+poly_shift_noid <- function(obj_sp, bbox_tot) {
+    .Call('_tpsa_poly_shift_noid', PACKAGE = 'tpsa', obj_sp, bbox_tot)
+}
+
+#' Create copies of a set of polygons
+#'
+#' @param obj_sp object from class \code{SpatialPolygons}
+#' @param bbox_tot Boundary box from class \code{matrix}
+#'
+#' @description Auxiliar function.
+#'
+#' @importFrom stats runif
+#' @return an object from class \code{SpatialPolygons}
+#'
 poly_shift <- function(obj_sp, bbox_tot) {
     .Call('_tpsa_poly_shift', PACKAGE = 'tpsa', obj_sp, bbox_tot)
 }
