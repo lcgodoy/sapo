@@ -5,7 +5,7 @@
 \title{\eqn{K_{1,2}} - area-based adaptation for polygons - Modified}
 \usage{
 pk_area12(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL,
-  bbox, correction = "none", ...)
+  bbox, distances = NULL, correction = "none", ...)
 }
 \arguments{
 \item{obj_sp1}{a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object}
@@ -22,6 +22,8 @@ the function \code{default = max(polygonds distance matrix)}.}
 between each \code{r} value.}
 
 \item{bbox}{a \code{matrix} giving the region of study.}
+
+\item{distances}{vector of distances to evaluete the function}
 
 \item{correction}{a \code{character} giving the edge correction to be used. Possible
 entries are \code{c('none', 'torus', 'guard', 'adjust')}.}

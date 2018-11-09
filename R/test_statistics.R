@@ -56,6 +56,7 @@ psam <- function(obj_sp1, obj_sp2, correction = 'none', ...) {
 #' @param by a \code{numeric} value that represents the how many units
 #' between each \code{r} value.
 #' @param bbox a \code{matrix} giving the region of study.
+#' @param distances vector of distances to evaluete the function
 #' @param correction a \code{character} giving the edge correction to be used. Possible
 #' entries are \code{c('none', 'torus', 'guard', 'adjust')}.
 #' @param ... parameters associated with edge correction.
@@ -65,28 +66,39 @@ psam <- function(obj_sp1, obj_sp2, correction = 'none', ...) {
 #'
 #' @export
 #'
-pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox,
+pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL,
+                      by = NULL, bbox, distances = NULL,
                       correction = 'none', ...) {
   # mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
 
   # if(sp::is.projected(obj_sp1)) obj_sp1 <- rgeos::gBuffer(obj_sp1, byid = T, width = 0)
   # if(sp::is.projected(obj_sp2)) obj_sp2 <- rgeos::gBuffer(obj_sp2, byid = T, width = 0)
 
-  if(is.null(r_max) | is.null(r_min)) {
-    r_x <- bbox[1,2] - bbox[1,1]
-    r_y <- bbox[2,2] - bbox[2,1]
-  }
+  if(!is.null(distances)) {
+    r <- distances
+  } else {
+    if(is.null(r_max) | is.null(r_min)) {
+      r_x <- bbox[1,2] - bbox[1,1]
+      r_y <- bbox[2,2] - bbox[2,1]
+    }
 
-  if(is.null(r_max)) {
-    r_max <- .15*max(r_x, r_y)
-  }
+    if(is.null(r_max)) {
+      r_max <- .15*max(r_x, r_y)
+    }
 
-  if(is.null(r_min)) {
-    r_min <- .05*max(r_x, r_y)
-  }
+    if(is.null(r_min)) {
+      r_min <- .05*max(r_x, r_y)
+    }
 
-  if(is.null(by)) {
-    by <- (r_max - r_min)/sqrt(12)
+    if(is.null(by)) {
+      by <- (r_max - r_min)/sqrt(12)
+    }
+
+    r <- seq(from = r_min, to = r_max, by = by)
+
+    if(r[length(r)] != r_max) {
+      r <- c(r, r_max)
+    }
   }
 
   # this calculations can be done outside the function
@@ -251,6 +263,7 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
 #' @param by a \code{numeric} value that represents the how many units
 #' between each \code{r} value.
 #' @param bbox a \code{matrix} giving the region of study
+#' @param distances vector of distances to evaluete the function
 #' @param correction a \code{character} giving the edge correction to be used. Possible
 #' entries are \code{c('none', 'torus', 'guard', 'adjust')}.
 #' @param ... parameters associated with edge correction.
@@ -260,33 +273,39 @@ pk_area12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, b
 #'
 #' @export
 #'
-pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL, r_max = NULL, by = NULL, bbox,
+pk_dist12 <- function(obj_sp1, obj_sp2, r_min = NULL,
+                      r_max = NULL, by = NULL,
+                      bbox, distances = NULL,
                       correction = 'none', ...) {
-
-  if(is.null(r_max) | is.null(r_min)) {
-    r_x <- bbox[1,2] - bbox[1,1]
-    r_y <- bbox[2,2] - bbox[2,1]
-  }
-
-  if(is.null(r_max)) {
-    r_max <- .15*max(r_x, r_y)
-  }
-
-  if(is.null(r_min)) {
-    r_min <- .05*max(r_x, r_y)
-  }
-
-  if(is.null(by)) {
-    by <- (r_max - r_min)/sqrt(12)
-  }
 
   # this calculations can be done outside the function
   N <- (bbox[1,2] - bbox[1,1])*(bbox[2,2] - bbox[2,1])
 
-  r <- seq(from = r_min, to = r_max, by = by)
+  if(!is.null(distances)) {
+    r <- distances
+  } else {
+    if(is.null(r_max) | is.null(r_min)) {
+      r_x <- bbox[1,2] - bbox[1,1]
+      r_y <- bbox[2,2] - bbox[2,1]
+    }
 
-  if(r[length(r)] != r_max) {
-    r <- c(r, r_max)
+    if(is.null(r_max)) {
+      r_max <- .15*max(r_x, r_y)
+    }
+
+    if(is.null(r_min)) {
+      r_min <- .05*max(r_x, r_y)
+    }
+
+    if(is.null(by)) {
+      by <- (r_max - r_min)/sqrt(12)
+    }
+
+    r <- seq(from = r_min, to = r_max, by = by)
+
+    if(r[length(r)] != r_max) {
+      r <- c(r, r_max)
+    }
   }
 
   output <- data.frame(r = r, pk12 = rep(NA, length(r)))
