@@ -4,7 +4,7 @@
 \alias{psam}
 \title{Polygons' Spatial Association Measure}
 \usage{
-psam(obj_sp1, obj_sp2, correction = "none", ...)
+psam(obj_sp1, obj_sp2, correction = "none", hausdorff = FALSE)
 }
 \arguments{
 \item{obj_sp1}{a \code{SpatialPolygons} or \code{SpatialPointsDataFrame} object}
@@ -13,6 +13,9 @@ psam(obj_sp1, obj_sp2, correction = "none", ...)
 
 \item{correction}{a \code{character} giving the edge correction to be used. Possible
 entries are \code{c('none', 'torus', 'guard')}.}
+
+\item{hausdorff}{a \code{boolean}. If \code{TRUE}, then the Hausdorff distance is used.
+Otherwise the Euclidean distance is used. Default is \code{FALSE}.}
 
 \item{...}{parameters associated with edge correction.}
 }
