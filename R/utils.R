@@ -254,8 +254,8 @@ h_euc <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...) 
             mat_dist1 <- sp_ID_dist(obj_sp1, obj_sp2_t)
             mat_dist2 <- sp_ID_dist(obj_sp1_t, obj_sp2)
             for(i in seq_along(distances)) {
-              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_2
-              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_1
+              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_1
+              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_2
               output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
             }
           },
@@ -270,8 +270,8 @@ h_euc <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...) 
             mat_dist1 <- sp_ID_dist(obj_sp1_ng, obj_sp2)
             mat_dist2 <- sp_ID_dist(obj_sp1, obj_sp2_ng)
             for(i in seq_along(distances)) {
-              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_2
-              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_1
+              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_1
+              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_2
               output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
             }
           },
@@ -356,8 +356,8 @@ h_haus <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
             mat_dist1 <- sp_ID_haus(obj_sp1, obj_sp2_t)
             mat_dist2 <- sp_ID_haus(obj_sp1_t, obj_sp2)
             for(i in seq_along(distances)) {
-              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_2
-              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_1
+              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_1
+              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_2
               output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
             }
           },
@@ -372,8 +372,8 @@ h_haus <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
             mat_dist1 <- sp_ID_haus(obj_sp1_ng, obj_sp2)
             mat_dist2 <- sp_ID_haus(obj_sp1, obj_sp2_ng)
             for(i in seq_along(distances)) {
-              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_2
-              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_1
+              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_1
+              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_2
               output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
             }
           },
