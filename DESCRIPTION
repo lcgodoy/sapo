@@ -1,8 +1,8 @@
 Package: tpsa
 Type: Package
 Title: Testing Polygons Spatial Association
-Version: 0.2.0
-Date: 2018-08-13
+Version: 1.0.0
+Date: 2019-08-15
 Authors@R: person("Godoy", "Lucas", email = "lucasdac.godoy@gmail.com",
   role = c("aut", "cre"))
 Description: This is a developing R package whose main purpose is to create a 
@@ -21,7 +21,7 @@ Imports:
     methods,
     stats
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: knitr,
   rmarkdown,
   ggplot2 (>= 2.1)
