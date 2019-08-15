@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{sp_ID_haus}
 \alias{sp_ID_haus}
-\title{Hausdorff Distance Matrix - ID}
+\title{Hausdorff Distance Matrix - ID (Method 1)}
 \usage{
 sp_ID_haus(obj_sp1, obj_sp2)
 }

@@ -5,7 +5,8 @@
 #'
 #' @section tpsa functions and methods:
 #' \itemize{
-#'   \item psat_mc
+#'   \item psam_mc
+#'   \item gof_mc
 #'   \item summary
 #'   \item plot
 #' }

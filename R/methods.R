@@ -1,135 +1,71 @@
-#' Class of the output from \code{\link{psat_mc}}
+#' \code{\link{mc_psa}} class
 #'
 #' Internal use
 #'
-#' @param x Output from \code{\link{psat_mc}}
+#' @param x Output from \code{\link{psam_mc}} or
+#' \code{\link{gof_mc}}
 #'
-#' @aliases psa_test
 #'
-#' @export
-#'
-psa_test <- function(x) {
-  x <- append(class(x), "psa_test")
+mc_psa <- function(x) {
+  x <- append(class(x), "mc_psa")
 }
 
-#' Class of the output from \code{\link{psat_mc}} when the test statistic is \code{\link{psam}}
+#' \code{\link{psam_mc}} class
 #'
 #' Internal use
 #'
-#' @param x Output from \code{\link{psat_mc}}
+#' @param x Output from \code{\link{psam_mc}}
 #'
-#' @aliases psa_psam
 #'
-#' @export
-#'
-psa_psam <- function(x) {
-  x <- append(class(x), "psa_psam")
+psam_test <- function(x) {
+  x <- append(class(x), "psam_test")
 }
 
-
-#' Class of the output from \code{\link{psat_mc}} when the test statistic is \code{\link{pk_dist12}}
-#' or \code{\link{pk_area12}}
+#' \code{\link{gof_mc}} class
 #'
 #' Internal use
 #'
-#' @param x Output from \code{\link{psat_mc}}
+#' @param x Output from \code{\link{gof_mc}}
 #'
-#' @aliases psa_pk12
-#'
-#' @export
-#'
-psa_pk12 <- function(x) {
-  x <- append(class(x), "psa_pk12")
+gof_test <- function(x) {
+  x <- append(class(x), "gof_test")
 }
 
-#' Print method for \code{\link{psa_test}}
+#' Print method for \code{\link{mc_psa}}
 #'
-#' @param x A \code{\link{psa_test}} object
-#' @param ... inherits from \code{print} and \code{format}
+#' @param x A \code{\link{mc_psa}} object
+#' @param ... inherits from \code{print}.
 #'
-#' @aliases print print.psa_test
-#' @method print psa_test
+#' @method print mc_psa
 #' @export
 #'
-print.psa_test <- function(x, ...) {
-  if(!"psa_test" %in% class(x)) stop('Invalid object')
+print.mc_psa <- function(x, ...) {
+  conf <- round((1 - x$alpha)*100, digits = 4)
 
-  conf <- (1 - x$alpha)*100 %>%
-    round(digits = 4)
+  if(F) print(x$mc_sample, ...)
 
-  alt <- switch(x$alternative,
-                "two_sided" = "The sets have some kind of association.",
-                "attraction" = "The sets attracts each other.",
-                "repulsion" = "The sets repulses each other.")
-
-  if('psa_psam' %in% class(x)) {
-
-    if(FALSE) invisible(a <- print(x, ...))
-
-    cat(format('Monte Carlo Polygons Spatial Association Test', ...), '\n', '\n')
-    cat(paste('Confidence level:', paste(conf, "%", sep = ""), "\n", sep = " "))
-    cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
-    cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
-    cat(paste('p-value:', round(x$p_value, 8), "\n", sep = " "))
-  }
-
-  if('psa_pk12' %in% class(x)) {
-    cat(format('Monte Carlo Polygons Spatial Association Test', ...), '\n', '\n')
-    cat(paste('Confidence level:', paste(conf, "%", sep = ""), "\n", sep = " "))
-    cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
-    cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
-    cat(paste('Decision:', "\n", sep = " "))
-    cat(paste('\t', 'K12:', ifelse(x$rejects, 'Reject H0', 'Do not reject H0'), sep = " "))
-  }
-
+  cat('Monte Carlo Polygons Spatial Association Test', '\n', '\n')
+  cat('Null hypothesis:', "The polygons' sets are independent.", "\n")
+  cat('p-value:', round(x$p_value, 8), "\n")
 }
 
-#' Summary method for \code{\link{psa_test}}
+#' Summary method for \code{\link{mc_psa}}
 #'
-#' @param object a \code{\link{psa_test}} object
-#' @param ... inherits from \code{print}, \code{format}, and \code{summary}
+#' @param object a \code{\link{mc_psa}} object
+#' @param ... inherits from \code{summary}.
 #'
-#' @aliases summary summary.psa_test
-#' @method summary psa_test
+#' @method summary mc_psa
 #' @export
-summary.psa_test <- function(object, ...) {
-  if(!"psa_test" %in% class(object)) stop('Invalid object')
-
-  if(FALSE) a <- summary(object, ...)
-
-  if('psa_psam' %in% class(object)) {
-    alt <- switch(object$alternative,
-                  "two_sided" = "The sets have some kind of association.",
-                  "attraction" = "The sets attracts each other.",
-                  "repulsion" = "The sets repulses each other.")
-
-    conf <- (1 - object$alpha)*100 %>%
-      round(digits = 4)
-
-    if(object$alternative == "two_sided") {
-      dec <- ifelse(object$p_value < (object$alpha/2),
-                    "Reject the null hypothesis",
-                    "Do not reject the null hypothesis")
-    } else {
-      dec <- ifelse(object$p_value < object$alpha,
-                    "Reject the null hypothesis",
-                    "Do not reject the null hypothesis")
-    }
-
-    cat("Monte Carlo Polygons Spatial Association Test", '\n \n')
-    cat(paste('Null hypothesis:', "The sets are independent.", "\n", sep = " "))
-    cat(paste('Alternative hypothesis:', alt, "\n", sep = " "))
-    cat(paste('Decision:', dec,
-              "with confidence level of",
-              paste(conf, "%", sep = ""),
-              "\n", sep = " "))
-    cat(paste('p-value:', round(object$p_value, 6), "\n", sep = " "))
-  } else {
-    cat('Summary not implemented for this test statistic yet.')
-  }
+summary.mc_psa <- function(object, ...) {
+  cat("Monte Carlo Polygons Spatial Association Test", '\n \n')
+  cat('Test Statistic Summary \n')
+  cat('\t')
+  summary(object$mc_sample, ...)
+  cat('\n')
+  cat('p-value:', round(object$p_value, 6), "\n")
 }
 
-#' PLot method for \code{\link{psa_test}}
+#' Plot method for \code{\link{mc_psa}}
 #'
 #' @param x a \code{\link{psa_test}} object
 #' @param ... inherits from \code{plot}
@@ -140,104 +76,97 @@ summary.psa_test <- function(object, ...) {
 #' @method plot psa_test
 #' @export
 #'
-plot.psa_test <- function(x, ...) {
-  if(!"psa_test" %in% class(x)) stop('Invalid object')
-
-  if('psa_psam' %in% class(x)) {
-    if(x$alternative == 'two_sided') {
-      if (requireNamespace("ggplot2", quietly = TRUE)) {
-        ggplot2::ggplot() +
-          ggplot2::geom_line(ggplot2::aes(x = x$mc_ts), stat = 'density') +
-          ggplot2::geom_area(ggplot2::aes(x = x$mc_ts,
-                                 fill = {x$mc_ts >= quantile(x$mc_ts, 1 - (x$alpha/2))}
-          ), stat = 'density'
-          ) +
-          ggplot2::geom_area(ggplot2::aes(x$mc_ts,
-                                 fill = {x$mc_ts <= quantile(x$mc_ts, x$alpha/2)}
-          ), stat = 'density'
-          ) +
-          ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
-          ggplot2::geom_vline(xintercept = x$sample_ts,
-                              linetype = 'dashed', col = 'red') +
-          theme_tpsa() +
-          ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
-          ggplot2::ggtitle(label = 'Monte Carlo Test',
-                           subtitle = 'Polygons Spatial Association Measure') +
-          ggplot2::guides(fill = F)
-      } else {
-        stop('install ggplot2 to visualize the plot.')
-      }
-    } else {
-      if(x$alternative == 'repulsion') {
-        if (requireNamespace("ggplot2", quietly = TRUE)) {
-          ggplot2::ggplot() +
-            ggplot2::geom_line(ggplot2::aes(x = x$mc_ts), stat = 'density') +
-            ggplot2::geom_area(ggplot2::aes(x = x$mc_ts,
-                                            fill = {x$mc_ts >= quantile(x$mc_ts, 1 - x$alpha)}
-            ), stat = 'density'
-            ) +
-            ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
-            ggplot2::geom_vline(xintercept = x$sample_ts,
-                                linetype = 'dashed', col = 'red') +
-            theme_tpsa() +
-            ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
-            ggplot2::ggtitle(label = 'Monte Carlo Test',
-                             subtitle = 'Polygons Spatial Association Measure') +
-            ggplot2::guides(fill = F)
-        } else {
-          stop('install ggplot2 to visualize the plot.')
-        }
-      } else {
-        if(x$alternative == 'attraction') {
-          if (requireNamespace("ggplot2", quietly = TRUE)) {
-            ggplot2::ggplot() +
-              ggplot2::geom_line(ggplot2::aes(x = x$mc_ts), stat = 'density') +
-              ggplot2::geom_area(ggplot2::aes(x = x$mc_ts,
-                                              fill = {x$mc_ts <= quantile(x$mc_ts, x$alpha)}
-              ), stat = 'density'
-              ) +
-              ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
-              ggplot2::geom_vline(xintercept = x$sample_ts,
-                                  linetype = 'dashed', col = 'red') +
-              theme_tpsa() +
-              ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
-              ggplot2::ggtitle(label = 'Monte Carlo Test',
-                               subtitle = 'Polygons Spatial Association Measure') +
-              ggplot2::guides(fill = F)
-
-          } else {
-            stop('install ggplot2 to visualize the plot.')
-          }
-        }
-      }
-    }
-
-  } else {
-      if (requireNamespace("ggplot2", quietly = TRUE)) {
-        df_gg <- x$mc_ts[,1:3]
-        names(df_gg) <- c('r', 'k_inf', 'k_up')
-        df_gg$obs <- x$sample_ts[,2]
-        df_gg$func <- 'K[12](d)'
-
-        ggplot2::ggplot(data = df_gg) +
-          ggplot2::geom_line(ggplot2::aes(x = r, y = obs)) +
-          ggplot2::geom_line(ggplot2::aes(x = r, y = k_inf),
-                             color = 'red', linetype = 2, inherit.aes = F) +
-          ggplot2::geom_line(ggplot2::aes(x = r, y = k_up),
-                             color = 'red', linetype = 2, inherit.aes = F) +
-          theme_tpsa() +
-          ggplot2::labs(x = 'Distance', y = expression(K[12](d))) +
-          ggplot2::ggtitle(label = 'Monte Carlo Test')
-      } else {
-        plot(x$sample_ts[, 1], x$sample_ts[, 2],
-             type = 'l',
-             xlab = 'Distance',
-             ylab = '',
-             main = expression(K['12'](d)),
-             bty = 'l', ...)
-        grid()
-        lines(x$mc_ts$r, x$mc_ts$k12_up, lty = 2, col = 'red')
-        lines(x$mc_ts$r, x$mc_ts$k12_inf, lty = 2, col = 'red')
-      }
-    }
-}
+# plot.psa_test <- function(x, ...) {
+#   if('psam_test' %in% class(x)) {
+#     if(x$alternative == 'two_sided') {
+#       if (requireNamespace("ggplot2", quietly = TRUE)) {
+#         ggplot2::ggplot() +
+#           ggplot2::geom_line(ggplot2::aes(x = x$mc_sample), stat = 'density') +
+#           ggplot2::geom_area(ggplot2::aes(x = x$mc_sample,
+#                                           fill = {x$mc_sample >= quantile(x$mc_sample, 1 - (x$alpha/2))}
+#           ), stat = 'density'
+#           ) +
+#           ggplot2::geom_area(ggplot2::aes(x$mc_sample,
+#                                           fill = {x$mc_sample <= quantile(x$mc_sample, x$alpha/2)}
+#           ), stat = 'density'
+#           ) +
+#           ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
+#           ggplot2::geom_vline(xintercept = x$sample_ts,
+#                               linetype = 'dashed', col = 'red') +
+#           theme_tpsa() +
+#           ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
+#           ggplot2::ggtitle(label = 'Monte Carlo Test',
+#                            subtitle = 'Polygons Spatial Association Measure') +
+#           ggplot2::guides(fill = F)
+#       } else {
+#         stop('install ggplot2 to visualize the plot.')
+#       }
+#     } else {
+#       if(x$alternative == 'repulsion') {
+#         if (requireNamespace("ggplot2", quietly = TRUE)) {
+#           ggplot2::ggplot() +
+#             ggplot2::geom_line(ggplot2::aes(x = x$mc_sample), stat = 'density') +
+#             ggplot2::geom_area(ggplot2::aes(x = x$mc_sample,
+#                                             fill = {x$mc_sample >= quantile(x$mc_sample, 1 - x$alpha)}
+#             ), stat = 'density'
+#             ) +
+#             ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
+#             ggplot2::geom_vline(xintercept = x$sample_ts,
+#                                 linetype = 'dashed', col = 'red') +
+#             theme_tpsa() +
+#             ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
+#             ggplot2::ggtitle(label = 'Monte Carlo Test',
+#                              subtitle = 'Polygons Spatial Association Measure') +
+#             ggplot2::guides(fill = F)
+#         } else {
+#           stop('install ggplot2 to visualize the plot.')
+#         }
+#       } else {
+#         if(x$alternative == 'attraction') {
+#           if (requireNamespace("ggplot2", quietly = TRUE)) {
+#             ggplot2::ggplot() +
+#               ggplot2::geom_line(ggplot2::aes(x = x$mc_sample), stat = 'density') +
+#               ggplot2::geom_area(ggplot2::aes(x = x$mc_sample,
+#                                               fill = {x$mc_sample <= quantile(x$mc_sample, x$alpha)}
+#               ), stat = 'density'
+#               ) +
+#               ggplot2::scale_fill_manual(values = c('FALSE' = 'transparent', 'TRUE' = '#ff000080')) +
+#               ggplot2::geom_vline(xintercept = x$sample_ts,
+#                                   linetype = 'dashed', col = 'red') +
+#               theme_tpsa() +
+#               ggplot2::labs(x = 'Test Statistic', y = 'Kernel density') +
+#               ggplot2::ggtitle(label = 'Monte Carlo Test',
+#                                subtitle = 'Polygons Spatial Association Measure') +
+#               ggplot2::guides(fill = F)
+#
+#           } else {
+#             stop('install ggplot2 to visualize the plot.')
+#           }
+#         }
+#       }
+#     }
+#
+#   } else {
+#     if (requireNamespace("ggplot2", quietly = TRUE)) {
+#       ggplot2::ggplot() +
+#         ggplot2::geom_line(ggplot2::aes(x = x$distances, y = x$mc_sample)) +
+#         ggplot2::geom_line(ggplot2::aes(x = r, y = k_inf),
+#                            color = 'red', linetype = 2, inherit.aes = F) +
+#         ggplot2::geom_line(ggplot2::aes(x = r, y = k_up),
+#                            color = 'red', linetype = 2, inherit.aes = F) +
+#         theme_tpsa() +
+#         ggplot2::labs(x = 'Distance', y = expression(K[12](d))) +
+#         ggplot2::ggtitle(label = 'Monte Carlo Test')
+#     } else {
+#       plot(x$sample_ts[, 1], x$sample_ts[, 2],
+#            type = 'l',
+#            xlab = 'Distance',
+#            ylab = '',
+#            main = expression(K['12'](d)),
+#            bty = 'l', ...)
+#       grid()
+#       lines(x$mc_sample$r, x$mc_sample$k12_up, lty = 2, col = 'red')
+#       lines(x$mc_sample$r, x$mc_sample$k12_inf, lty = 2, col = 'red')
+#     }
+#   }
+# }
