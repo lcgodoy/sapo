@@ -426,8 +426,8 @@ h_haus <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
 #'
 #' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
 #' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-#' @param correction a \code{character} giving the edge correction to be used. Possible
-#' entries are \code{c('none', 'torus', 'guard', 'adjust')}.
+# @param correction a \code{character} giving the edge correction to be used. Possible
+# entries are \code{c('none', 'torus', 'guard', 'adjust')}.
 #' @param distances a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
 #' \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
 #' observed inside the \code{unique_bbox}.
@@ -439,7 +439,7 @@ h_haus <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
 #'
 #' @return \code{numeric vector}.
 h_area <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...) {
-  distances <- distances/2
+  distances <- distances
   output <- vector(mode = 'numeric', length = length(distances))
   N <- (unique_bbox[1,2] - unique_bbox[1,1])*(unique_bbox[2,2] - unique_bbox[2,1])
 
