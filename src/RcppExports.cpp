@@ -6,6 +6,21 @@
 
 using namespace Rcpp;
 
+// covariog_aux
+double covariog_aux(const double h, const arma::vec dists, const arma::vec resp, const double tol, const int n_xy);
+RcppExport SEXP _tpsa_covariog_aux(SEXP hSEXP, SEXP distsSEXP, SEXP respSEXP, SEXP tolSEXP, SEXP n_xySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type h(hSEXP);
+    Rcpp::traits::input_parameter< const arma::vec >::type dists(distsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec >::type resp(respSEXP);
+    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_xy(n_xySEXP);
+    rcpp_result_gen = Rcpp::wrap(covariog_aux(h, dists, resp, tol, n_xy));
+    return rcpp_result_gen;
+END_RCPP
+}
 // mean_vec
 arma::vec mean_vec(arma::vec& x);
 RcppExport SEXP _tpsa_mean_vec(SEXP xSEXP) {
@@ -96,6 +111,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_tpsa_covariog_aux", (DL_FUNC) &_tpsa_covariog_aux, 5},
     {"_tpsa_mean_vec", (DL_FUNC) &_tpsa_mean_vec, 1},
     {"_tpsa_poly_rf2", (DL_FUNC) &_tpsa_poly_rf2, 2},
     {"_tpsa_poly_shift", (DL_FUNC) &_tpsa_poly_shift, 2},

@@ -4,9 +4,18 @@
 \alias{psam_mc}
 \title{Polygons Spatial Association Test - PSAM}
 \usage{
-psam_mc(obj_sp1, obj_sp2, n_sim = 499L, unique_bbox = NULL,
-  alpha = 0.01, alternative = "two_sided", correction = "none",
-  fixed = FALSE, hausdorff = F, ...)
+psam_mc(
+  obj_sp1,
+  obj_sp2,
+  n_sim = 499L,
+  unique_bbox = NULL,
+  alpha = 0.01,
+  alternative = "two_sided",
+  correction = "none",
+  fixed = FALSE,
+  hausdorff = F,
+  ...
+)
 }
 \arguments{
 \item{obj_sp1}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}

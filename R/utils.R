@@ -19,6 +19,41 @@ limits_to_sp <- function(b_box) {
   return(out)
 }
 
+#' b(P1, P2, r) function
+#'
+#' Internal use
+#'
+#' @param r \code{numeric scalar} a distance
+#' @param poly_1 \code{SpatialPolygons} - Polygon pattern 1
+#' @param poly_2 \code{SpatialPolygons} - Polygon pattern 2
+#' @param n_1 \code{numeric vector} - number of polygons in pattern 1
+#' @param n_2 \code{numeric vector} - number of polygons in pattern 1
+#'
+#' @return \code{numeric scaler}
+b_12 <- function(r, poly_1, poly_2, n_1, n_2) {
+  poly_1bf <- rgeos::gBuffer(poly_1, width = r, byid = TRUE)
+  areas_2 <- sapply(poly_2@polygons, function(x) x@area)
+  ids_1 <- seq_len(n_1)
+  ids_2 <- seq_len(n_2)
+  ids <- expand.grid(ids_1, ids_2)
+
+  out <- mapply(FUN = function(i, j, p1, p2, a2) {
+    if(!rgeos::gIsValid(p2[j]))
+      itsc <- NULL
+    else
+      itsc <- suppressWarnings(rgeos::gIntersection(p1[i], p2[j], checkValidity = 0))
+    if(is.null(itsc))
+      0 else
+        itsc@polygons[[1]]@area/a2[j]
+  }, i = ids[,1], j = ids[,2],
+  MoreArgs = list(
+    p1 = poly_1bf,
+    p2 = poly_2,
+    a2 = areas_2
+  ))
+  return(sum(out))
+}
+
 #' Polygons' Random Shift
 #'
 #' @param obj_sp object from class \code{SpatialPolygons}
@@ -438,126 +473,25 @@ h_haus <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
 #' @param ... parameters for test statistics functions
 #'
 #' @return \code{numeric vector}.
-h_area <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...) {
-  distances <- distances
-  output <- vector(mode = 'numeric', length = length(distances))
+h_area <- function(obj_sp1, obj_sp2, distances, H, unique_bbox, ...) {
+  tot_1 <- length(obj_sp1)
+  tot_2 <- length(obj_sp2)
+
+  # total area
   N <- (unique_bbox[1,2] - unique_bbox[1,1])*(unique_bbox[2,2] - unique_bbox[2,1])
 
-  switch (correction,
-          'none' = {
-            tot_1 <- rgeos::gArea(obj_sp1)
-            tot_2 <- rgeos::gArea(obj_sp2)
-            for(i in seq_along(distances)) {
-              aux <- rgeos::gBuffer(obj_sp2, width = distances[i])
-              aux <- rgeos::gIntersection(aux, obj_sp1, byid = T)
-              if(is.null(aux)) {
-                areas_1 <- 0
-              } else {
-                areas_1 <- rgeos::gArea(aux)
-              }
-              rm(aux)
+  # vector to receive the ouput variable
+  output <- vector(mode = "numeric", length = length(distances))
 
-              aux <- rgeos::gBuffer(obj_sp1, width = distances[i])
-              aux <- rgeos::gIntersection(aux, obj_sp2, byid = T)
-              if(is.null(aux)) {
-                areas_2 <- 0
-              } else {
-                areas_2 <- rgeos::gArea(aux)
-              }
-
-              k12 <- tot_1*areas_2
-              k21 <- tot_2*areas_1
-              output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
-            }
-          },
-          'torus' = {
-            tot_1 <- rgeos::gArea(obj_sp1)
-            tot_2 <- rgeos::gArea(obj_sp2)
-            for(i in seq_along(distances)) {
-              obj_sp1_t <- torus_corr(obj_sp1, unique_bbox)
-              obj_sp2_t <- torus_corr(obj_sp2, unique_bbox)
-              aux <- rgeos::gBuffer(obj_sp1_t, width = distances[i], byid = F)
-              aux <- rgeos::gIntersection(aux, obj_sp2, byid = T)
-              if(is.null(aux)) {
-                areas_1 <- 0
-              } else {
-                # row.names(aux) <- stringr::str_extract(string = row.names(aux), pattern = '^[^\\s]+')
-                areas_1 <- rgeos::gArea(aux)
-              }
-
-              aux <- rgeos::gBuffer(obj_sp2_t, width = distances[i], F)
-              aux <- rgeos::gIntersection(aux, obj_sp1, T)
-              if(is.null(aux)) {
-                areas_2 <- 0
-              } else {
-                areas_2 <- rgeos::gArea(aux)
-              }
-
-              k12 <- tot_1*areas_2
-              k21 <- tot_2*areas_1
-              output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
-            }
-          },
-          'guard' = {
-            new_bbox <- make_guard(obj_sp1@bbox, ...)
-            obj_sp1_ng <- rgeos::gIntersection(obj_sp1, limits_to_sp(new_bbox), byid = T)
-            obj_sp2_ng <- rgeos::gIntersection(obj_sp2, limits_to_sp(new_bbox), byid = T)
-            tot_1 <- rgeos::gArea(obj_sp1_ng)
-            tot_2 <- rgeos::gArea(obj_sp2_ng)
-            for(i in seq_along(distances)) {
-              aux <- rgeos::gBuffer(obj_sp1_ng, width = distances[i], byid = T)
-              aux <- rgeos::gIntersection(aux, obj_sp2, byid = T)
-              if(is.null(aux)) {
-                areas_1 <- 0
-              } else {
-                areas_1 <- rgeos::gArea(aux)
-              }
-              rm(aux)
-
-              aux <- rgeos::gBuffer(obj_sp2_ng, width = distances[i], byid = T)
-              aux <- rgeos::gIntersection(aux, obj_sp1, byid = T)
-              if(is.null(aux)) {
-                areas_2 <- 0
-              } else {
-                areas_2 <- rgeos::gArea(aux)
-              }
-
-              k12 <- tot_1*areas_2
-              k21 <- tot_2*areas_1
-              output[i] <- tryCatch(((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2)),
-                                    error = function(cond) {
-                                      return(NA)
-                                    })
-            }
-          },
-          'adjust' = {
-            tot_1 <- rgeos::gArea(obj_sp1)
-            tot_2 <- rgeos::gArea(obj_sp2)
-            for(i in seq_along(distances)) {
-              aux <- rgeos::gBuffer(obj_sp1, width = distances[i], byid = T)
-              prop_inside_1 <- rgeos::gArea(rgeos::gIntersection(aux, limits_to_sp(obj_sp1@bbox)))/rgeos::gArea(aux)
-              aux <- rgeos::gIntersection(aux, obj_sp2, byid = T)
-              if(is.null(aux)) {
-                areas_1 <- 0
-              } else {
-                areas_1 <- rgeos::gArea(aux)
-              }
-              rm(aux)
-
-              aux <- rgeos::gBuffer(obj_sp2, width = distances[i], byid = T)
-              prop_inside_2 <- rgeos::gArea(rgeos::gIntersection(aux, limits_to_sp(obj_sp2@bbox)))/rgeos::gArea(aux)
-              aux <- rgeos::gIntersection(aux, obj_sp1, byid = T)
-              if(is.null(aux)) {
-                areas_2 <- 0
-              } else {
-                areas_2 <- rgeos::gArea(aux)
-              }
-              rm(aux)
-              k12 <- (tot_1/prop_inside_1)*areas_2
-              k21 <- (tot_2/prop_inside_2)*areas_1
-              output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
-            }
-          })
+  for(i in seq_along(distances)) {
+    a <- suppressWarnings(b_12(r = distances[i], poly_1 = obj_sp1, poly_2 = obj_sp2,
+                               n_1 = tot_1, n_2 = tot_2))
+    b <- suppressWarnings(b_12(r = distances[i], poly_1 = obj_sp2, poly_2 = obj_sp1,
+                               n_1 = tot_2, n_2 = tot_1))
+    k12_1 <- N/(tot_1*tot_2)*a
+    k12_2 <- N/(tot_1*tot_2)*b
+    output[i] <- (tot_1*k12_1 + tot_2*k12_2)/(tot_1 + tot_2)
+  }
 
   if(H == 'L') {
     output <- sqrt(output/pi)
@@ -565,6 +499,7 @@ h_area <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
 
   return(output)
 }
+
 
 #' \eqn{H_{12}(d)}
 #'
@@ -633,6 +568,6 @@ h_func <- function(obj_sp1, obj_sp2, unique_bbox = NULL, distances = NULL,
                   h_euc(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
                 },
                 'area' = {
-                  h_area(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
+                  h_area(obj_sp1, obj_sp2, distances, H, unique_bbox, ...)
                 }))
 }

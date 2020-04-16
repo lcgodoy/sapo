@@ -4,9 +4,19 @@
 \alias{gof_mc}
 \title{Polygons Spatial Association Test - Global Envelope}
 \usage{
-gof_mc(obj_sp1, obj_sp2, n_sim = 499L, unique_bbox = NULL,
-  alpha = 0.01, correction = "none", H = "L", ts = "IMS",
-  distances = NULL, fixed = FALSE, method = "hausdorff")
+gof_mc(
+  obj_sp1,
+  obj_sp2,
+  n_sim = 499L,
+  unique_bbox = NULL,
+  alpha = 0.01,
+  correction = "none",
+  H = "L",
+  ts = "IMS",
+  distances = NULL,
+  fixed = FALSE,
+  method = "hausdorff"
+)
 }
 \arguments{
 \item{obj_sp1}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}

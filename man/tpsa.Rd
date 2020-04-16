@@ -3,7 +3,6 @@
 \docType{package}
 \name{tpsa}
 \alias{tpsa}
-\alias{tpsa-package}
 \title{tpsa: A package for testing polygons spatial association.}
 \description{
 The \code{tpsa} package provides functions, with methods to sumarise and

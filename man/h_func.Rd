@@ -4,8 +4,16 @@
 \alias{h_func}
 \title{\eqn{H_{12}(d)}}
 \usage{
-h_func(obj_sp1, obj_sp2, unique_bbox = NULL, distances = NULL,
-  method = "hausdorff", H = "L", correction = "none", ...)
+h_func(
+  obj_sp1,
+  obj_sp2,
+  unique_bbox = NULL,
+  distances = NULL,
+  method = "hausdorff",
+  H = "L",
+  correction = "none",
+  ...
+)
 }
 \arguments{
 \item{obj_sp1}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}
