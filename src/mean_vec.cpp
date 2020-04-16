@@ -16,9 +16,10 @@ using namespace Rcpp;
 arma::vec mean_vec(arma::vec& x) {
   arma::uvec idx(1);
   arma::vec y(x.size());
+  arma::vec ids_aux = arma::linspace(0, x.size());
 
   for(int i = 0; i < x.size(); i++) {
-    idx = arma::find(x != x.at(i));
+    idx = arma::find(ids_aux != ids_aux.at(i));
     y.at(i) = arma::mean(x.elem(idx));
   }
   return y;
