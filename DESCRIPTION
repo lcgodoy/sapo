@@ -17,6 +17,7 @@ Imports:
     RcppArmadillo,
     rgeos (>= 0.3-26),
     sp (>= 1.2-5),
+    sf,
     graphics,
     methods,
     stats
