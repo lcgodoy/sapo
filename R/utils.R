@@ -26,96 +26,37 @@ limits_to_sp <- function(b_box) {
 #' @param r \code{numeric scalar} a distance
 #' @param poly_1 \code{SpatialPolygons} - Polygon pattern 1
 #' @param poly_2 \code{SpatialPolygons} - Polygon pattern 2
-#' @param n_1 \code{numeric vector} - number of polygons in pattern 1
-#' @param n_2 \code{numeric vector} - number of polygons in pattern 1
 #'
 #' @return \code{numeric scaler}
-b_12 <- function(r, poly_1, poly_2, n_1, n_2) {
-  poly_1bf <- rgeos::gBuffer(poly_1, width = r, byid = TRUE)
-  areas_2 <- sapply(poly_2@polygons, function(x) x@area)
-  ids_1 <- seq_len(n_1)
-  ids_2 <- seq_len(n_2)
-  ids <- expand.grid(ids_1, ids_2)
+b_12 <- function(r, poly_1, poly_2) {
+    x <- sf::st_as_sfc(poly_1)
+    x <- sf::st_as_sfc(poly_2)
 
-  out <- mapply(FUN = function(i, j, p1, p2, a2) {
-    if(!rgeos::gIsValid(p2[j]))
-      itsc <- NULL
-    else
-      itsc <- suppressWarnings(rgeos::gIntersection(p1[i], p2[j], checkValidity = 0))
-    if(is.null(itsc))
-      0 else
-        itsc@polygons[[1]]@area/a2[j]
-  }, i = ids[,1], j = ids[,2],
-  MoreArgs = list(
-    p1 = poly_1bf,
-    p2 = poly_2,
-    a2 = areas_2
-  ))
-  return(sum(out))
-}
 
-#' Polygons' Random Shift
-#'
-#' @param obj_sp object from class \code{SpatialPolygons}
-#' @param bbox_max Boundary box from class \code{matrix}
-#'
-#' @importFrom stats runif
-#'
-#' @return an object from class \code{SpatialPolygons} randomly translated
-#'
-poly_rf <- function(obj_sp, bbox_max) {
-  range_x <- (max(obj_sp@bbox[1,]) - min(obj_sp@bbox[1,]))
-  range_y <- (max(obj_sp@bbox[2,]) - min(obj_sp@bbox[2,]))
+    xx <- vector(mode = "list",
+                 length = length(r))
 
-  bbox_max2 <- bbox_max
+    xy_bool <- vector(mode = "list",
+                      length = length(r))
 
-  bbox_max2[1,1] <- bbox_max[1,1] + range_x/2
-  bbox_max2[1,2] <- bbox_max[1,2] - range_x/2
-  bbox_max2[2,1] <- bbox_max[2,1] + range_y/2
-  bbox_max2[2,2] <- bbox_max[2,2] - range_y/2
+    intsection <- vector(mode = "list",
+                         length = length(r))
 
-  n_x <- runif(1, bbox_max2[1,1], bbox_max2[1,2])
-  n_y <- runif(1, bbox_max2[2,1], bbox_max2[2,2])
+    b12 <- vector(mode = "numeric", length = length(r))
 
-  bbox2 <- matrix(c(xmin = n_x - range_x/2,
-                    xmax = n_x + range_x/2,
-                    ymin = n_y - range_y/2,
-                    ymax = n_y + range_y/2),
-                  nrow = 2, byrow = T, dimnames = list(c("x", "y"),
-                                                       c("min", "max")))
-
-  jump_x <- bbox2[1,1] - sp::bbox(obj_sp)[1,1]
-  jump_y <- bbox2[2,1] - sp::bbox(obj_sp)[2,1]
-
-  attr(obj_sp, "bbox") <- bbox2
-
-  if(class(obj_sp) %in% 'SpatialPolygons') {
-    for(i in 1:length(obj_sp)) {
-      npolyaux <- length(obj_sp@polygons[[i]]@Polygons)
-      if(!npolyaux > 1) {
-        aux <- obj_sp@polygons[[i]]@Polygons[[1]]@coords
-        aux[,1] <- aux[,1] + jump_x
-        aux[,2] <- aux[,2] + jump_y
-        attr(obj_sp@polygons[[i]]@Polygons[[1]], "coords") <- aux
-      } else {
-        for(k in seq_along(npolyaux)) {
-          aux <- obj_sp@polygons[[i]]@Polygons[[k]]@coords
-          aux[,1] <- aux[,1] + jump_x
-          aux[,2] <- aux[,2] + jump_y
-          attr(obj_sp@polygons[[i]]@Polygons[[k]], "coords") <- aux
+    for(i in seq_along(r)) {
+        xx[[i]] <- sf::st_buffer(x = x, dist = r[i],
+                                 nQuadSegs = 5L)
+        xy_bool[[i]] <- sf::st_intersects(x = xx[[i]],
+                                          y = y,
+                                          sparse = FALSE)
+        if(any(xy_bool[[i]])) {
+            b12[i] <- sum(sf::st_area(sf::st_intersection(xx[[i]], y)))
+        } else {
+            b12[i] <- 0
         }
-      }
-
     }
-  } else {
-    aux <- obj_sp@coords
-    aux[,1] <- aux[,1] + jump_x
-    aux[,2] <- aux[,2] + jump_y
-    attr(obj_sp, "coords") <- aux
-  }
-
-  return(obj_sp)
-
+    return(b12)
 }
 
 #' Distance Matrix - ID
@@ -226,7 +167,6 @@ sp_ID_haus <- function(obj_sp1, obj_sp2) {
   return(matrix_dist)
 
 }
-
 
 #' Make Guard
 #'
@@ -474,30 +414,36 @@ h_haus <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
 #'
 #' @return \code{numeric vector}.
 h_area <- function(obj_sp1, obj_sp2, distances, H, unique_bbox, ...) {
-  tot_1 <- length(obj_sp1)
-  tot_2 <- length(obj_sp2)
+    x <- sf::st_sfc(obj_sp1)
+    y <- sf::st_sfc(obj_sp2)
 
-  # total area
-  N <- (unique_bbox[1,2] - unique_bbox[1,1])*(unique_bbox[2,2] - unique_bbox[2,1])
+    if(is.null(unique_bbox))
+        bb_xy <- sf::st_bbox(x)
 
-  # vector to receive the ouput variable
-  output <- vector(mode = "numeric", length = length(distances))
+    ## areas
+    a_d <- diff(bb_xy[c(1, 3)])*diff(bb_xy[c(2, 4)])
+    a_x <- sf::st_area(sf::st_union(x))
+    a_y <- sf::st_area(sf::st_union(y))
+    ## intensities
+    l_x <- a_x/a_d
+    l_y <- a_y/a_d
+    ## number of elements
+    n_x <- length(x)
+    n_y <- length(y)
 
-  for(i in seq_along(distances)) {
-    a <- suppressWarnings(b_12(r = distances[i], poly_1 = obj_sp1, poly_2 = obj_sp2,
-                               n_1 = tot_1, n_2 = tot_2))
-    b <- suppressWarnings(b_12(r = distances[i], poly_1 = obj_sp2, poly_2 = obj_sp1,
-                               n_1 = tot_2, n_2 = tot_1))
-    k12_1 <- N/(tot_1*tot_2)*a
-    k12_2 <- N/(tot_1*tot_2)*b
-    output[i] <- (tot_1*k12_1 + tot_2*k12_2)/(tot_1 + tot_2)
-  }
+    k12 <- vector(mode = "numeric", length = length(distances))
+    k21 <- vector(mode = "numeric", length = length(distances))
 
-  if(H == 'L') {
-    output <- sqrt(output/pi)
-  }
+    k12 <- ((l_y*n_x)^(-1))*b_12(x, y, r)
+    k21 <- ((l_x*n_y)^(-1))*b_12(x, y, r)
 
-  return(output)
+    out <- (n_x*k12 + n_y*k12)/(n_x + n_y)
+    
+    if(H == 'L') {
+        out <- sqrt(out/pi)
+    }
+
+    return(out)
 }
 
 
@@ -556,8 +502,9 @@ h_func <- function(obj_sp1, obj_sp2, unique_bbox = NULL, distances = NULL,
   }
 
   if(is.null(distances)) {
-    max_d <- sqrt((unique_bbox[1, 2] - unique_bbox[1, 1])^2 + (unique_bbox[2, 2] - unique_bbox[2, 1])^2)
-    distances <- seq(from = .05*max_d, to = .2*max_d, length.out = 16L)
+      max_d <- sqrt((unique_bbox[1, 2] - unique_bbox[1, 1])^2 +
+                    (unique_bbox[2, 2] - unique_bbox[2, 1])^2)
+      distances <- seq(from = .05*max_d, to = .2*max_d, length.out = 16L)
   }
 
   return(switch(method,
@@ -570,4 +517,221 @@ h_func <- function(obj_sp1, obj_sp2, unique_bbox = NULL, distances = NULL,
                 'area' = {
                   h_area(obj_sp1, obj_sp2, distances, H, unique_bbox, ...)
                 }))
+}
+
+#' Fix distance matrix containing broken polygons
+#'
+#' @description fix a polygons' distance matrix based on a given method.
+#'
+#' @param x distance matrix
+#' @param method method used to fix. The options are "min", "max", "mean", "rnd_poly", "rnd_dist", "min_norm", "max_norm", "hybrid", "hyb_center", "hybrid_nc", "old_min"
+#' @return a distance matrix
+fix_dist <- function(x, method = "rnd_poly") {
+    ## cleaning row names
+    rownames(x) <- trimws(rownames(x))
+    row_nms <- gsub("t", "", rownames(x))
+    ## verifying if there are broken polygons
+    if(method == "nothing") {
+        x_out <- x
+    } else {
+        
+    if(any(duplicated(row_nms))) {
+        ## extracting duplicated rows (broken polys)
+        extr <- unique(row_nms[duplicated(row_nms)])
+        ids  <- which(row_nms %in% extr)
+
+        ## auxiliar matrix without broken polygons
+        x2 <- x[-ids, ]
+
+        ## auxiliar matrix that will store the "right" distances
+        x_extr <- matrix(nrow = length(extr), ncol = ncol(x2))
+        rownames(x_extr) <- extr
+        colnames(x_extr) <- colnames(x)
+
+        ## auxiliar vector to filter the rows of the matrix
+        ids_aux <- vector(mode = "list", length = length(extr))
+
+        if(method == "min") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, min, na.rm = TRUE)
+                }
+            } 
+        } else if(method == "old_min") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, min, na.rm = TRUE)
+            } 
+        } else if(method == "max") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, max, na.rm = TRUE)
+                }
+            }
+        } else if(method == "mean") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, mean, na.rm = TRUE)
+                }
+            }
+        } else if(method == "rnd_poly") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    x_extr[i, ] <- x[sample(ids_aux[[i]], size = 1), ]
+                }
+            }
+        } else if(method == "rnd_dist") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, sample, size = 1)
+                }
+            }
+        } else if(method == "min_norm") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    norm_aux <- apply(x[ids_aux[[i]], ], 1, function(x) sqrt(sum(x^2)))
+                    x_extr[i, ] <- x[ids_aux[[i]][which.min(norm_aux)], ]
+                }
+            }
+        } else if(method == "max_norm") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    norm_aux <- apply(x[ids_aux[[i]], ], 1, function(x) sqrt(sum(x^2)))
+                    x_extr[i, ] <- x[ids_aux[[i]][which.max(norm_aux)], ]
+                }
+            }
+        } else if(method == "hybrid") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    if(nrow(x[ids_aux[[i]], ]) > 2) {
+                        norm_aux <- apply(x[ids_aux[[i]], ], 1, function(x) sqrt(sum(x^2)))
+                        x_extr[i, ] <- x[ids_aux[[i]][which.min(norm_aux)], ]
+                    } else {
+                        x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, min, na.rm = TRUE)
+                    }
+                }
+            }
+        } else if(method == "hyb_center") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    if(nrow(x[ids_aux[[i]], ]) > 2) {
+                        x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, median, na.rm = TRUE)
+                    } else {
+                        x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, mean, na.rm = TRUE)
+                    }
+                }
+            }
+        } else if(method == "hybrid_nc") {
+            for(i in seq_along(extr)) {
+                ids_aux[[i]] <- which(row_nms %in% extr[i])
+                if(any(grepl("t", rownames(x)[ids_aux[[i]]]))) {
+                    ids_aux[[i]] <- ids_aux[[i]][grepl("t", rownames(x)[ids_aux[[i]]])]
+                    x_extr[i, ] <- x[ids_aux[[i]], ]
+                } else {
+                    if(nrow(x[ids_aux[[i]], ]) > 2) {
+                        norm_aux <- apply(x[ids_aux[[i]], ], 1, function(x) sqrt(sum(x^2)))
+                        x_extr[i, ] <- x[ids_aux[[i]][
+                            which.min(abs(norm_aux - median(norm_aux)))],
+                            ]
+                    } else {
+                        x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, mean, na.rm = TRUE)
+                    }
+                }
+            }
+        } else {
+            stop("Provide a valid method!")
+        }
+        x_out <- rbind(x2, x_extr)
+    } else {
+        x_out <- x
+    }
+    }
+    
+    return(x_out)
+}
+
+#' Calculates the psam
+#'
+#' @description Computes the PSAM based on a distance matrix based on a method
+#' to deal with broken polygons (represented by duplicated rows)
+#'
+#' .. content for \details{} ..
+#' @title PSAM - Dist. Mat.
+#' @param x a distance matrix
+#' @param method method to deal with broken polygons
+#' @return scalar psam
+#' @author lcgodoy
+calc_psam <- function(x, method = "rnd_poly") {
+    x <- fix_dist(x, method = method)
+    min_row <- apply(x, 1, min)
+    min_col <- apply(x, 2, min)
+    (sum(min_row) + sum(min_col))/(length(min_col) + length(min_row))
+}
+
+#' \eqn{h_{12}(t)}
+#' 
+#' @description Computes the \eqn{h_{12}} (K or L) based on a distance matrix based on a method
+#'
+#' @param x distance matrix
+#' @param method method to deal with broken polygons
+#' @param L logical scalar indicating if the L function should be used instead
+#' @param dists vector of distances to compute \eqn{h_{12}(t)}.
+#' @return a numeric vector
+calc_h <- function(x, method = "min",
+                   L = FALSE,
+                   dists = NULL) {
+    x <- fix_dist(x, method = method)
+    n <- nrow(x)
+    m <- ncol(x)
+
+    if(is.null(dists)) dists <- seq(from = .05*sqrt(2),
+                                    to   = .2*sqrt(2),
+                                    length.out = 15L)
+    
+    h12 <- vector(mode = "numeric", length = length(dists))
+
+    for(i in seq_along(h12)) {
+        h12[i] <- sum(x <= dists[i])/(n*m)
+    }
+
+    if(L)
+        return(sqrt(h12/pi))
+    else
+        return(h12)
 }
