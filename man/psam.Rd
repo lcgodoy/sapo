@@ -16,8 +16,6 @@ entries are \code{c('none', 'torus', 'guard')}.}
 
 \item{hausdorff}{a \code{boolean}. If \code{TRUE}, then the Hausdorff distance is used.
 Otherwise the Euclidean distance is used. Default is \code{FALSE}.}
-
-\item{...}{parameters associated with edge correction.}
 }
 \value{
 a \code{numeric} \code{scalar} with the polygons' spatial

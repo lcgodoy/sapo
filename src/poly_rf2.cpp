@@ -7,12 +7,11 @@ using namespace Rcpp;
 //' Polygons' Random Shift - 2
 //'
 //' @param objsp object from class \code{SpatialPolygons}
-//' @param bbox_max Boundary box from class \code{matrix}
 //'
 //' @return an object from class \code{SpatialPolygons} randomly translated
 //'
 // [[Rcpp::export]]
-S4 poly_rf2(const S4& objsp, NumericMatrix& bbox_max) {
+S4 poly_rf2(const S4& objsp) {
 
   NumericMatrix bbox_obj = objsp.slot("bbox");
 
@@ -21,37 +20,52 @@ S4 poly_rf2(const S4& objsp, NumericMatrix& bbox_max) {
   double range_x = bbox_obj(0,1);
   double range_y = bbox_obj(1,1);
 
-  range_x = (range_x - bbox_obj(0,0));
-  range_y = (range_y - bbox_obj(1,0));
-
-  NumericMatrix max_bbox = clone(bbox_max);
-
-  max_bbox(0,0) = max_bbox(0,0) + (range_x/2);
-  max_bbox(0,1) = max_bbox(0,1) - (range_x/2);
-  max_bbox(1,0) = max_bbox(1,0) + (range_y/2);
-  max_bbox(1,1) = max_bbox(1,1) - (range_y/2);
+  range_x = (range_x - bbox_obj(0, 0));
+  range_y = (range_y - bbox_obj(1, 0));
 
   double n_x = Rcpp::runif(1)[0];
   double n_y = Rcpp::runif(1)[0];
 
-  n_x = max_bbox(0,0) + (max_bbox(0,1) - max_bbox(0,0))*n_x;
-  n_y = max_bbox(1,0) + (max_bbox(1,1) - max_bbox(1,0))*n_y;
+  n_x = bbox_obj(0, 0) + (bbox_obj(0, 1) - bbox_obj(0, 0))*n_x;
+  n_y = bbox_obj(1, 0) + (bbox_obj(1, 1) - bbox_obj(1, 0))*n_y;
 
   NumericMatrix bbox_new(2,2);
 
-  bbox_new(0,0) = n_x - range_x/2;
-  bbox_new(0,1) = n_x + range_x/2;
-  bbox_new(1,0) = n_y - range_y/2;
-  bbox_new(1,1) = n_y + range_y/2;
+  IntegerVector side_aux = seq(1, 4);
+  int side = sample(side_aux, 1, false)[0];
 
+  double jump_x, jump_y;
+  
+  if(side == 1) {
+    bbox_new(0, 0) = n_x;
+    bbox_new(0, 1) = n_x + range_x;
+    bbox_new(1, 0) = n_y;
+    bbox_new(1, 1) = n_y + range_y;
+  } else if(side == 2) {
+     bbox_new(0, 0) = n_x - range_x;
+     bbox_new(0, 1) = n_x;
+     bbox_new(1, 0) = n_y;
+     bbox_new(1, 1) = n_y + range_y;
+  } else if(side == 3) {
+     bbox_new(0, 0) = n_x - range_x;
+     bbox_new(0, 1) = n_x;
+     bbox_new(1, 0) = n_y - range_y;
+     bbox_new(1, 1) = n_y;
+  } else {
+     bbox_new(0, 0) = n_x;
+     bbox_new(0, 1) = n_x + range_x;
+     bbox_new(1, 0) = n_y - range_y;
+     bbox_new(1, 1) = n_y;
+  }
+
+  jump_x = bbox_new(0, 0) - bbox_obj(0, 0);
+  jump_y = bbox_new(1, 0) - bbox_obj(1, 0);
+  
   CharacterVector rNames = CharacterVector::create("x", "y");
   rownames(bbox_new) = rNames;
 
   CharacterVector cNames = CharacterVector::create("min", "max");
   colnames(bbox_new) = cNames;
-
-  double jump_x = bbox_new(0,0) - bbox_obj(0,0);
-  double jump_y = bbox_new(1,0) - bbox_obj(1,0);
 
   output.slot("bbox") = bbox_new;
 
@@ -100,4 +114,3 @@ S4 poly_rf2(const S4& objsp, NumericMatrix& bbox_max) {
 
   return(output);
 }
-

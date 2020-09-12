@@ -11,7 +11,6 @@ h_func(
   distances = NULL,
   method = "hausdorff",
   H = "L",
-  correction = "none",
   ...
 )
 }
@@ -33,9 +32,6 @@ to evalueate \eqn{H}. Also, there is an option of using areas. Options available
 
 \item{H}{a \code{character} indicating the function to be used. Possible entries are:
 \code{'K'} or \code{'L'}.}
-
-\item{correction}{a \code{character} giving the edge correction to be used. Possible
-entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
 
 \item{...}{parameters for test statistics functions}
 }

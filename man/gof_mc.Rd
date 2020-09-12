@@ -10,9 +10,8 @@ gof_mc(
   n_sim = 499L,
   unique_bbox = NULL,
   alpha = 0.01,
-  correction = "none",
   H = "L",
-  ts = "IMS",
+  ts = "SMAD",
   distances = NULL,
   fixed = FALSE,
   method = "hausdorff"
@@ -31,14 +30,11 @@ that contains both sets}
 
 \item{alpha}{a \code{numeric} indicating the confidence level.}
 
-\item{correction}{a \code{character} giving the edge correction to be used. Possible
-entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
-
 \item{H}{a \code{character} indicating the function to be used. Possible entries are:
 \code{'K'} or \code{'L'}.}
 
 \item{ts}{a \code{character} associated to a test statistic. Inputs acepted:
-\code{c('IM', 'MAD', 'SIM', 'SMAD', 'IMAC', 'MADAC')}.}
+\code{c('IM', 'MAD', 'SIM', 'SMAD', 'IMDQ', 'MADDQ')}.}
 
 \item{distances}{a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
 \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
@@ -51,8 +47,6 @@ shift or the first will be fixed in half of iterations and then the other one. \
 \item{method}{a \code{character} specifying which kind of distance will be used
 to evalueate \eqn{H}. Also, there is an option of using areas. Options available:
 \code{c('hausdorff', 'euclidean', 'area')}.}
-
-\item{...}{parameters for test statistics functions}
 }
 \value{
 a list from class \code{\link{gof_test}}, with values: \describe{

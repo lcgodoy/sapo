@@ -4,12 +4,10 @@
 \alias{poly_rf2}
 \title{Polygons' Random Shift - 2}
 \usage{
-poly_rf2(objsp, bbox_max)
+poly_rf2(objsp)
 }
 \arguments{
 \item{objsp}{object from class \code{SpatialPolygons}}
-
-\item{bbox_max}{Boundary box from class \code{matrix}}
 }
 \value{
 an object from class \code{SpatialPolygons} randomly translated

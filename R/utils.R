@@ -30,8 +30,7 @@ limits_to_sp <- function(b_box) {
 #' @return \code{numeric scaler}
 b_12 <- function(r, poly_1, poly_2) {
     x <- sf::st_as_sfc(poly_1)
-    x <- sf::st_as_sfc(poly_2)
-
+    y <- sf::st_as_sfc(poly_2)
 
     xx <- vector(mode = "list",
                  length = length(r))
@@ -197,8 +196,6 @@ make_guard <- function(bbox, guard_perc = 0.125) {
 #'
 #' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
 #' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-#' @param correction a \code{character} giving the edge correction to be used. Possible
-#' entries are \code{c('none', 'torus', 'guard', 'adjust')}.
 #' @param distances a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
 #' \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
 #' observed inside the \code{unique_bbox}.
@@ -209,86 +206,19 @@ make_guard <- function(bbox, guard_perc = 0.125) {
 #' @param ... parameters for test statistics functions
 #'
 #' @return \code{numeric vector}.
-h_euc <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...) {
-  N <- (unique_bbox[1,2] - unique_bbox[1,1])*(unique_bbox[2,2] - unique_bbox[2,1])
-  output <- vector(mode = 'numeric', length = length(distances))
-  switch (correction,
-          'none' = {
-            tot_1 <- length(obj_sp1)
-            tot_2 <- length(obj_sp2)
-            mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
-            for(i in seq_along(distances)) {
-              output[i] <- (N/(tot_1*tot_2))*sum(mat_dist < distances[i], na.rm = T)
-            }
-          },
-          'torus' = {
-            tot_1 <- length(obj_sp1)
-            tot_2 <- length(obj_sp2)
-            obj_sp1_t <- torus_corr(obj_sp1, unique_bbox)
-            obj_sp2_t <- torus_corr(obj_sp2, unique_bbox)
-            mat_dist1 <- sp_ID_dist(obj_sp1, obj_sp2_t)
-            mat_dist2 <- sp_ID_dist(obj_sp1_t, obj_sp2)
-            for(i in seq_along(distances)) {
-              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_1
-              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_2
-              output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
-            }
-          },
-          'guard' = {
-            new_bbox <- make_guard(obj_sp1@bbox, ...)
-            obj_sp1_ng <- rgeos::gIntersection(obj_sp1, limits_to_sp(new_bbox), byid = T)
-            obj_sp2_ng <- rgeos::gIntersection(obj_sp2, limits_to_sp(new_bbox), byid = T)
-            tot_1 <- length(obj_sp1_ng)
-            tot_1 <- ifelse(tot_1 == 0, 1e-10, tot_1)
-            tot_2 <- length(obj_sp2_ng)
-            tot_1 <- ifelse(tot_2 == 0, 1e-10, tot_2)
-            mat_dist1 <- sp_ID_dist(obj_sp1_ng, obj_sp2)
-            mat_dist2 <- sp_ID_dist(obj_sp1, obj_sp2_ng)
-            for(i in seq_along(distances)) {
-              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_1
-              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_2
-              output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
-            }
-          },
-          'adjust' = {
-            tot_1 <- length(obj_sp1)
-            tot_2 <- length(obj_sp2)
-            nm_1 <- row.names(obj_sp1)
-            nm_2 <- row.names(obj_sp2)
-            nm_aux_1 <- as.character(1:length(obj_sp1))
-            nm_aux_2 <- as.character(1:length(obj_sp2))
-            row.names(obj_sp1) <- nm_aux_1
-            row.names(obj_sp2) <- nm_aux_2
-            for(i in seq_along(distances)) {
-              obj_sp1_bf <- rgeos::gBuffer(obj_sp1,
-                                           width = distances[i], byid = T)
-              obj_sp2_bf <- rgeos::gBuffer(obj_sp2,
-                                           width = distances[i], byid = T)
-              row.names(obj_sp1_bf) <- nm_1
-              row.names(obj_sp2_bf) <- nm_2
-              obj_sp1_bf <- rgeos::gArea(rgeos::gIntersection(obj_sp1_bf,
-                                                              limits_to_sp(obj_sp1@bbox),byid = T),
-                                         byid = T)/rgeos::gArea(obj_sp1_bf, byid = T)
-              obj_sp2_bf <- rgeos::gArea(rgeos::gIntersection(obj_sp2_bf,
-                                                              limits_to_sp(obj_sp2@bbox),
-                                                              byid = T), byid = T)/rgeos::gArea(obj_sp2_bf, byid = T)
+h_euc <- function(obj_sp1, obj_sp2, distances, H, unique_bbox, ...) {
+    N <- diff(unique_bbox[1, ]) * diff(unique_bbox[2, ])
 
-              row.names(obj_sp1) <- nm_1
-              row.names(obj_sp2) <- nm_2
-              mat_dist <- sp_ID_dist(obj_sp1, obj_sp2)
-              row.names(obj_sp1) <- nm_aux_1
-              row.names(obj_sp2) <- nm_aux_2
-              w <- (tot_1*obj_sp1_bf + tot_2*obj_sp2_bf)/(tot_1 + tot_2)
-              output[i] <- (sum((mat_dist < distances[i])/w[col(mat_dist)]))*(N/(tot_1*tot_2))
-            }
-          }
-  )
+    output <- vector(mode = 'numeric', length = length(distances))
 
-  if(H == 'L') {
-    output <- sqrt(output/pi)
-  }
+    mat_dist <- rgeos::gDistance(obj_sp1, obj_sp2, byid = TRUE)
+    output <- calc_h(x = mat_dist, dists = distances)
+    output <- output*N
+    if(H == 'L') {
+        output <- sqrt(output/pi)
+    }
 
-  return(output)
+    return(output)
 }
 
 #' H(d) - Hausdorff Distance
@@ -299,8 +229,6 @@ h_euc <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...) 
 #'
 #' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
 #' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-#' @param correction a \code{character} giving the edge correction to be used. Possible
-#' entries are \code{c('none', 'torus', 'guard', 'adjust')}.
 #' @param distances a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
 #' \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
 #' observed inside the \code{unique_bbox}.
@@ -311,86 +239,19 @@ h_euc <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...) 
 #' @param ... parameters for test statistics functions
 #'
 #' @return \code{numeric vector}.
-h_haus <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...) {
-  N <- (unique_bbox[1,2] - unique_bbox[1,1])*(unique_bbox[2,2] - unique_bbox[2,1])
-  output <- vector(mode = 'numeric', length = length(distances))
-  switch (correction,
-          'none' = {
-            tot_1 <- length(obj_sp1)
-            tot_2 <- length(obj_sp2)
-            mat_dist <- sp_ID_haus(obj_sp1, obj_sp2)
-            for(i in seq_along(distances)) {
-              output[i] <- (N/(tot_1*tot_2))*sum(mat_dist < distances[i], na.rm = T)
-            }
-          },
-          'torus' = {
-            tot_1 <- length(obj_sp1)
-            tot_2 <- length(obj_sp2)
-            obj_sp1_t <- torus_corr(obj_sp1, unique_bbox)
-            obj_sp2_t <- torus_corr(obj_sp2, unique_bbox)
-            mat_dist1 <- sp_ID_haus(obj_sp1, obj_sp2_t)
-            mat_dist2 <- sp_ID_haus(obj_sp1_t, obj_sp2)
-            for(i in seq_along(distances)) {
-              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_1
-              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_2
-              output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
-            }
-          },
-          'guard' = {
-            new_bbox <- make_guard(obj_sp1@bbox, ...)
-            obj_sp1_ng <- rgeos::gIntersection(obj_sp1, limits_to_sp(new_bbox), byid = T)
-            obj_sp2_ng <- rgeos::gIntersection(obj_sp2, limits_to_sp(new_bbox), byid = T)
-            tot_1 <- length(obj_sp1_ng)
-            tot_1 <- ifelse(tot_1 == 0, 1e-10, tot_1)
-            tot_2 <- length(obj_sp2_ng)
-            tot_1 <- ifelse(tot_2 == 0, 1e-10, tot_2)
-            mat_dist1 <- sp_ID_haus(obj_sp1_ng, obj_sp2)
-            mat_dist2 <- sp_ID_haus(obj_sp1, obj_sp2_ng)
-            for(i in seq_along(distances)) {
-              k12 <- sum(mat_dist1 < distances[i], na.rm = T)*tot_1
-              k21 <- sum(mat_dist2 < distances[i], na.rm = T)*tot_2
-              output[i] <- ((k12 + k21)/(tot_1 + tot_2))*(N/(tot_1*tot_2))
-            }
-          },
-          'adjust' = {
-            tot_1 <- length(obj_sp1)
-            tot_2 <- length(obj_sp2)
-            nm_1 <- row.names(obj_sp1)
-            nm_2 <- row.names(obj_sp2)
-            nm_aux_1 <- as.character(1:length(obj_sp1))
-            nm_aux_2 <- as.character(1:length(obj_sp2))
-            row.names(obj_sp1) <- nm_aux_1
-            row.names(obj_sp2) <- nm_aux_2
-            for(i in seq_along(distances)) {
-              obj_sp1_bf <- rgeos::gBuffer(obj_sp1,
-                                           width = distances[i], byid = T)
-              obj_sp2_bf <- rgeos::gBuffer(obj_sp2,
-                                           width = distances[i], byid = T)
-              row.names(obj_sp1_bf) <- nm_1
-              row.names(obj_sp2_bf) <- nm_2
-              obj_sp1_bf <- rgeos::gArea(rgeos::gIntersection(obj_sp1_bf,
-                                                              limits_to_sp(obj_sp1@bbox),byid = T),
-                                         byid = T)/rgeos::gArea(obj_sp1_bf, byid = T)
-              obj_sp2_bf <- rgeos::gArea(rgeos::gIntersection(obj_sp2_bf,
-                                                              limits_to_sp(obj_sp2@bbox),
-                                                              byid = T), byid = T)/rgeos::gArea(obj_sp2_bf, byid = T)
+h_haus <- function(obj_sp1, obj_sp2, distances, H, unique_bbox, ...) {
+    N <- diff(unique_bbox[1, ]) * diff(unique_bbox[2, ])
+    output <- vector(mode = 'numeric', length = length(distances))
+    mat_dist <- rgeos::gDistance(obj_sp1, obj_sp2,
+                                 byid = TRUE,
+                                 hausdorff = TRUE)
+    output <- calc_h(x = mat_dist, dists = distances)
+    output <- output * N
+    if(H == 'L') {
+        output <- sqrt(output/pi)
+    }
 
-              row.names(obj_sp1) <- nm_1
-              row.names(obj_sp2) <- nm_2
-              mat_dist <- sp_ID_haus(obj_sp1, obj_sp2)
-              row.names(obj_sp1) <- nm_aux_1
-              row.names(obj_sp2) <- nm_aux_2
-              w <- (tot_1*obj_sp1_bf + tot_2*obj_sp2_bf)/(tot_1 + tot_2)
-              output[i] <- (sum((mat_dist < distances[i])/w[col(mat_dist)]))*(N/(tot_1*tot_2))
-            }
-          }
-  )
-
-  if(H == 'L') {
-    output <- sqrt(output/pi)
-  }
-
-  return(output)
+    return(output)
 }
 
 #' H(d) - Area-based
@@ -401,8 +262,6 @@ h_haus <- function(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
 #'
 #' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
 #' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-# @param correction a \code{character} giving the edge correction to be used. Possible
-# entries are \code{c('none', 'torus', 'guard', 'adjust')}.
 #' @param distances a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
 #' \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
 #' observed inside the \code{unique_bbox}.
@@ -419,6 +278,8 @@ h_area <- function(obj_sp1, obj_sp2, distances, H, unique_bbox, ...) {
 
     if(is.null(unique_bbox))
         bb_xy <- sf::st_bbox(x)
+    else
+        bb_xy <- as.vector(unique_bbox)
 
     ## areas
     a_d <- diff(bb_xy[c(1, 3)])*diff(bb_xy[c(2, 4)])
@@ -434,8 +295,8 @@ h_area <- function(obj_sp1, obj_sp2, distances, H, unique_bbox, ...) {
     k12 <- vector(mode = "numeric", length = length(distances))
     k21 <- vector(mode = "numeric", length = length(distances))
 
-    k12 <- ((l_y*n_x)^(-1))*b_12(x, y, r)
-    k21 <- ((l_x*n_y)^(-1))*b_12(x, y, r)
+    k12 <- ((l_y*n_x)^(-1))*b_12(x, y, distances)
+    k21 <- ((l_x*n_y)^(-1))*b_12(x, y, distances)
 
     out <- (n_x*k12 + n_y*k12)/(n_x + n_y)
     
@@ -453,8 +314,6 @@ h_area <- function(obj_sp1, obj_sp2, distances, H, unique_bbox, ...) {
 #'
 #' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
 #' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-#' @param correction a \code{character} giving the edge correction to be used. Possible
-#' entries are \code{c('none', 'torus', 'guard', 'adjust')}.
 #' @param distances a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
 #' \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
 #' observed inside the \code{unique_bbox}.
@@ -470,53 +329,53 @@ h_area <- function(obj_sp1, obj_sp2, distances, H, unique_bbox, ...) {
 #' @export
 #'
 #' @return \code{numeric vector}.
-h_func <- function(obj_sp1, obj_sp2, unique_bbox = NULL, distances = NULL,
-                   method = 'hausdorff', H = 'L', correction = 'none', ...) {
-  if((! "SpatialPolygons" %in% class(obj_sp1)) | (! "SpatialPolygons" %in% class(obj_sp2)))
-    stop("obj_sp1 and obj_sp2 must be from class 'SpatialPolygons'")
+h_func <- function(obj_sp1, obj_sp2,
+                   unique_bbox = NULL,
+                   distances = NULL,
+                   method = 'hausdorff', H = 'L', ...) {
+    if((! "SpatialPolygons" %in% class(obj_sp1)) | (! "SpatialPolygons" %in% class(obj_sp2)))
+        stop("obj_sp1 and obj_sp2 must be from class 'SpatialPolygons'")
 
-  if(length(H) > 1 | length(correction) > 1 | length(method) > 1)
-    stop('correction, method, and H should have length == 1L.')
+    if(length(H) > 1 | length(method) > 1)
+        stop(' method and H should have length == 1L.')
 
-  if(! correction %in% c('none', 'adjust', 'guard', 'torus'))
-    stop("correction must be 'none', 'adjust', 'guard' or 'torus'.")
+    if(! method %in% c('hausdorff', 'euclidean', 'area'))
+        stop("method must be 'hausdorff', 'euclidean' or 'area'.")
 
-  if(! method %in% c('hausdorff', 'euclidean', 'area'))
-    stop("method must be 'hausdorff', 'euclidean' or 'area'.")
+    if(! H %in% c('K', 'L'))
+        stop("H must be 'K' or 'L'.")
 
-  if(! H %in% c('K', 'L'))
-    stop("correction must be 'K' or 'L'.")
+    if((!is.null(unique_bbox)) & (!is.matrix(unique_bbox)))
+        stop('unique_bbox must be NULL or matrix.')
 
-  if((!is.null(unique_bbox)) & (!is.matrix(unique_bbox)))
-    stop('unique_bbox must be NULL or matrix.')
+    if(is.null(unique_bbox)) {
+        bbox_1 <- obj_sp1@bbox
+        bbox_2 <- obj_sp2@bbox
+        unique_bbox <- matrix(c(min(c(bbox_1[1, 1], bbox_2[1, 1])),
+                                max(c(bbox_1[1, 2], bbox_2[1, 2])),
+                                min(c(bbox_1[2, 1], bbox_2[2, 1])),
+                                max(c(bbox_1[2, 2], bbox_2[2, 2]))),
+                              ncol = 2, byrow = T)
+        rm(bbox_1, bbox_2)
+    }
 
-  if(is.null(unique_bbox)) {
-    bbox_1 <- obj_sp1@bbox
-    bbox_2 <- obj_sp2@bbox
-    unique_bbox <- matrix(c(min(c(bbox_1[1, 1], bbox_2[1, 1])),
-                            max(c(bbox_1[1, 2], bbox_2[1, 2])),
-                            min(c(bbox_1[2, 1], bbox_2[2, 1])),
-                            max(c(bbox_1[2, 2], bbox_2[2, 2]))),
-                          ncol = 2, byrow = T)
-    rm(bbox_1, bbox_2)
-  }
+    if(is.null(distances)) {
+        max_d <- sqrt(diff(unique_bbox[1, ])^2 +
+                      diff(unique_bbox[2, ])^2)
+        distances <- seq(from = .05*max_d, to = .2*max_d,
+                         length.out = 15L)
+    }
 
-  if(is.null(distances)) {
-      max_d <- sqrt((unique_bbox[1, 2] - unique_bbox[1, 1])^2 +
-                    (unique_bbox[2, 2] - unique_bbox[2, 1])^2)
-      distances <- seq(from = .05*max_d, to = .2*max_d, length.out = 16L)
-  }
-
-  return(switch(method,
-                'hausdorff' = {
-                  h_haus(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
-                },
-                'euclidean' = {
-                  h_euc(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
-                },
-                'area' = {
-                  h_area(obj_sp1, obj_sp2, distances, H, unique_bbox, ...)
-                }))
+    return(switch(method,
+                  "hausdorff" = {
+                      h_haus(obj_sp1, obj_sp2, distances, H, unique_bbox, ...)
+                  },
+                  "euclidean" = {
+                      h_euc(obj_sp1, obj_sp2, distances, H, unique_bbox, ...)
+                  },
+                  "area" = {
+                      h_area(obj_sp1, obj_sp2, distances, H, unique_bbox, ...)
+                  }))
 }
 
 #' Fix distance matrix containing broken polygons
@@ -526,6 +385,7 @@ h_func <- function(obj_sp1, obj_sp2, unique_bbox = NULL, distances = NULL,
 #' @param x distance matrix
 #' @param method method used to fix. The options are "min", "max", "mean", "rnd_poly", "rnd_dist", "min_norm", "max_norm", "hybrid", "hyb_center", "hybrid_nc", "old_min"
 #' @return a distance matrix
+#' @importFrom stats median
 fix_dist <- function(x, method = "rnd_poly") {
     ## cleaning row names
     rownames(x) <- trimws(rownames(x))
@@ -691,12 +551,9 @@ fix_dist <- function(x, method = "rnd_poly") {
 #' @description Computes the PSAM based on a distance matrix based on a method
 #' to deal with broken polygons (represented by duplicated rows)
 #'
-#' .. content for \details{} ..
-#' @title PSAM - Dist. Mat.
 #' @param x a distance matrix
 #' @param method method to deal with broken polygons
 #' @return scalar psam
-#' @author lcgodoy
 calc_psam <- function(x, method = "rnd_poly") {
     x <- fix_dist(x, method = method)
     min_row <- apply(x, 1, min)
@@ -735,3 +592,4 @@ calc_h <- function(x, method = "min",
     else
         return(h12)
 }
+

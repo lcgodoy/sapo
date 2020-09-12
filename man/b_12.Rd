@@ -4,7 +4,7 @@
 \alias{b_12}
 \title{b(P1, P2, r) function}
 \usage{
-b_12(r, poly_1, poly_2, n_1, n_2)
+b_12(r, poly_1, poly_2)
 }
 \arguments{
 \item{r}{\code{numeric scalar} a distance}
@@ -12,10 +12,6 @@ b_12(r, poly_1, poly_2, n_1, n_2)
 \item{poly_1}{\code{SpatialPolygons} - Polygon pattern 1}
 
 \item{poly_2}{\code{SpatialPolygons} - Polygon pattern 2}
-
-\item{n_1}{\code{numeric vector} - number of polygons in pattern 1}
-
-\item{n_2}{\code{numeric vector} - number of polygons in pattern 1}
 }
 \value{
 \code{numeric scaler}

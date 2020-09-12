@@ -9,9 +9,8 @@ psam_mc(
   obj_sp2,
   n_sim = 499L,
   unique_bbox = NULL,
-  alpha = 0.01,
+  alpha = 0.05,
   alternative = "two_sided",
-  correction = "none",
   fixed = FALSE,
   hausdorff = F,
   ...
@@ -34,9 +33,6 @@ that contains both sets}
 "repulsion", or "attraction" if you interest is  only check if the sets are independent
           or not, if the two sets repulses each other, or if the two sets attracts each other,
           respectively.}
-
-\item{correction}{a \code{character} giving the edge correction to be used. Possible
-entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
 
 \item{fixed}{a \code{boolean} indicating if the first pattern should be fixed on the toroidal
 shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or

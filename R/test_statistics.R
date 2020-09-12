@@ -8,64 +8,17 @@
 #' entries are \code{c('none', 'torus', 'guard')}.
 #' @param hausdorff a \code{boolean}. If \code{TRUE}, then the Hausdorff distance is used.
 #' Otherwise the Euclidean distance is used. Default is \code{FALSE}.
-#' @param ... parameters associated with edge correction.
 #'
 #' @return a \code{numeric} \code{scalar} with the polygons' spatial
 #'  association measure for the corresponding objects.
 #' @export
 #'
 psam <- function(obj_sp1, obj_sp2, correction = 'none', hausdorff = FALSE) {
+    mat_dist <- rgeos::gDistance(obj_sp1, obj_sp2,
+                                 byid = TRUE,
+                                 hausdorff = TRUE)
 
-  if(hausdorff) {
-    switch (correction,
-            'none' = {
-              m_dist <- sp_ID_haus(obj_sp1, obj_sp2)
-              min_row <- apply(m_dist, 1, min)
-              min_col <- apply(m_dist, 2, min)
-            },
-            'torus' = {
-              obj_sp1_t <- torus_corr(obj_sp1, obj_sp1@bbox)
-              obj_sp2_t <- torus_corr(obj_sp2, obj_sp2@bbox)
-              min_row <- apply(sp_ID_haus(obj_sp1, obj_sp2_t), 1, min)
-              min_col <- apply(sp_ID_haus(obj_sp1_t, obj_sp2), 2, min)
-            },
-            'guard' = {
-              new_bbox <- make_guard(obj_sp1@bbox, ...)
-              obj_sp1_ng <- rgeos::gIntersection(obj_sp1, limits_to_sp(new_bbox), byid = T)
-              obj_sp2_ng <- rgeos::gIntersection(obj_sp2, limits_to_sp(new_bbox), byid = T)
-              min_row <- apply(sp_ID_haus(obj_sp1_ng, obj_sp2), 1, min, na.rm = T)
-              min_col <- apply(sp_ID_haus(obj_sp1, obj_sp2_ng), 2, min, na.rm = T)
-            }
-    )
-  } else {
-    switch (correction,
-            'none' = {
-              m_dist <- sp_ID_dist(obj_sp1, obj_sp2)
-              min_row <- apply(m_dist, 1, min)
-              min_col <- apply(m_dist, 2, min)
-            },
-            'torus' = {
-              obj_sp1_t <- torus_corr(obj_sp1, obj_sp1@bbox)
-              obj_sp2_t <- torus_corr(obj_sp2, obj_sp2@bbox)
-              min_row <- apply(sp_ID_dist(obj_sp1, obj_sp2_t), 1, min)
-              min_col <- apply(sp_ID_dist(obj_sp1_t, obj_sp2), 2, min)
-            },
-            'guard' = {
-              new_bbox <- make_guard(obj_sp1@bbox, ...)
-              obj_sp1_ng <- rgeos::gIntersection(obj_sp1, limits_to_sp(new_bbox), byid = T)
-              obj_sp2_ng <- rgeos::gIntersection(obj_sp2, limits_to_sp(new_bbox), byid = T)
-              min_row <- apply(sp_ID_dist(obj_sp1_ng, obj_sp2), 1, min, na.rm = T)
-              min_col <- apply(sp_ID_dist(obj_sp1, obj_sp2_ng), 2, min, na.rm = T)
-            }
-    )
-  }
-
-  M <- (sum(min_row) + sum(min_col))/(length(min_col) + length(min_row))
-
-  rm(list = ls()[ls() != "M"])
-
-  return(M)
-
+    calc_psam(mat_dist, method = "rnd_poly")
 }
 
 #' Maximum Absolute Deviation
@@ -74,12 +27,12 @@ psam <- function(obj_sp1, obj_sp2, correction = 'none', hausdorff = FALSE) {
 #'
 #' @return \code{numeric vector}
 mad <- function(x) {
-  out <- vector(mode = 'numeric', length = nrow(x))
-  mu <- apply(x, 2, mean_vec)
-  for(i in seq_len(nrow(x))) {
-    out[i] <- max(abs(x[i, ] - mu[i, ]))
-  }
-  return(out)
+    out <- vector(mode = 'numeric', length = nrow(x))
+    mu <- apply(x, 2, mean_vec)
+    for(i in seq_len(nrow(x))) {
+        out[i] <- max(abs(x[i, ] - mu[i, ]))
+    }
+    return(out)
 }
 
 #' Studentized Maximum Absolute Deviation
@@ -88,13 +41,13 @@ mad <- function(x) {
 #'
 #' @return \code{numeric vector}
 s_mad <- function(x) {
-  out <- vector(mode = 'numeric', length = nrow(x))
-  mu <- apply(x, 2, mean_vec)
-  sd_mad <- apply(x[-nrow(x),], 2, stats::sd)
-  for(i in seq_len(nrow(x))) {
-    out[i] <- max(abs(x[i, ] - mu[i, ])/sd_mad)
-  }
-  return(out)
+    out <- vector(mode = 'numeric', length = nrow(x))
+    mu <- apply(x, 2, mean_vec)
+    sd_mad <- apply(x[-nrow(x),], 2, stats::sd)
+    for(i in seq_len(nrow(x))) {
+        out[i] <- max(abs(x[i, ] - mu[i, ])/sd_mad)
+    }
+    return(out)
 }
 
 #' Maximum Absolute Deviation with Assimetry Correction

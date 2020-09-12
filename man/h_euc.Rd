@@ -4,15 +4,12 @@
 \alias{h_euc}
 \title{H(d) - Euclidean Distance}
 \usage{
-h_euc(obj_sp1, obj_sp2, correction, distances, H, unique_bbox, ...)
+h_euc(obj_sp1, obj_sp2, distances, H, unique_bbox, ...)
 }
 \arguments{
 \item{obj_sp1}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}
 
 \item{obj_sp2}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}
-
-\item{correction}{a \code{character} giving the edge correction to be used. Possible
-entries are \code{c('none', 'torus', 'guard', 'adjust')}.}
 
 \item{distances}{a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
 \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
