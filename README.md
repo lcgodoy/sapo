@@ -4,11 +4,14 @@
 
 An approach for testing ecological patches.
 
-> P.s.: the package is under development.  
-
 ## Installation 
 
 ```r
 # install.packages('devtools')
 devtools::install_github('lcgodoy/tpsa')
 ```
+
+## Note
+
+The purpose of this package is to make available to end users a newly developed
+method which was submitted for publication.
