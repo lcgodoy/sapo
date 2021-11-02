@@ -5,11 +5,12 @@ Version: 1.0.0
 Date: 2019-08-15
 Authors@R: person("Godoy", "Lucas", email = "lucasdac.godoy@gmail.com",
   role = c("aut", "cre"))
-Description: This is a developing R package whose main purpose is to create a 
+Description: The purpose of this (under development) R package is to create a 
   statistical test to check whether two sets of polygons have a statistically
-  significan spatial association.
+  significant spatial association.
 License: GPL-3 + file LICENSE
-BugReports: https://github.com/lcgodoy/pat/issues
+BugReports: https://github.com/lcgodoy/tpsa/issues
+Encoding: UTF-8
 Depends: R (>= 3.4)
 SystemRequirements: GEOS (>= 3.4.0)
 Imports: 
