@@ -570,7 +570,7 @@ calc_psam <- function(x, method = "rnd_poly") {
 #' @param L logical scalar indicating if the L function should be used instead
 #' @param dists vector of distances to compute \eqn{h_{12}(t)}.
 #' @return a numeric vector
-calc_h <- function(x, method = "min",
+calc_h <- function(x, method = "rnd_poly",
                    L = FALSE,
                    dists = NULL) {
     x <- fix_dist(x, method = method)
