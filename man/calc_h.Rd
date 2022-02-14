@@ -4,7 +4,7 @@
 \alias{calc_h}
 \title{\eqn{h_{12}(t)}}
 \usage{
-calc_h(x, method = "min", L = FALSE, dists = NULL)
+calc_h(x, method = "rnd_poly", L = FALSE, dists = NULL)
 }
 \arguments{
 \item{x}{distance matrix}
