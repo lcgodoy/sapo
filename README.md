@@ -1,17 +1,16 @@
-[![Build Status](https://travis-ci.org/lcgodoy/tpsa.svg?branch=master)](https://travis-ci.org/lcgodoy/tpsa)
-
-# Testing Polygons Spatial Association
-
-An approach for testing ecological patches.
+# Spatial association of polygons
 
 ## Installation 
 
 ```r
 # install.packages('devtools')
-devtools::install_github('lcgodoy/tpsa')
+devtools::install_github('lcgodoy/sapo')
 ```
 
-## Note
+## Tasklist
 
-The purpose of this package is to make available to end users a newly developed
-method which was submitted for publication.
+- [ ] Move `rgeos/sp` to `sf`
+  - [ ] Toroidal shift using `sf`
+- [ ] Improve documentation
+- [ ] Move from travis to GA
+- [ ] New method
