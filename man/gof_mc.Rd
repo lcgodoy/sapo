@@ -37,7 +37,7 @@ that contains both sets}
 \code{c('IM', 'MAD', 'SIM', 'SMAD', 'IMDQ', 'MADDQ')}.}
 
 \item{distances}{a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
-\code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
+\code{NULL} then the range considered goes from 5\% to 20\% of the max distance that can be
 observed inside the \code{unique_bbox}.}
 
 \item{fixed}{a \code{boolean} indicating if the first pattern should be fixed on the toroidal
@@ -50,17 +50,17 @@ to evalueate \eqn{H}. Also, there is an option of using areas. Options available
 }
 \value{
 a list from class \code{\link{gof_test}}, with values: \describe{
-    \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
-    \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
-    \item{mc_funct}{a \code{matrix} where each line correspond to the function (\eqn{K} or \eqn{L}) estimated
-    for the Monte Carlo simulations}
-    \item{distances}{\code{numeric vector} containing the distances where mc_func were evaluated.}
-    \item{alpha}{a \code{numeric} scalar giving the significance level}
-    \item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
-  }
+\item{p_value}{a \code{numeric} scalar giving the p-value of the test}
+\item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
+\item{mc_funct}{a \code{matrix} where each line correspond to the function (\eqn{K} or \eqn{L}) estimated
+for the Monte Carlo simulations}
+\item{distances}{\code{numeric vector} containing the distances where mc_func were evaluated.}
+\item{alpha}{a \code{numeric} scalar giving the significance level}
+\item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
+}
 }
 \description{
 A Monte Carlo test to verify if two sets of polygons are
-   associated based in a global envelope of the functions
-   \eqn{K_{12}(d)} and \eqn{L_{12}(d)} using different test statistics.
+associated based in a global envelope of the functions
+\eqn{K_{12}(d)} and \eqn{L_{12}(d)} using different test statistics.
 }

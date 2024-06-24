@@ -19,7 +19,7 @@ Otherwise the Euclidean distance is used. Default is \code{FALSE}.}
 }
 \value{
 a \code{numeric} \code{scalar} with the polygons' spatial
- association measure for the corresponding objects.
+association measure for the corresponding objects.
 }
 \description{
 test statistic for the MC test.

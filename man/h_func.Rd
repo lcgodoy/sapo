@@ -23,7 +23,7 @@ h_func(
 that contains both sets}
 
 \item{distances}{a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
-\code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
+\code{NULL} then the range considered goes from 5\% to 20\% of the max distance that can be
 observed inside the \code{unique_bbox}.}
 
 \item{method}{a \code{character} specifying which kind of distance will be used

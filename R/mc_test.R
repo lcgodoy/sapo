@@ -1,41 +1,41 @@
-#' Polygons Spatial Association Test - PSAM
-#'
-#' @description A Monte Carlo test based on the test statistic \code{\link{psam}}, to verify if
-#' two sets of polygons are associated.
-#'
-#' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-#' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-#' @param n_sim an \code{integer} corresponding to the number of Monte Carlo simulations
-#'  for the test
-#' @param unique_bbox a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
-#'  that contains both sets
-#' @param alpha a \code{numeric} indicating the confidence level
-#' @param alternative a \code{character} indicating the alternative hypothesis, it can be: "two_sided",
-#' "repulsion", or "attraction" if you interest is  only check if the sets are independent
-#'           or not, if the two sets repulses each other, or if the two sets attracts each other,
-#'           respectively.
-#' @param fixed a \code{boolean} indicating if the first pattern should be fixed on the toroidal
-#' shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or
-#' \code{FALSE}, respectively.
-#' @param hausdorff a \code{boolean}. If \code{TRUE}, then the Hausdorff distance is used.
-#' Otherwise the Euclidean distance is used. Default is \code{FALSE}.
-#' @param ... parameters for test statistics functions
-#'
-#' @importFrom rgeos gIntersection
-#' @importFrom methods slot
-#' @importFrom stats quantile
-#' @import sp
-#'
-#' @return a list from class \code{\link{psam_test}}, with values: \describe{
-#'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
-#'     \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
-#'     \item{alternative}{a \code{character} giving the alternative hypothesis}
-#'     \item{alpha}{a \code{numeric} scalar giving the significance level}
-#'     \item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
-#'   }
-#'
-#' @export
-#'
+##' Polygons Spatial Association Test - PSAM
+##'
+##' @description A Monte Carlo test based on the test statistic \code{\link{psam}}, to verify if
+##' two sets of polygons are associated.
+##'
+##' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
+##' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
+##' @param n_sim an \code{integer} corresponding to the number of Monte Carlo simulations
+##'  for the test
+##' @param unique_bbox a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
+##'  that contains both sets
+##' @param alpha a \code{numeric} indicating the confidence level
+##' @param alternative a \code{character} indicating the alternative hypothesis, it can be: "two_sided",
+##' "repulsion", or "attraction" if you interest is  only check if the sets are independent
+##'           or not, if the two sets repulses each other, or if the two sets attracts each other,
+##'           respectively.
+##' @param fixed a \code{boolean} indicating if the first pattern should be fixed on the toroidal
+##' shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or
+##' \code{FALSE}, respectively.
+##' @param hausdorff a \code{boolean}. If \code{TRUE}, then the Hausdorff distance is used.
+##' Otherwise the Euclidean distance is used. Default is \code{FALSE}.
+##' @param ... parameters for test statistics functions
+##'
+##' @importFrom rgeos gIntersection
+##' @importFrom methods slot
+##' @importFrom stats quantile
+##' @import sp
+##'
+##' @return a list from class \code{\link{psam_test}}, with values: \describe{
+##'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
+##'     \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
+##'     \item{alternative}{a \code{character} giving the alternative hypothesis}
+##'     \item{alpha}{a \code{numeric} scalar giving the significance level}
+##'     \item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
+##'   }
+##'
+##' @export
+##'
 psam_mc <- function(obj_sp1, obj_sp2, n_sim = 499L,
                     unique_bbox = NULL, alpha = 0.05,
                     alternative = "two_sided", 
@@ -158,50 +158,50 @@ psam_mc <- function(obj_sp1, obj_sp2, n_sim = 499L,
     return(output)
 }
 
-#' Polygons Spatial Association Test - Global Envelope
-#'
-#' @description A Monte Carlo test to verify if two sets of polygons are
-#'    associated based in a global envelope of the functions
-#'    \eqn{K_{12}(d)} and \eqn{L_{12}(d)} using different test statistics.
-#'
-#' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-#' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
-#' @param n_sim an \code{integer} corresponding to the number of Monte Carlo simulations
-#'  for the test
-#' @param unique_bbox a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
-#'  that contains both sets
-#' @param alpha a \code{numeric} indicating the confidence level.
-#' @param H a \code{character} indicating the function to be used. Possible entries are:
-#' \code{'K'} or \code{'L'}.
-#' @param ts a \code{character} associated to a test statistic. Inputs acepted:
-#' \code{c('IM', 'MAD', 'SIM', 'SMAD', 'IMDQ', 'MADDQ')}.
-#' @param distances a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
-#' \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
-#' observed inside the \code{unique_bbox}.
-#' @param fixed a \code{boolean} indicating if the first pattern should be fixed on the toroidal
-#' shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or
-#' \code{FALSE}, respectively.
-#' @param method a \code{character} specifying which kind of distance will be used
-#' to evalueate \eqn{H}. Also, there is an option of using areas. Options available:
-#' \code{c('hausdorff', 'euclidean', 'area')}.
-#'
-#' @importFrom rgeos gIntersection
-#' @importFrom methods slot
-#' @importFrom stats quantile
-#' @import sp
-#'
-#' @return a list from class \code{\link{gof_test}}, with values: \describe{
-#'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
-#'     \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
-#'     \item{mc_funct}{a \code{matrix} where each line correspond to the function (\eqn{K} or \eqn{L}) estimated
-#'     for the Monte Carlo simulations}
-#'     \item{distances}{\code{numeric vector} containing the distances where mc_func were evaluated.}
-#'     \item{alpha}{a \code{numeric} scalar giving the significance level}
-#'     \item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
-#'   }
-#'
-#' @export
-#'
+##' Polygons Spatial Association Test - Global Envelope
+##'
+##' @description A Monte Carlo test to verify if two sets of polygons are
+##'    associated based in a global envelope of the functions
+##'    \eqn{K_{12}(d)} and \eqn{L_{12}(d)} using different test statistics.
+##'
+##' @param obj_sp1 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
+##' @param obj_sp2 an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}
+##' @param n_sim an \code{integer} corresponding to the number of Monte Carlo simulations
+##'  for the test
+##' @param unique_bbox a \code{matrix} \eqn{2 \times 2} corresponding to the boundary box
+##'  that contains both sets
+##' @param alpha a \code{numeric} indicating the confidence level.
+##' @param H a \code{character} indicating the function to be used. Possible entries are:
+##' \code{'K'} or \code{'L'}.
+##' @param ts a \code{character} associated to a test statistic. Inputs acepted:
+##' \code{c('IM', 'MAD', 'SIM', 'SMAD', 'IMDQ', 'MADDQ')}.
+##' @param distances a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
+##' \code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
+##' observed inside the \code{unique_bbox}.
+##' @param fixed a \code{boolean} indicating if the first pattern should be fixed on the toroidal
+##' shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or
+##' \code{FALSE}, respectively.
+##' @param method a \code{character} specifying which kind of distance will be used
+##' to evalueate \eqn{H}. Also, there is an option of using areas. Options available:
+##' \code{c('hausdorff', 'euclidean', 'area')}.
+##'
+##' @importFrom rgeos gIntersection
+##' @importFrom methods slot
+##' @importFrom stats quantile
+##' @import sp
+##'
+##' @return a list from class \code{\link{gof_test}}, with values: \describe{
+##'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
+##'     \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
+##'     \item{mc_funct}{a \code{matrix} where each line correspond to the function (\eqn{K} or \eqn{L}) estimated
+##'     for the Monte Carlo simulations}
+##'     \item{distances}{\code{numeric vector} containing the distances where mc_func were evaluated.}
+##'     \item{alpha}{a \code{numeric} scalar giving the significance level}
+##'     \item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
+##'   }
+##'
+##' @export
+##'
 gof_mc <- function(obj_sp1, obj_sp2, n_sim = 499L,
                    unique_bbox = NULL, alpha = 0.01,
                    H = 'L', ts = 'SMAD', distances = NULL,
@@ -337,7 +337,7 @@ gof_mc <- function(obj_sp1, obj_sp2, n_sim = 499L,
     return(output)
 }
 
-#' @useDynLib tpsa
-#' @importFrom Rcpp sourceCpp
-#' @importFrom Rcpp evalCpp
+##' @useDynLib tpsa
+##' @importFrom Rcpp sourceCpp
+##' @importFrom Rcpp evalCpp
 NULL

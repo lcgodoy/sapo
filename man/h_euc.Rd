@@ -12,7 +12,7 @@ h_euc(obj_sp1, obj_sp2, distances, H, unique_bbox, ...)
 \item{obj_sp2}{an object from class \code{SpatialPolygons} or \code{SpatialPointsDataFrame}}
 
 \item{distances}{a \code{numeric vector} indicating the distances to evaluate \eqn{H(d)}. If
-\code{NULL} then the range considered goes from 5% to 20% of the max distance that can be
+\code{NULL} then the range considered goes from 5\% to 20\% of the max distance that can be
 observed inside the \code{unique_bbox}.}
 
 \item{H}{a \code{character} indicating the function to be used. Possible entries are:

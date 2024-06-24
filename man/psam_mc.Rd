@@ -31,8 +31,8 @@ that contains both sets}
 
 \item{alternative}{a \code{character} indicating the alternative hypothesis, it can be: "two_sided",
 "repulsion", or "attraction" if you interest is  only check if the sets are independent
-          or not, if the two sets repulses each other, or if the two sets attracts each other,
-          respectively.}
+or not, if the two sets repulses each other, or if the two sets attracts each other,
+respectively.}
 
 \item{fixed}{a \code{boolean} indicating if the first pattern should be fixed on the toroidal
 shift or the first will be fixed in half of iterations and then the other one. \code{TRUE} or
@@ -45,12 +45,12 @@ Otherwise the Euclidean distance is used. Default is \code{FALSE}.}
 }
 \value{
 a list from class \code{\link{psam_test}}, with values: \describe{
-    \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
-    \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
-    \item{alternative}{a \code{character} giving the alternative hypothesis}
-    \item{alpha}{a \code{numeric} scalar giving the significance level}
-    \item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
-  }
+\item{p_value}{a \code{numeric} scalar giving the p-value of the test}
+\item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
+\item{alternative}{a \code{character} giving the alternative hypothesis}
+\item{alpha}{a \code{numeric} scalar giving the significance level}
+\item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
+}
 }
 \description{
 A Monte Carlo test based on the test statistic \code{\link{psam}}, to verify if

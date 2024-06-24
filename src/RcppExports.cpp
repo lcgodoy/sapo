@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // mean_vec
 arma::vec mean_vec(arma::vec& x);
-RcppExport SEXP _tpsa_mean_vec(SEXP xSEXP) {
+RcppExport SEXP _sapo_mean_vec(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -24,7 +24,7 @@ END_RCPP
 }
 // poly_rf2
 S4 poly_rf2(const S4& objsp);
-RcppExport SEXP _tpsa_poly_rf2(SEXP objspSEXP) {
+RcppExport SEXP _sapo_poly_rf2(SEXP objspSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -35,7 +35,7 @@ END_RCPP
 }
 // poly_shift
 S4 poly_shift(S4& obj_sp, NumericMatrix& bbox_tot);
-RcppExport SEXP _tpsa_poly_shift(SEXP obj_spSEXP, SEXP bbox_totSEXP) {
+RcppExport SEXP _sapo_poly_shift(SEXP obj_spSEXP, SEXP bbox_totSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,7 +47,7 @@ END_RCPP
 }
 // poly_shift_noid
 S4 poly_shift_noid(S4& obj_sp, NumericMatrix& bbox_tot);
-RcppExport SEXP _tpsa_poly_shift_noid(SEXP obj_spSEXP, SEXP bbox_totSEXP) {
+RcppExport SEXP _sapo_poly_shift_noid(SEXP obj_spSEXP, SEXP bbox_totSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -59,7 +59,7 @@ END_RCPP
 }
 // poly_touch
 S4 poly_touch(S4& x, arma::mat& bbox);
-RcppExport SEXP _tpsa_poly_touch(SEXP xSEXP, SEXP bboxSEXP) {
+RcppExport SEXP _sapo_poly_touch(SEXP xSEXP, SEXP bboxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -71,7 +71,7 @@ END_RCPP
 }
 // shift_aux
 S4 shift_aux(S4 obj_sp, S4 obj_sp2, S4 obj_sp3, S4 obj_sp4, int n_poly, double range_x, double range_y);
-RcppExport SEXP _tpsa_shift_aux(SEXP obj_spSEXP, SEXP obj_sp2SEXP, SEXP obj_sp3SEXP, SEXP obj_sp4SEXP, SEXP n_polySEXP, SEXP range_xSEXP, SEXP range_ySEXP) {
+RcppExport SEXP _sapo_shift_aux(SEXP obj_spSEXP, SEXP obj_sp2SEXP, SEXP obj_sp3SEXP, SEXP obj_sp4SEXP, SEXP n_polySEXP, SEXP range_xSEXP, SEXP range_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,7 +88,7 @@ END_RCPP
 }
 // torus_corr
 S4 torus_corr(S4& objsp, Rcpp::NumericMatrix& bbox_tot);
-RcppExport SEXP _tpsa_torus_corr(SEXP objspSEXP, SEXP bbox_totSEXP) {
+RcppExport SEXP _sapo_torus_corr(SEXP objspSEXP, SEXP bbox_totSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -100,17 +100,17 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_tpsa_mean_vec", (DL_FUNC) &_tpsa_mean_vec, 1},
-    {"_tpsa_poly_rf2", (DL_FUNC) &_tpsa_poly_rf2, 1},
-    {"_tpsa_poly_shift", (DL_FUNC) &_tpsa_poly_shift, 2},
-    {"_tpsa_poly_shift_noid", (DL_FUNC) &_tpsa_poly_shift_noid, 2},
-    {"_tpsa_poly_touch", (DL_FUNC) &_tpsa_poly_touch, 2},
-    {"_tpsa_shift_aux", (DL_FUNC) &_tpsa_shift_aux, 7},
-    {"_tpsa_torus_corr", (DL_FUNC) &_tpsa_torus_corr, 2},
+    {"_sapo_mean_vec", (DL_FUNC) &_sapo_mean_vec, 1},
+    {"_sapo_poly_rf2", (DL_FUNC) &_sapo_poly_rf2, 1},
+    {"_sapo_poly_shift", (DL_FUNC) &_sapo_poly_shift, 2},
+    {"_sapo_poly_shift_noid", (DL_FUNC) &_sapo_poly_shift_noid, 2},
+    {"_sapo_poly_touch", (DL_FUNC) &_sapo_poly_touch, 2},
+    {"_sapo_shift_aux", (DL_FUNC) &_sapo_shift_aux, 7},
+    {"_sapo_torus_corr", (DL_FUNC) &_sapo_torus_corr, 2},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_tpsa(DllInfo *dll) {
+RcppExport void R_init_sapo(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

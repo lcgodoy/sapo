@@ -10,7 +10,7 @@
 #' @return \code{numeric vector}
 #'
 mean_vec <- function(x) {
-    .Call('_tpsa_mean_vec', PACKAGE = 'tpsa', x)
+    .Call('_sapo_mean_vec', PACKAGE = 'sapo', x)
 }
 
 #' Polygons' Random Shift - 2
@@ -20,7 +20,7 @@ mean_vec <- function(x) {
 #' @return an object from class \code{SpatialPolygons} randomly translated
 #'
 poly_rf2 <- function(objsp) {
-    .Call('_tpsa_poly_rf2', PACKAGE = 'tpsa', objsp)
+    .Call('_sapo_poly_rf2', PACKAGE = 'sapo', objsp)
 }
 
 #' Create copies of a set of polygons
@@ -34,7 +34,7 @@ poly_rf2 <- function(objsp) {
 #' @return an object from class \code{SpatialPolygons}
 #'
 poly_shift <- function(obj_sp, bbox_tot) {
-    .Call('_tpsa_poly_shift', PACKAGE = 'tpsa', obj_sp, bbox_tot)
+    .Call('_sapo_poly_shift', PACKAGE = 'sapo', obj_sp, bbox_tot)
 }
 
 #' Create copies of a set of polygons
@@ -48,7 +48,7 @@ poly_shift <- function(obj_sp, bbox_tot) {
 #' @return an object from class \code{SpatialPolygons}
 #'
 poly_shift_noid <- function(obj_sp, bbox_tot) {
-    .Call('_tpsa_poly_shift_noid', PACKAGE = 'tpsa', obj_sp, bbox_tot)
+    .Call('_sapo_poly_shift_noid', PACKAGE = 'sapo', obj_sp, bbox_tot)
 }
 
 #' Polygons that touch a bbox
@@ -59,7 +59,7 @@ poly_shift_noid <- function(obj_sp, bbox_tot) {
 #' @export
 #'
 poly_touch <- function(x, bbox) {
-    .Call('_tpsa_poly_touch', PACKAGE = 'tpsa', x, bbox)
+    .Call('_sapo_poly_touch', PACKAGE = 'sapo', x, bbox)
 }
 
 #' Auxiliar function
@@ -73,7 +73,7 @@ poly_touch <- function(x, bbox) {
 #' @param range_y a numeric
 #'
 shift_aux <- function(obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_y) {
-    .Call('_tpsa_shift_aux', PACKAGE = 'tpsa', obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_y)
+    .Call('_sapo_shift_aux', PACKAGE = 'sapo', obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_y)
 }
 
 #' Toroidal edge correction
@@ -84,6 +84,6 @@ shift_aux <- function(obj_sp, obj_sp2, obj_sp3, obj_sp4, n_poly, range_x, range_
 #' @export
 #'
 torus_corr <- function(objsp, bbox_tot) {
-    .Call('_tpsa_torus_corr', PACKAGE = 'tpsa', objsp, bbox_tot)
+    .Call('_sapo_torus_corr', PACKAGE = 'sapo', objsp, bbox_tot)
 }
 

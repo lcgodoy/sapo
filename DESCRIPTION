@@ -1,6 +1,6 @@
 Package: sapo
 Type: Package
-Title: Spatial Association of Polygons
+Title: Spatial Association of Differnet Types of Polygon
 Version: 0.5.0
 Date: 2024-06-24
 Authors@R:
@@ -10,8 +10,8 @@ Authors@R:
            email = "lcgodoy@duck.com",
            comment = c(ORCID = "0000-0003-4265-972X"))
 Description: sapo provides functions totest the spatial association of different
-  types of polygons
-License: GPL-3 + file LICENSE
+  types of polygons (Godoy et al. (2022) <doi:10.1016/j.spasta.2022.100695>).
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 SystemRequirements: GDAL (>= 2.0.1), GEOS (>= 3.4.0),

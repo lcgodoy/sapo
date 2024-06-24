@@ -19,5 +19,5 @@ a distance matrix
 }
 \description{
 Calculate the distance between polygons (or points)
-             from different types considering their ID's.
+from different types considering their ID's.
 }
