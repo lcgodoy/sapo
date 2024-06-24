@@ -21,7 +21,8 @@ install:
 	R CMD INSTALL .
 
 clean:
-	rm -f ../$(PKG_NAME)_*.tar.gz
+	rm -f ./$(PKG_NAME)_*.tar.gz
+	rm -rf ./$(PKG_NAME).Rcheck
 	rm -rf man/*.Rd
 	rm -rf NAMESPACE
 	rm -f *~ R/*~ src/*~
