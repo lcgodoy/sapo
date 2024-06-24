@@ -25,6 +25,8 @@ clean:
 	rm -rf man/*.Rd
 	rm -rf NAMESPACE
 	rm -f *~ R/*~ src/*~
+	rm -f R/*~ src/*~
+	rm -f src/*~
 
 docs:
 	Rscript -e "devtools::document()"
