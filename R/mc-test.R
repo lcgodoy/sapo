@@ -21,9 +21,6 @@
 ##'   used to evalueate \eqn{H}. Also, there is an option of using
 ##'   areas. Options available: \code{c("hausdorff", "euclidean")}.
 ##'
-##' @importFrom methods slot
-##' @importFrom stats quantile
-##' @import sp
 ##'
 ##' @return a list from class \code{\link{gof_test}}, with values: \describe{
 ##'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}

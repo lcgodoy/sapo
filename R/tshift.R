@@ -110,7 +110,7 @@ translate_by_pt <- function(pt, poly) {
 ##'   parameter is mainly for internal use and testing.
 ##' @param unique_bb a bbox shared between both "Polygon Patterns"
 ##'
-##' @return
+##' @return a list
 ##'
 ##' @author Lucas Godoy
 toroidal_shift <- function(x, y,

@@ -10,8 +10,6 @@
 ##'   "hybrid_nc", "old_min"
 ##'
 ##' @return a distance matrix
-##'
-##' @importFrom stats median
 fix_dist <- function(x, method = "rnd_poly") {
   ## cleaning row names
   rownames(x) <- trimws(rownames(x))
