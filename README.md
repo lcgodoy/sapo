@@ -12,4 +12,6 @@ devtools::install_github('lcgodoy/sapo')
 - [x] Move `rgeos/sp` to `sf`
   - [x] Toroidal shift using `sf`
 - [ ] Improve documentation
+  - [ ] vignette
+  - [ ] rewrite docs
 - [ ] logo
