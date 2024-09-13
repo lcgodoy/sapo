@@ -1,8 +1,8 @@
 Package: sapo
 Type: Package
 Title: Spatial Association of Differnet Types of Polygon
-Version: 0.5.0
-Date: 2024-06-24
+Version: 0.8.0
+Date: 2024-09-13
 Authors@R:
     person(given = "Lucas",
            family = "da Cunha Godoy",
@@ -23,8 +23,7 @@ Imports:
     methods,
     stats
 Suggests: knitr,
-  rmarkdown,
-  ggplot2
+  rmarkdown
 Depends: R (>= 4.0)
 URL: https://github.com/lcgodoy/sapo/
 BugReports: https://github.com/lcgodoy/sapo/issues/
