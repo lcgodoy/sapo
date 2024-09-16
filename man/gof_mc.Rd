@@ -37,6 +37,9 @@ simulations for the test}
 evaluate \eqn{H(d)}. If \code{NULL} then the range considered goes from 5\%
 to 20\% of the max distance that can be observed inside the study region.}
 
+\item{hausdorff}{a \code{logical} scalar indicating whether the Hausdorff
+distance should be used (default is TRUE).}
+
 \item{method}{a \code{character} specifying which kind of distance will be
 used to evalueate \eqn{H}. Also, there is an option of using
 areas. Options available: \code{c("hausdorff", "euclidean")}.}

@@ -33,6 +33,8 @@ instead}
 \item{dists}{vector of distances to compute \eqn{h_{12}(t)}.}
 
 \item{x}{a list with two sf objects.}
+
+\item{...}{Parameters to be used with \code{h_func} when inputting a list.}
 }
 \value{
 a numeric vector
