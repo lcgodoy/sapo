@@ -17,10 +17,10 @@ LazyData: true
 SystemRequirements: GDAL (>= 2.0.1), GEOS (>= 3.4.0),
     PROJ (>= 4.8.0)
 Imports: 
-    sf
-Depends: R (>= 4.0),
-  methods,
-  stats
+    sf,
+    methods,
+    stats 
+Depends: R (>= 4.0)
 URL: https://github.com/lcgodoy/sapo/
 BugReports: https://github.com/lcgodoy/sapo/issues/
 Roxygen: list(markdown = TRUE)

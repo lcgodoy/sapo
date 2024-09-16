@@ -13,7 +13,7 @@
 pre_ts <- function(poly,
                    bb = NULL,
                    id_col = NULL) {
-  if (is(poly, "sfc")) {
+  if (methods::is(poly, "sfc")) {
     poly <- sf::st_as_sf(poly)
   }
   if (is.null(id_col)) {
@@ -69,7 +69,7 @@ create_jump <- function(unique_bb) {
       min = unique_bb[1],
       max = unique_bb[3]
     ),
-    "y" = runif(1,
+    "y" = stats::runif(1,
       min = unique_bb[2],
       max = unique_bb[4]
     )

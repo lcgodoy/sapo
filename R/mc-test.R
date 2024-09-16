@@ -24,7 +24,7 @@
 ##'   areas. Options available: \code{c("hausdorff", "euclidean")}.
 ##'
 ##'
-##' @return a list from class \code{\link{gof_test}}, with values: \describe{
+##' @return a list from class \code{gof_test}, with values: \describe{
 ##'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
 ##'     \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
 ##'     \item{mc_funct}{a \code{matrix} where each line correspond to the function (\eqn{K} or \eqn{L}) estimated

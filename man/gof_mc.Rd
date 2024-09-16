@@ -45,7 +45,7 @@ used to evalueate \eqn{H}. Also, there is an option of using
 areas. Options available: \code{c("hausdorff", "euclidean")}.}
 }
 \value{
-a list from class \code{\link{gof_test}}, with values: \describe{
+a list from class \code{gof_test}, with values: \describe{
 \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
 \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
 \item{mc_funct}{a \code{matrix} where each line correspond to the function (\eqn{K} or \eqn{L}) estimated
