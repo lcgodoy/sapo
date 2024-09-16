@@ -48,7 +48,7 @@ s_mad <- function(x) {
 mad_ac <- function(x) {
   out <- vector(mode = "numeric", length = nrow(x))
   mu <- apply(x, 2, mean_aux)
-  quant <- apply(x[-nrow(x), ], 2, quantile, c(.025, .975))
+  quant <- apply(x[-nrow(x), ], 2, stats::quantile, c(.025, .975))
   for (i in seq_len(nrow(x))) {
     Ind <- as.numeric(x[i, ] >= mu[i, ])
     out[i] <- max(Ind * abs(x[i, ] - mu[i, ]) / abs(quant[1, ] - mu[i, ]) +
@@ -106,7 +106,7 @@ s_im <- function(x, h = 1) {
 im_ac <- function(x, h = 1) {
   out <- vector(mode = "numeric", length = nrow(x))
   mu <- apply(x, 2, mean_aux)
-  quant <- apply(x[-nrow(x), ], 2, quantile, c(.025, .975))
+  quant <- apply(x[-nrow(x), ], 2, stats::quantile, c(.025, .975))
   for (i in seq_len(nrow(x))) {
     Ind <- as.numeric(x[i, ] >= mu[i, ])
     out[i] <- sum(Ind * ((x[i, ] - mu[i, ])^2) *

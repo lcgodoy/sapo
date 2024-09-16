@@ -133,7 +133,7 @@ fix_dist <- function(x, method = "rnd_poly") {
             x_extr[i, ] <- x[ids_aux[[i]], ]
           } else {
             if (nrow(x[ids_aux[[i]], ]) > 2) {
-              x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, median, na.rm = TRUE)
+              x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, stats::median, na.rm = TRUE)
             } else {
               x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, mean, na.rm = TRUE)
             }
@@ -152,7 +152,7 @@ fix_dist <- function(x, method = "rnd_poly") {
                 function(x) sqrt(sum(x^2))
               )
               x_extr[i, ] <-
-                x[ids_aux[[i]][which.min(abs(norm_aux - median(norm_aux)))], ]
+                x[ids_aux[[i]][which.min(abs(norm_aux - stats::median(norm_aux)))], ]
             } else {
               x_extr[i, ] <- apply(x[ids_aux[[i]], ], 2, mean, na.rm = TRUE)
             }
@@ -248,13 +248,14 @@ calc_h <- function(x,
 ##' @param var_st logical scalar indicating if the L function should be used
 ##'   instead
 ##' @param dists vector of distances to compute \eqn{h_{12}(t)}.
+##' @param ... Parameters to be used with `h_func` when inputting a list.
 ##' @name hfun
 ##' @return a numeric vector
 h_func <- function(p1, p2,
-                           hausdorff = TRUE,
-                           method = "rnd_poly",
-                           var_st = FALSE,
-                           dists = NULL) {
+                   hausdorff = TRUE,
+                   method = "rnd_poly",
+                   var_st = FALSE,
+                   dists = NULL) {
   output <- iadist(p1, p2, hausdorff, method) |>
     calc_h(var_st, dists)
   return(output)

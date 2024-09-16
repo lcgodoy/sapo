@@ -22,7 +22,7 @@ pre_ts <- function(poly,
   if (is.null(bb)) {
     bb <- sf::st_bbox(poly)
   } else {
-    stopifnot(is(bb, "bbox"))
+    stopifnot(methods::is(bb, "bbox"))
   }
   range_x <- diff(bb[c(1, 3)]) |>
     unname()
@@ -65,7 +65,7 @@ pre_ts <- function(poly,
 ##' @author Lucas Godoy
 create_jump <- function(unique_bb) {
   jump_size <- c(
-    "x" = runif(1,
+    "x" = stats::runif(1,
       min = unique_bb[1],
       max = unique_bb[3]
     ),
@@ -117,8 +117,8 @@ toroidal_shift <- function(x, y,
                            shifted = FALSE,
                            unique_bb = NULL) {
   stopifnot(
-    is(x, "sf") || is(x, "sfc"),
-    is(y, "sf") || is(y, "sfc"),
+    methods::is(x, "sf") || methods::is(x, "sfc"),
+    methods::is(y, "sf") || methods::is(y, "sfc"),
     sf::st_crs(x) == sf::st_crs(y)
   )
   if (is.null(unique_bb)) {

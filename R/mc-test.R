@@ -14,6 +14,8 @@
 ##' @param var_st use the variance stabilizing funciton?
 ##' @param ts a \code{character} associated to a test statistic. Inputs acepted:
 ##'   \code{c('IM', 'MAD', 'SIM', 'SMAD', 'IMDQ', 'MADDQ')}.
+##' @param hausdorff a \code{logical} scalar indicating whether the Hausdorff
+##'   distance should be used (default is TRUE).
 ##' @param distances a \code{numeric vector} indicating the distances to
 ##'   evaluate \eqn{H(d)}. If \code{NULL} then the range considered goes from 5%
 ##'   to 20% of the max distance that can be observed inside the study region.
