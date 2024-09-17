@@ -9,8 +9,9 @@ Authors@R:
            role = c("aut", "cre"),
            email = "lcgodoy@duck.com",
            comment = c(ORCID = "0000-0003-4265-972X"))
-Description: sapo provides functions totest the spatial association of different
-  types of polygons (Godoy et al. (2022) <doi:10.1016/j.spasta.2022.100695>).
+Description: This package provides a function to test the spatial association
+  of different types of polygons
+  (Godoy et al. (2022) <doi:10.1016/j.spasta.2022.100695>).
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
