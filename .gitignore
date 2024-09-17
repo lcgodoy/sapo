@@ -62,3 +62,4 @@ tramp
 *.pdf
 
 docs
+inst/doc

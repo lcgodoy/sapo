@@ -27,3 +27,7 @@ BugReports: https://github.com/lcgodoy/sapo/issues/
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Language: en-US
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
