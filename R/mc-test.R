@@ -8,6 +8,8 @@
 ##'   id.
 ##' @param p2 a \code{sf} object containing one column specifying the objects
 ##'   id.
+##' @param id_col a \code{character} or \code{integer} indicating the column of
+##'   \code{p1} storing the unique identifier for the polygons/sample units.
 ##' @param n_sim an \code{integer} corresponding to the number of Monte Carlo
 ##'   simulations for the test
 ##' @param alpha a \code{numeric} indicating the confidence level.
@@ -24,7 +26,7 @@
 ##'   areas. Options available: \code{c("hausdorff", "euclidean")}.
 ##'
 ##'
-##' @return a list from class \code{gof_test}, with values: \describe{
+##' @return a \code{list} with values: \describe{
 ##'     \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
 ##'     \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
 ##'     \item{mc_funct}{a \code{matrix} where each line correspond to the function (\eqn{K} or \eqn{L}) estimated
@@ -36,7 +38,9 @@
 ##'
 ##' @export
 ##'
-gof_mc <- function(p1, p2, n_sim = 499L,
+gof_mc <- function(p1, p2,
+                   id_col = NULL,
+                   n_sim = 499L,
                    alpha = 0.01,
                    var_st = TRUE,
                    ts = "SMAD",
@@ -69,6 +73,11 @@ gof_mc <- function(p1, p2, n_sim = 499L,
       length.out = 15L
     )
   }
+  unique_bbox <- sf::st_intersection(
+    sf::st_as_sfc(sf::st_bbox(p1)),
+    sf::st_as_sfc(sf::st_bbox(p2))
+    ) |>
+    sf::st_bbox()
   output <- vector(mode = "list", length = 6L)
   names(output) <- c(
     "p_value", "rejects",
@@ -84,8 +93,11 @@ gof_mc <- function(p1, p2, n_sim = 499L,
       p1, p2, hausdorff, method,
       var_st, dists = distances
   )
+  p1_shifted <- pre_ts(p1, bb = unique_bbox, id_col = id_col)
   for (i in seq_len(n_sim))
-    output$mc_funct[i, ] <- toroidal_shift(p1, p2) |>
+    output$mc_funct[i, ] <- toroidal_shift(p1_shifted, p2,
+                                           shifted = TRUE,
+                                           unique_bb = unique_bbox) |>
       h_func.list(hausdorff, method, var_st, distances)
   if (length(distances) > 1) {
     h <- distances[length(distances)] - distances[length(distances) - 1L]
@@ -114,7 +126,6 @@ gof_mc <- function(p1, p2, n_sim = 499L,
   )
   output$p_value <- mean(output$mc_sample[n_sim + 1L] <= output$mc_sample)
   if (output$p_value <= output$alpha) output$rejects <- TRUE
-  ## class(output) <- mc_psa(output)
   ## class(output) <- gof_test(output)
   return(output)
 }

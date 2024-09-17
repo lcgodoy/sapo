@@ -95,6 +95,8 @@ create_jump <- function(unique_bb) {
 ##'
 ##' @author Lucas Godoy
 translate_by_pt <- function(pt, poly) {
+  sf::st_agr(poly) <- "constant"
+  sf::st_agr(pt) <- "constant"
   sf::st_geometry(poly) <-
     sf::st_geometry(poly) + pt
   return(poly)

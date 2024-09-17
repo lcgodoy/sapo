@@ -7,6 +7,7 @@
 gof_mc(
   p1,
   p2,
+  id_col = NULL,
   n_sim = 499L,
   alpha = 0.01,
   var_st = TRUE,
@@ -22,6 +23,9 @@ id.}
 
 \item{p2}{a \code{sf} object containing one column specifying the objects
 id.}
+
+\item{id_col}{a \code{character} or \code{integer} indicating the column of
+\code{p1} storing the unique identifier for the polygons/sample units.}
 
 \item{n_sim}{an \code{integer} corresponding to the number of Monte Carlo
 simulations for the test}
@@ -45,7 +49,7 @@ used to evalueate \eqn{H}. Also, there is an option of using
 areas. Options available: \code{c("hausdorff", "euclidean")}.}
 }
 \value{
-a list from class \code{gof_test}, with values: \describe{
+a \code{list} with values: \describe{
 \item{p_value}{a \code{numeric} scalar giving the p-value of the test}
 \item{mc_sample}{a \code{numeric} vector giving the test statistic for each of the Monte Carlo simulations}
 \item{mc_funct}{a \code{matrix} where each line correspond to the function (\eqn{K} or \eqn{L}) estimated
