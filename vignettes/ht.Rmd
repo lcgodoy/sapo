@@ -1,6 +1,7 @@
 ---
 title: "Getting started"
 output: rmarkdown::html_vignette
+bibliography: vignette.bib
 vignette: >
   %\VignetteIndexEntry{ht}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,43 +19,97 @@ knitr::opts_chunk$set(
 library(sapo)
 library(sf)
 
+set.seed(2024)
+```
+
+> The `sapo` package provides a Monte Carlo test for evaluating spatial
+> association between polygons. For reproducibility, set a seed before using the
+> functions.
+
+
+This vignette illustrates the functionality of the `sapo` package. `sapo`, which
+is Portuguese for "toad," stands for "**S**patial **A**ssociation Between
+**Po**lygons".  This package enables you to test whether two types of polygons
+are spatially associated. This raises two key questions: 1) What do these
+"polygon types" represent? and 2) What constitutes spatial association?
+
+
+Polygons can represent various spatial entities. In ecology, for instance,
+polygons might represent ecological patches [@mcgarigal2013landscape], animal
+home ranges, or forest canopy gaps. It's often important to determine if two
+types of spatial phenomena (like those mentioned above) tend to attract or repel
+each other.  Conditional Monte Carlo (MC) hypothesis tests [@godoy2022testing]
+offer a way to test these hypotheses. The `cmc_psat` function (conditional MC
+polygon association test) implements these methods. All methods are based on
+conditional MC simulation, generating spatial patterns that assume spatial
+independence (using an adaptation of the toroidal shift^[a technique that shifts
+the polygons to simulate different spatial arrangements]) while preserving the
+observed marginal spatial structures.
+
+
+To illustrate the package's functionality, consider two simulated polygon types,
+`poly1` and `poly2`, loaded below as `sf` objects. These will represent two
+distinct spatial features. Our goal is to test whether they are _spatially
+independent_.
+
+```{r}
 poly1 <- system.file("extdata", "poly1.rds", package = "sapo") |>
   readRDS()
 poly2 <- system.file("extdata", "poly2.rds", package = "sapo") |>
   readRDS()
-```
 
-Methods in: Godoy et al. 2022.
-
-For this toy example we load two sets of simulated polygons. Both are `sf`
-objects:
-```{r}
 str(poly1)
 str(poly2)
 ```
-Note that, at least one of them must have an "id" column.
 
-They can be visualized below:
+Below, we plot these polygon types from this toy example.
+
 ```{r}
 plot(sf::st_geometry(poly1), col = "gray70")
 plot(sf::st_geometry(poly2), add = TRUE)
 ```
 
-Assuming we would like to test whether they are spatially independent, all we
-can do is to run the function `gof_mc`.
+The `cmc_psat` function requires that its first two arguments, `p1` and `p2`,
+are `sf` objects. Other important arguments include:
+
+*   `n_sim` (default = 499): An integer specifying the number of conditional MC
+    simulations under the null hypothesis of spatial independence.
+
+*   `alpha` (default = 0.05): A real number (between 0 and 1) indicating the
+    significance level for the hypothesis test.
+
+
+For a deeper understanding of the remaining arguments, refer to
+@godoy2022testing, which provides a comprehensive explanation of the method. The
+default argument values generally optimize the test's power and type I error
+rate.
+
+
+The code below tests whether `poly1` and `poly2` are _spatially independent_. In
+essence, it assesses whether the presence of a type 2 polygon affects the
+likelihood of observing a type 1 polygon.
+
 ```{r}
-## significance level
-sig_level <- .05
-## hypothesis test
-my_ht <- gof_mc(poly1, poly2,
-                n_sim = 199,
-                alpha = sig_level)
+my_ht <- cmc_psat(poly1, poly2)
 ```
 
-This function provides a p-value and further quantities that allow the user to
-plot the results. The graph below shows...
+The test's p-value is `r sprintf("%.4f", my_ht$p.value)`, indicating a lack of
+spatial dependence. If the analysis suggests that the polygons are not spatially
+independent, a descriptive analysis can be performed using a generalization of
+the $H_{12}$ function (typically $K_{12}$ or $L_{12}$, with the latter being the
+package default) used for analyzing spatial point patterns.
 
+
+We'll now create point-wise confidence bands based on the $L_{12}$ null
+hypothesis. These bands will be plotted against the $L_{12}$ function calculated
+from the real data. A significant result with the black curve (representing the
+real data) below the envelope suggests that the two polygon types repel each
+other. Conversely, if the black curve is above the envelope, it indicates
+attraction. Remember that these envelopes are for descriptive analysis, not
+inference. The _p-value_ determines whether to reject the hypothesis of spatial
+independence.
 ```{r}
+sig_level <- my_ht$alpha
 sig_plot <-
   data.frame(r = my_ht$distances,
              h = my_ht$mc_funct[NROW(my_ht$mc_funct), ],
@@ -62,18 +117,18 @@ sig_plot <-
                        prob = .5 * sig_level),
              u = apply(my_ht$mc_funct, 2, quantile,
                        prob = 1 - .5 * sig_level))
-par(mfrow = c(1, 2))
-## plot density part
-den <- density(my_ht$mc_sample)
-plot(den, main = sprintf("Test statistic (p-value = %.4f)",
-                         my_ht$p_value),
-     xlab = "u", ylab = "density")
-value <- my_ht$mc_sample[length(my_ht$mc_sample)]
-polygon(c(den$x[den$x >= value], value),
-        c(den$y[den$x >= value], 0),
-        col = "coral1",
-        border = "transparent")
-lines(den)
+## par(mfrow = c(1, 2))
+## ## plot density part
+## den <- density(my_ht$mc_sample)
+## plot(den, main = sprintf("Test statistic (p-value = %.4f)",
+##                          my_ht$p_value),
+##      xlab = "u", ylab = "density")
+## value <- my_ht$mc_sample[length(my_ht$mc_sample)]
+## polygon(c(den$x[den$x >= value], value),
+##         c(den$y[den$x >= value], 0),
+##         col = "coral1",
+##         border = "transparent")
+## lines(den)
 ## H function
 with(sig_plot, plot(x = r, y = h, type = "l",
                     col = 2,

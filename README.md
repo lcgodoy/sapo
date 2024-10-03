@@ -1,10 +1,13 @@
-# Spatial association of polygons
+# `sapo` (sˈa.pu)
+
+`sapo`, which is Portuguese for "toad", is an acronym for _Spatial Association
+of Polygons_. For more information, refer to the package vignette.
 
 ## Installation 
 
-```r
-# install.packages('devtools')
-devtools::install_github('lcgodoy/sapo')
+```{r}
+# install.packages("remotes")
+remotes::install_github("lcgodoy/sapo")
 ```
 
 ## Tasklist
