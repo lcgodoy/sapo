@@ -93,7 +93,7 @@ likelihood of observing a type 1 polygon.
 my_ht <- cmc_psat(poly1, poly2)
 ```
 
-The test's p-value is `r sprintf("%.4f", my_ht$p.value)`, indicating a lack of
+The test's p-value is `r sprintf("%.4f", my_ht$p_value)`, indicating a lack of
 spatial dependence. If the analysis suggests that the polygons are not spatially
 independent, a descriptive analysis can be performed using a generalization of
 the $H_{12}$ function (typically $K_{12}$ or $L_{12}$, with the latter being the

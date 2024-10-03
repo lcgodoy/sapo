@@ -36,6 +36,20 @@
 ##'     \item{rejects}{a \code{logical} scalar, TRUE if the null hypothesis is reject}
 ##'   }
 ##'
+##' @examples
+##' library(sapo)
+##' library(sf)
+##' set.seed(2024)
+##'
+##'  ## loading toy data
+##' poly1 <- system.file("extdata", "poly1.rds", package = "sapo") |>
+##'   readRDS()
+##' poly2 <- system.file("extdata", "poly2.rds", package = "sapo") |>
+##'   readRDS()
+##'
+##' my_ht <- cmc_psat(poly1, poly2, n_sim = 199)
+##' my_ht$p_value
+##' 
 ##' @export
 ##'
 cmc_psat <- function(p1, p2,
