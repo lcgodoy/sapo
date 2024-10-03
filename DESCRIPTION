@@ -2,7 +2,7 @@ Package: sapo
 Type: Package
 Title: Spatial Association of Differnet Types of Polygon
 Version: 0.8.0
-Date: 2024-09-13
+Date: 2024-10-02
 Authors@R:
     person(given = "Lucas",
            family = "da Cunha Godoy",
