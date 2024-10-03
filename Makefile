@@ -15,7 +15,7 @@ check_cran:
 	rm -f .$(PKG_NAME)_*.tar.gz
 
 build:
-	Rscript -e "devtools::build(args = c('--compact-vignettes=both'))"
+	Rscript -e "devtools::build()"
 
 install:
 	R CMD INSTALL .
