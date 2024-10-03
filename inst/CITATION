@@ -1,0 +1,30 @@
+bibentry(
+    key = "sapo-package",
+    bibtype = "Manual",
+    title = "{sapo}: Spatial Association of Different Types of Polygon",
+    author = c(
+        as.person("Lucas da Cunha Godoy")
+        ),
+    year = "2024",
+    url = "https://CRAN.R-project.org/package=sapo",
+    note = "R package version 0.8.0"
+)
+
+bibentry(
+    key = "sapo-paper",
+    bibtype = "Article",
+    title = "Testing the spatial association of different types of polygons",
+    author = c(
+        as.person("Lucas da Cunha Godoy"),
+        as.person("Renato Martins Assunção"),
+        as.person("Kevin A. Butler")
+    ),
+    journal = "Spatial Statistics",
+    year = "2022",
+    issn = "2211-6753",
+    volume = "51",
+    number = "3",
+    pages = "100695",
+    doi = "10.1016/j.spasta.2022.100695",
+    url = "https://www.sciencedirect.com/science/article/pii/S2211675322000562"
+)
